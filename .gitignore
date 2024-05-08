@@ -1,0 +1,29 @@
+# Compiled object files
+*.o
+*.so
+# Compiled static libraries
+*.a
+# Compiled binaries
+*.exe
+*.apk
+*.dex
+# Build output directories
+build/
+obj/
+lib/
+bin/
+# Logs
+*.log
+# Android specific
+*.class
+*.jar
+*.war
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.gradle
+/local.properties
+/navigation
