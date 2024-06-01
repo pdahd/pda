@@ -4,91 +4,81 @@
 #include <time.h>
 #include <wchar.h>
 #include <locale.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 
-#define ROWS 30   // 终端行数
-#define COLS 80    // 终端列数
-#define SLEEP_TIME 50000 // 刷新时间间隔 (微秒)
+// 获取终端窗口大小
+int get_terminal_size(int *rows, int *cols) {
+    struct winsize ws;
+    if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
+        return -1; 
+    } else {
+        *cols = ws.ws_col;
+        *rows = ws.ws_row;
+        return 0;
+    }
+}
 
 typedef struct {
-    wchar_t content[COLS];
-    int length;
+    wchar_t content[2];  // 只存储一个字符
     int row;
-    int fading; // 是否正在淡出
-    int brightness; // 亮度，用于模拟淡出效果
+    int col;
+    int speed;   // 下落速度
+    int brightness; // 亮度
 } RainDrop;
 
-// 将进酒的诗句
+// 将进酒的诗句，竖向排列
 const wchar_t *poem[] = {
-    L"君不见黄河之水天上来，",
-    L"奔流到海不复回。",
-    L"君不见高堂明镜悲白发，",
-    L"朝如青丝暮成雪。",
-    L"人生得意须尽欢，",
-    L"莫使金樽空对月。",
-    L"天生我材必有用，",
-    L"千金散尽还复来。",
-    L"烹羊宰牛且为乐，",
-    L"会须一饮三百杯。",
-    L"岑夫子，丹丘生，",
-    L"将进酒，杯莫停。",
-    L"与君歌一曲，",
-    L"请君为我倾耳听。",
-    L"钟鼓馔玉不足贵，",
-    L"但愿长醉不愿醒。",
-    L"古来圣贤皆寂寞，",
-    L"惟有饮者留其名。",
-    L"陈王昔时宴平乐，",
-    L"斗酒十千恣欢谑。",
-    L"主人何为言少钱，",
-    L"径须沽取对君酌。",
-    L"五花马，千金裘，",
-    L"呼儿将出换美酒，",
-    L"与尔同销万古愁。"
+    L"君", L"不", L"见", L"黄", L"河", L"之", L"水", L"天", L"上", L"来", L"，", 
+    L"奔", L"流", L"到", L"海", L"不", L"复", L"回", L"。", 
+    // ... 其他诗句，每个字占一行 ...
 };
 
 int main() {
     setlocale(LC_CTYPE, "zh_CN.UTF-8");
-
-    // 初始化随机数生成器
     srand(time(NULL));
 
-    RainDrop drops[COLS]; // 每列一个字符雨滴
+    int rows, cols;
+    if (get_terminal_size(&rows, &cols) == -1) {
+        fprintf(stderr, "无法获取终端大小\n");
+        return 1;
+    }
 
-    for (int i = 0; i < COLS; i++) {
-        drops[i].content[0] = L' '; // 初始为空格
-        drops[i].length = 1;
-        drops[i].row = -1; // 初始位置在屏幕上方
-        drops[i].fading = 0;
+    RainDrop drops[cols]; 
+
+    for (int i = 0; i < cols; i++) {
+        drops[i].content[0] = L' ';
+        drops[i].row = -rand() % rows; // 随机初始位置
+        drops[i].col = i;
+        drops[i].speed = rand() % 5 + 1; // 随机速度
         drops[i].brightness = 0;
     }
 
     while (1) {
         // 清空屏幕
-        wprintf(L"\033[2J"); 
+        wprintf(L"\033[2J");
 
-        // 随机生成新的字符雨滴
-        for (int i = 0; i < COLS; i++) {
-            if (drops[i].row >= ROWS || drops[i].row < 0) {
-                drops[i].row = 0;  // 从顶部开始
+        for (int i = 0; i < cols; i++) {
+            // 更新雨滴位置
+            drops[i].row += drops[i].speed; 
+            if (drops[i].row >= rows) {
+                drops[i].row = -rand() % rows; 
+                drops[i].content[0] = poem[rand() % (sizeof(poem) / sizeof(poem[0]))][0];
                 drops[i].brightness = rand() % 10 + 1; // 随机亮度
-                drops[i].length = wcslen(poem[rand() % (sizeof(poem) / sizeof(poem[0]))]);
-                wcscpy(drops[i].content, poem[rand() % (sizeof(poem) / sizeof(poem[0]))]);
+            }
+
+            // 打印字符
+            if (drops[i].row >= 0) {
+                wprintf(L"\033[%d;%dH\033[38;2;%d;%d;%dm%ls\033[0m", 
+                    drops[i].row, drops[i].col + 1, 
+                    drops[i].brightness * 25, drops[i].brightness * 25, drops[i].brightness * 25, 
+                    drops[i].content);
             }
         }
 
-        // 打印字符雨
-        for (int i = 0; i < COLS; i++) {
-            if (drops[i].row >= 0 && drops[i].row < ROWS) {
-                wprintf(L"\033[%d;%dH\033[38;2;%d;%d;%dm%ls\033[0m", 
-                       drops[i].row, i + 1, 
-                       drops[i].brightness * 25, drops[i].brightness * 25, drops[i].brightness * 25, // RGB颜色，模拟亮度
-                       drops[i].content);
-                    drops[i].row++;
-            }
-        }
-            
         fflush(stdout);
-        usleep(SLEEP_TIME);
+        usleep(50000);
     }
+
     return 0;
 }
