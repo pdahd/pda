@@ -30,25 +30,21 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ runner.temp }}/ndk
-          key: ndk-r21e
+          key: ndk-r16b  # 更新缓存 key
 
-      - name: Download NDK (r21e)
+      - name: Download NDK (r16b)
         if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
           mkdir ${{ runner.temp }}/ndk && cd ${{ runner.temp }}/ndk
-          curl -LO https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-          unzip android-ndk-r21e-linux-x86_64.zip
-          echo "ANDROID_NDK_HOME=${{ runner.temp }}/ndk/android-ndk-r21e" >> $GITHUB_ENV
+          curl -LO https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip  # 下载 NDK r16b
+          unzip android-ndk-r16b-linux-x86_64.zip
+          echo "ANDROID_NDK_HOME=${{ runner.temp }}/ndk/android-ndk-r16b" >> $GITHUB_ENV
 
       - name: Download FFmpeg source
         run: |
           curl -LO https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
           tar -xf ffmpeg-6.1.1.tar.xz
           cd ffmpeg-6.1.1
-
-      - name: Check compiler existence and permissions
-        run: |
-          ls -l ${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gcc
 
       - name: Configure FFmpeg (minimal)
         run: |
