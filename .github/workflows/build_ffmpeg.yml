@@ -46,6 +46,10 @@ jobs:
           tar -xf ffmpeg-6.1.1.tar.xz
           cd ffmpeg-6.1.1
 
+      - name: Check compiler existence and permissions
+        run: |
+          ls -l ${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gcc
+
       - name: Configure FFmpeg (minimal)
         run: |
           cd ffmpeg-6.1.1
@@ -61,7 +65,7 @@ jobs:
             --disable-everything \
             --enable-decoder=mpeg4 \
             --enable-shared \
-            --disable-asm 
+            --disable-asm
 
       - name: Build FFmpeg
         run: make -j $(nproc)
