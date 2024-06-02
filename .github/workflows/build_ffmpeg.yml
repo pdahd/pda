@@ -15,10 +15,10 @@ jobs:
 
       - name: Download NDK
         run: |
-          wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
-          unzip android-ndk-r21e-linux-x86_64.zip
-          echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r21e" >> $GITHUB_ENV
-          echo "$GITHUB_WORKSPACE/android-ndk-r21e" >> $GITHUB_PATH
+          wget https://dl.google.com/android/repository/android-ndk-r26d-linux.zip
+          unzip android-ndk-r26d-linux.zip
+          echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r26d" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/android-ndk-r26d" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
@@ -33,8 +33,8 @@ jobs:
 
       - name: Set compiler environment variables
         run: |
-          echo "CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang" >> $GITHUB_ENV
-          echo "CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang++" >> $GITHUB_ENV
+          echo "CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang" >> $GITHUB_ENV
+          echo "CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++" >> $GITHUB_ENV
           echo "NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm" >> $GITHUB_ENV
           echo "STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip" >> $GITHUB_ENV
           echo "PKG_CONFIG=pkg-config" >> $GITHUB_ENV
