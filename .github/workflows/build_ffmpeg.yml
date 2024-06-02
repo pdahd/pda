@@ -40,23 +40,23 @@ jobs:
 
       - name: Set compiler environment variables
         run: |
-          export CC=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
-          export CXX=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
-          export NM=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
-          export STRIP=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
-          export PKG_CONFIG=pkg-config
+          echo "CC=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang" >> $GITHUB_ENV
+          echo "CXX=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++" >> $GITHUB_ENV
+          echo "NM=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm" >> $GITHUB_ENV
+          echo "STRIP=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip" >> $GITHUB_ENV
+          echo "PKG_CONFIG=pkg-config" >> $GITHUB_ENV
 
       - name: Configure FFmpeg 
         run: |
           cd ffmpeg-6.1.1
           ./configure \
             --arch=armeabi-v7a \
-            --as="${CC}" \
-            --cc="${CC}" \
-            --cxx="${CXX}" \
-            --nm="${NM}" \
-            --pkg-config="${PKG_CONFIG}" \
-            --strip="${STRIP}" \
+            --as="$CC" \
+            --cc="$CC" \
+            --cxx="$CXX" \
+            --nm="$NM" \
+            --pkg-config="$PKG_CONFIG" \
+            --strip="$STRIP" \
             --cross-prefix="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
             --sysroot="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
             --disable-indevs \
