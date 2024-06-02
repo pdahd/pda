@@ -44,7 +44,7 @@ jobs:
           cd ffmpeg-6.1.1
           ./configure \
             --target-os=android \
-            --arch=armv7a \  # 使用更具体的架构
+            --arch=armv7a \
             --enable-cross-compile \
             --cross-prefix="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
             --sysroot="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
@@ -54,7 +54,7 @@ jobs:
             --disable-everything \
             --enable-decoder=mpeg4 \
             --enable-shared \
-            --disable-asm 
+            --disable-asm
 
       - name: Build FFmpeg
         run: make -j $(nproc)
