@@ -38,6 +38,7 @@ jobs:
 
       - name: Configure FFmpeg (minimal)
         run: |
+          cd ffmpeg-6.1.1  #  <---  添加了这一行
           ./configure \
             --target-os=android \
             --arch=arm \
