@@ -21,6 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
+          sudo dpkg --add-architecture i386
+          sudo apt update
           sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev yasm \
                                  libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 lib32bz2-1.0
 
@@ -33,7 +35,7 @@ jobs:
 
       - name: Download FFmpeg source
         run: |
-          curl -LO https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz  # 使用最新的 FFmpeg 6.1.1 版本
+          curl -LO https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
           tar -xf ffmpeg-6.1.1.tar.xz
           cd ffmpeg-6.1.1
 
@@ -52,7 +54,7 @@ jobs:
             --disable-everything \
             --enable-decoder=mpeg4 \
             --enable-shared \
-            --disable-asm  # 禁用汇编优化
+            --disable-asm 
 
       - name: Build FFmpeg
         run: make -j $(nproc)
