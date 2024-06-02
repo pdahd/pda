@@ -1,0 +1,102 @@
+name: Build FFmpeg for Android (Matching build.sh config)
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.5
+
+      - name: Set up NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: 'r25b' 
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev
+
+      - name: Download FFmpeg source
+        run: |
+          curl -LO https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
+          tar -xf ffmpeg-6.1.1.tar.xz
+          cd ffmpeg-6.1.1
+
+      - name: Configure FFmpeg 
+        run: |
+          ./configure \
+            --arch=armeabi-v7a \
+            --as="${CC}" \
+            --cc="${CC}" \
+            --cxx="${CXX}" \
+            --nm="${NM}" \
+            --pkg-config="${PKG_CONFIG}" \
+            --strip="${STRIP}" \
+            --cross-prefix="${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
+            --disable-indevs \
+            --disable-outdevs \
+            --enable-indev=lavfi \
+            --disable-static \
+            --disable-symver \
+            --enable-cross-compile \
+            --enable-gnutls \
+            --enable-gpl \
+            --enable-version3 \
+            --enable-jni \
+            --enable-lcms2 \
+            --enable-libaom \
+            --enable-libass \
+            --enable-libbluray \
+            --enable-libdav1d \
+            --enable-libfontconfig \
+            --enable-libfreetype \
+            --enable-libfribidi \
+            --enable-libgme \
+            --enable-libharfbuzz \
+            --enable-libmp3lame \
+            --enable-libopencore-amrnb \
+            --enable-libopencore-amrwb \
+            --enable-libopenmpt \
+            --enable-libopus \
+            --enable-librav1e \
+            --enable-libsoxr \
+            --enable-libsrt \
+            --enable-libssh \
+            --enable-libsvtav1 \
+            --enable-libtheora \
+            --enable-libv4l2  \
+            --enable-libvidstab \
+            --enable-libvo-amrwbenc \
+            --enable-libvorbis \
+            --enable-libvpx \
+            --enable-libwebp \
+            --enable-libx264 \
+            --enable-libx265 \
+            --enable-libxml2 \
+            --enable-libxvid \
+            --enable-libzimg \
+            --enable-mediacodec \
+            --enable-opencl \
+            --enable-shared \
+            --prefix="$GITHUB_WORKSPACE/build" \
+            --target-os=android \
+            --extra-libs="-landroid-glob" \
+            --disable-vulkan \
+            --enable-neon \
+            --disable-libfdk-aac 
+
+      - name: Build FFmpeg
+        run: make -j $(nproc)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-build-armeabi-v7a
+          path: build/
