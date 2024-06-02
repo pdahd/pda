@@ -30,13 +30,13 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ${{ runner.temp }}/ndk
-          key: ndk-r16b  # 更新缓存 key
+          key: ndk-r16b
 
       - name: Download NDK (r16b)
         if: steps.cache-ndk.outputs.cache-hit != 'true'
         run: |
           mkdir ${{ runner.temp }}/ndk && cd ${{ runner.temp }}/ndk
-          curl -LO https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip  # 下载 NDK r16b
+          curl -LO https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
           unzip android-ndk-r16b-linux-x86_64.zip
           echo "ANDROID_NDK_HOME=${{ runner.temp }}/ndk/android-ndk-r16b" >> $GITHUB_ENV
 
@@ -63,8 +63,14 @@ jobs:
             --enable-shared \
             --disable-asm
 
+      - name: Check for Makefile
+        run: |
+          ls -l ffmpeg-6.1.1/Makefile
+
       - name: Build FFmpeg
-        run: make -j $(nproc)
+        run: |
+          cd ffmpeg-6.1.1  # 进入 FFmpeg 源码目录
+          make -j $(nproc)
 
       - name: Install FFmpeg
         run: make install
