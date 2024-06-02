@@ -51,7 +51,8 @@ jobs:
           pkg-config \
           wget \
           yasm \
-          zlib1g-dev
+          zlib1g-dev \
+          tar
 
     - name: Download Android NDK
       run: |
