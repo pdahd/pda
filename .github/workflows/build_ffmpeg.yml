@@ -29,6 +29,9 @@ jobs:
       TERMUX_HOST_PLATFORM: arm-linux-androideabi
 
     steps:
+    - name: Install tar
+      run: sudo apt-get update && sudo apt-get install -y tar
+
     - name: Checkout repository
       uses: actions/checkout@v4.1.5
 
@@ -51,8 +54,7 @@ jobs:
           pkg-config \
           wget \
           yasm \
-          zlib1g-dev \
-          tar
+          zlib1g-dev
 
     - name: Download Android NDK
       run: |
