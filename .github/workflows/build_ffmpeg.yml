@@ -15,17 +15,10 @@ jobs:
 
       - name: Download NDK
         run: |
-          mkdir -p $GITHUB_WORKSPACE/.ndk
-          cd $GITHUB_WORKSPACE/.ndk
-          # 使用 Termux 中相同的 NDK 版本 (android-r26b-api-24-v1)
-          curl -LO https://dl.google.com/android/repository/android-ndk-r26b-linux.zip 
-          unzip android-ndk-r26b-linux.zip 
-          mv android-ndk-r26b  android-ndk-26.1.8770600
-
-      - name: Set NDK environment variables
-        run: |
-          echo "ANDROID_NDK_LATEST_HOME=$GITHUB_WORKSPACE/.ndk/android-ndk-26.1.8770600" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
+          wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+          unzip android-ndk-r21e-linux-x86_64.zip
+          echo "ANDROID_NDK_HOME=$GITHUB_WORKSPACE/android-ndk-r21e" >> $GITHUB_ENV
+          echo "$GITHUB_WORKSPACE/android-ndk-r21e" >> $GITHUB_PATH
 
       - name: Install dependencies
         run: |
@@ -40,10 +33,10 @@ jobs:
 
       - name: Set compiler environment variables
         run: |
-          echo "CC=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang" >> $GITHUB_ENV
-          echo "CXX=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++" >> $GITHUB_ENV
-          echo "NM=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm" >> $GITHUB_ENV
-          echo "STRIP=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip" >> $GITHUB_ENV
+          echo "CC=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang" >> $GITHUB_ENV
+          echo "CXX=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang++" >> $GITHUB_ENV
+          echo "NM=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm" >> $GITHUB_ENV
+          echo "STRIP=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip" >> $GITHUB_ENV
           echo "PKG_CONFIG=pkg-config" >> $GITHUB_ENV
 
       - name: Configure FFmpeg 
@@ -57,8 +50,8 @@ jobs:
             --nm="$NM" \
             --pkg-config="$PKG_CONFIG" \
             --strip="$STRIP" \
-            --cross-prefix="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
-            --sysroot="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
+            --cross-prefix="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
+            --sysroot="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot" \
             --disable-indevs \
             --disable-outdevs \
             --enable-indev=lavfi \
