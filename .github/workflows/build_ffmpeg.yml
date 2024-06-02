@@ -19,12 +19,13 @@ jobs:
       TERMUX_PKG_SRCDIR: ${{ github.workspace }}/src
       TERMUX_PKG_MASSAGEDIR: ${{ github.workspace }}/massage
       ANDROID_NDK_HOME: ${{ github.workspace }}/android-ndk-r21e
-      AS: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-as
-      CC: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang
-      CXX: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang++
-      NM: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
+      PATH: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH
+      AS: arm-linux-androideabi-as
+      CC: armv7a-linux-androideabi16-clang
+      CXX: armv7a-linux-androideabi16-clang++
+      NM: arm-linux-androideabi-nm
       PKG_CONFIG: pkg-config
-      STRIP: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+      STRIP: arm-linux-androideabi-strip
       TERMUX_HOST_PLATFORM: arm-linux-androideabi
 
     steps:
