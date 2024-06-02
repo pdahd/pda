@@ -40,7 +40,7 @@ jobs:
             --nm="${NM}" \
             --pkg-config="${PKG_CONFIG}" \
             --strip="${STRIP}" \
-            --cross-prefix="${ANDROID_NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
+            --cross-prefix="${ANDROID_NDK_LATEST_HOME}/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
             --disable-indevs \
             --disable-outdevs \
             --enable-indev=lavfi \
