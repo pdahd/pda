@@ -1,7 +1,10 @@
-name: Build Minimal FFmpeg for Android
+name: Build FFmpeg for Android
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -9,72 +12,107 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      TERMUX_ARCH: arm
+      TERMUX_PREFIX: /data/data/com.termux/files/usr
+      TERMUX_PKG_BUILDDIR: ${{ github.workspace }}/build
+      TERMUX_PKG_SRCDIR: ${{ github.workspace }}/src
+      TERMUX_PKG_MASSAGEDIR: ${{ github.workspace }}/massage
+      ANDROID_NDK_HOME: ${{ github.workspace }}/android-ndk-r21e
+      AS: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-as
+      CC: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang
+      CXX: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi16-clang++
+      NM: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
+      PKG_CONFIG: pkg-config
+      STRIP: ${{ github.workspace }}/android-ndk-r21e/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+      TERMUX_HOST_PLATFORM: arm-linux-androideabi
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4.1.5
+    - name: Checkout repository
+      uses: actions/checkout@v4.1.5
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev yasm \
-                                 libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 gcc-multilib g++-multilib 
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          autoconf \
+          automake \
+          build-essential \
+          cmake \
+          git \
+          libtool \
+          pkg-config \
+          wget \
+          yasm \
+          zlib1g-dev
 
-      - name: Cache NDK
-        uses: actions/cache@v3
-        with:
-          path: ${{ runner.temp }}/ndk
-          key: ndk-r16b
+    - name: Download Android NDK
+      run: |
+        wget https://dl.google.com/android/repository/android-ndk-r21e-linux-x86_64.zip
+        unzip android-ndk-r21e-linux-x86_64.zip
 
-      - name: Download NDK (r16b)
-        if: steps.cache-ndk.outputs.cache-hit != 'true'
-        run: |
-          mkdir ${{ runner.temp }}/ndk && cd ${{ runner.temp }}/ndk
-          curl -LO https://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
-          unzip android-ndk-r16b-linux-x86_64.zip
-          echo "ANDROID_NDK_HOME=${{ runner.temp }}/ndk/android-ndk-r16b" >> $GITHUB_ENV
+    - name: Download FFmpeg source
+      run: |
+        mkdir -p $TERMUX_PKG_SRCDIR
+        wget https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz -O $TERMUX_PKG_SRCDIR/ffmpeg-6.1.1.tar.xz
+        tar -xf $TERMUX_PKG_SRCDIR/ffmpeg-6.1.1.tar.xz -C $TERMUX_PKG_SRCDIR
+        mv $TERMUX_PKG_SRCDIR/ffmpeg-6.1.1/* $TERMUX_PKG_SRCDIR
 
-      - name: Download FFmpeg source
-        run: |
-          curl -LO https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
-          tar -xf ffmpeg-6.1.1.tar.xz
-          cd ffmpeg-6.1.1
+    - name: Create build directory
+      run: mkdir -p $TERMUX_PKG_BUILDDIR
 
-      - name: Configure FFmpeg (minimal)
-        run: |
-          cd ffmpeg-6.1.1
-          export CFLAGS="-I${ANDROID_NDK_HOME}/sysroot/usr/include -I${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/include"  # 添加 CFLAGS
-          export LDFLAGS="-L${ANDROID_NDK_HOME}/sysroot/usr/lib/arm-linux-androideabi -L${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x"  # 添加 LDFLAGS
-          ./configure \
-            --target-os=android \
-            --arch=armv7a \
-            --enable-cross-compile \
-            --cross-prefix="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
-            --sysroot="${ANDROID_NDK_HOME}/platforms/android-21/arch-arm" \
-            --cc="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gcc" \
-            --cxx="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-g++" \
-            --prefix="$GITHUB_WORKSPACE/build" \
-            --disable-everything \
-            --enable-decoder=mpeg4 \
-            --enable-shared \
-            --disable-asm
+    - name: Configure and build FFmpeg
+      run: |
+        cd $TERMUX_PKG_BUILDDIR
 
-      - name: Build FFmpeg
-        run: |
-          cd ffmpeg-6.1.1
-          make -j $(nproc)
+        _EXTRA_CONFIGURE_FLAGS=""
+        if [ $TERMUX_ARCH = "arm" ]; then
+          _ARCH="armeabi-v7a"
+          _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        elif [ $TERMUX_ARCH = "i686" ]; then
+          _ARCH="x86"
+          _EXTRA_CONFIGURE_FLAGS="--disable-asm"
+        elif [ $TERMUX_ARCH = "x86_64" ]; then
+          _ARCH="x86_64"
+        elif [ $TERMUX_ARCH = "aarch64" ]; then
+          _ARCH=$TERMUX_ARCH
+          _EXTRA_CONFIGURE_FLAGS="--enable-neon"
+        else
+          echo "Unsupported arch: $TERMUX_ARCH"
+          exit 1
+        fi
 
-      - name: Install FFmpeg
-        run: make install
+        $TERMUX_PKG_SRCDIR/configure \
+          --arch="${_ARCH}" \
+          --as="$AS" \
+          --cc="$CC" \
+          --cxx="$CXX" \
+          --nm="$NM" \
+          --pkg-config="$PKG_CONFIG" \
+          --strip="$STRIP" \
+          --cross-prefix="${TERMUX_HOST_PLATFORM}-" \
+          --disable-indevs \
+          --disable-outdevs \
+          --disable-static \
+          --disable-symver \
+          --enable-cross-compile \
+          --enable-gpl \
+          --enable-version3 \
+          --enable-shared \
+          --prefix="$TERMUX_PREFIX" \
+          --target-os=android \
+          --extra-libs="-landroid-glob" \
+          $_EXTRA_CONFIGURE_FLAGS
 
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ffmpeg-build-minimal
-          path: build/
+        make -j$(nproc)
+
+    - name: Archive build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ffmpeg-build
+        path: $TERMUX_PKG_BUILDDIR
