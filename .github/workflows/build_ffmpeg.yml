@@ -16,7 +16,7 @@ jobs:
       - name: Set up NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: '26.3.11579264'
+          ndk-version: '26.3.1'
 
       - name: Install dependencies
         run: |
