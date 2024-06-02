@@ -24,7 +24,7 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update
           sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev yasm \
-                                 libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 lib32bz2-1.0
+                                 libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 libbz2-1.0:i386 
 
       - name: Download NDK
         run: |
