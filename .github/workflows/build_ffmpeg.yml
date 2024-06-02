@@ -49,6 +49,8 @@ jobs:
       - name: Configure FFmpeg (minimal)
         run: |
           cd ffmpeg-6.1.1
+          export CFLAGS="-I${ANDROID_NDK_HOME}/sysroot/usr/include -I${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/include"  # 添加 CFLAGS
+          export LDFLAGS="-L${ANDROID_NDK_HOME}/sysroot/usr/lib/arm-linux-androideabi -L${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/lib/gcc/arm-linux-androideabi/4.9.x"  # 添加 LDFLAGS
           ./configure \
             --target-os=android \
             --arch=armv7a \
@@ -63,13 +65,9 @@ jobs:
             --enable-shared \
             --disable-asm
 
-      - name: Check for Makefile
-        run: |
-          ls -l ffmpeg-6.1.1/Makefile
-
       - name: Build FFmpeg
         run: |
-          cd ffmpeg-6.1.1  # 进入 FFmpeg 源码目录
+          cd ffmpeg-6.1.1
           make -j $(nproc)
 
       - name: Install FFmpeg
