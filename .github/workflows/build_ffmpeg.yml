@@ -25,6 +25,7 @@ jobs:
       - name: Set NDK environment variables
         run: |
           echo "ANDROID_NDK_LATEST_HOME=$GITHUB_WORKSPACE/.ndk/android-ndk-26.1.8770600" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin:$PATH" >> $GITHUB_ENV
 
       - name: Install dependencies
         run: |
@@ -36,6 +37,14 @@ jobs:
           curl -LO https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
           tar -xf ffmpeg-6.1.1.tar.xz
           cd ffmpeg-6.1.1
+
+      - name: Set compiler environment variables
+        run: |
+          export CC=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang
+          export CXX=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/armv7a-linux-androideabi24-clang++
+          export NM=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-nm
+          export STRIP=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/arm-linux-androideabi-strip
+          export PKG_CONFIG=pkg-config
 
       - name: Configure FFmpeg 
         run: |
