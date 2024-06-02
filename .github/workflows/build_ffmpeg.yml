@@ -53,15 +53,15 @@ jobs:
             --target-os=android \
             --arch=armv7a \
             --enable-cross-compile \
-            --cross-prefix="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \  # 明确指定工具链
-            --sysroot="${ANDROID_NDK_HOME}/platforms/android-21/arch-arm" \  # 使用正确的系统根目录
+            --cross-prefix="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-" \
+            --sysroot="${ANDROID_NDK_HOME}/platforms/android-21/arch-arm" \
             --cc="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-gcc" \
             --cxx="${ANDROID_NDK_HOME}/toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-g++" \
             --prefix="$GITHUB_WORKSPACE/build" \
             --disable-everything \
             --enable-decoder=mpeg4 \
             --enable-shared \
-            --disable-asm
+            --disable-asm 
 
       - name: Build FFmpeg
         run: make -j $(nproc)
