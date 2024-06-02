@@ -27,10 +27,11 @@ jobs:
         run: |
           curl -LO https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
           tar -xf ffmpeg-6.1.1.tar.xz
-          cd ffmpeg-6.1.1
+          cd ffmpeg-6.1.1 # 进入解压后的目录
 
       - name: Configure FFmpeg 
         run: |
+          cd ffmpeg-6.1.1  # 进入 FFmpeg 源代码目录
           ./configure \
             --arch=armeabi-v7a \
             --as="${CC}" \
