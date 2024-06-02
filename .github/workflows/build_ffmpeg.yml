@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev
+          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev libc6-i386 lib32stdc++6
 
       - name: Download FFmpeg source
         run: |
