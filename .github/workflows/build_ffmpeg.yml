@@ -21,7 +21,8 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev yasm
+          sudo apt install -y build-essential autoconf automake libtool git pkg-config make curl unzip zlib1g-dev yasm \
+                                 libc6:i386 libncurses5:i386 libstdc++6:i386 lib32z1 lib32bz2-1.0
 
       - name: Download NDK
         run: |
@@ -32,13 +33,13 @@ jobs:
 
       - name: Download FFmpeg source
         run: |
-          curl -LO https://www.ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz
+          curl -LO https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.xz  # 使用最新的 FFmpeg 6.1.1 版本
           tar -xf ffmpeg-6.1.1.tar.xz
           cd ffmpeg-6.1.1
 
       - name: Configure FFmpeg (minimal)
         run: |
-          cd ffmpeg-6.1.1  #  <---  添加了这一行
+          cd ffmpeg-6.1.1
           ./configure \
             --target-os=android \
             --arch=arm \
@@ -50,7 +51,8 @@ jobs:
             --prefix="$GITHUB_WORKSPACE/build" \
             --disable-everything \
             --enable-decoder=mpeg4 \
-            --enable-shared
+            --enable-shared \
+            --disable-asm  # 禁用汇编优化
 
       - name: Build FFmpeg
         run: make -j $(nproc)
