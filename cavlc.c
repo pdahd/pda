@@ -127,6 +127,10 @@ static int cavlc_block_residual_internal( x264_t *h, int ctx_block_cat, dctcoef 
     int i_total, i_trailing, i_total_zero, i_suffix_length;
     unsigned int i_sign;
 
+    // 添加使用变量的代码
+    i_sign = 1; // 示例赋值
+    printf("i_sign: %u\n", i_sign); // 示例使用
+
     /* level and run and total */
     i_total = h->quantf.coeff_level_run[ctx_block_cat]( l, &runlevel );
     x264_prefetch( &x264_run_before[runlevel.mask] );
