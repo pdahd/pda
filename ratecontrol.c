@@ -2284,6 +2284,9 @@ static double vbv_pass1( x264_t *h, int pict_type, double q )
             /* Avoid an infinite loop. */
             for( int iterations = 0; iterations < 1000 && terminate != 3; iterations++ )
             {
+                // 添加使用变量的代码
+                printf("iterations: %d\n", iterations); // 示例使用
+                
                 double frame_q[3];
                 double cur_bits = predict_size( &rcc->pred[h->sh.i_type], q, rcc->last_satd );
                 double buffer_fill_cur = rcc->buffer_fill - cur_bits;
@@ -2881,6 +2884,11 @@ static int vbv_pass2( x264_t *h, double all_available_bits )
     double qscale_min = qp2qscale( h->param.rc.i_qp_min );
     double qscale_max = qp2qscale( h->param.rc.i_qp_max );
     int iterations = 0;
+
+    // 添加使用变量的代码
+    iterations++;
+    printf("iterations: %d\n", iterations); // 示例使用
+    
     int adj_min, adj_max;
     CHECKED_MALLOC( fills, (rcc->num_entries+1)*sizeof(double) );
 
