@@ -1,0 +1,1494 @@
+﻿2024-06-18T08:00:50.4763082Z ##[group]Run cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+2024-06-18T08:00:50.4763527Z [36;1mcd $GITHUB_WORKSPACE/ffmpeg-7.0.1[0m
+2024-06-18T08:00:50.4763895Z [36;1mcat fftools/opt_common.c[0m
+2024-06-18T08:00:50.4821111Z shell: /usr/bin/bash -e {0}
+2024-06-18T08:00:50.4821403Z env:
+2024-06-18T08:00:50.4821624Z   TT: armv7a-linux-androideabi
+2024-06-18T08:00:50.4821975Z   NDK: /usr/local/lib/android/sdk/ndk/25.2.9519653
+2024-06-18T08:00:50.4822470Z   PKG_CONFIG_PATH: /home/runner/work/HD/HD/exlibs/lib/pkgconfig:
+2024-06-18T08:00:50.4822891Z ##[endgroup]
+2024-06-18T08:00:50.4908046Z /*
+2024-06-18T08:00:50.4908894Z  * Option handlers shared between the tools.
+2024-06-18T08:00:50.4910007Z  *
+2024-06-18T08:00:50.4910371Z  * This file is part of FFmpeg.
+2024-06-18T08:00:50.4911324Z  *
+2024-06-18T08:00:50.4911975Z  * FFmpeg is free software; you can redistribute it and/or
+2024-06-18T08:00:50.4913100Z  * modify it under the terms of the GNU Lesser General Public
+2024-06-18T08:00:50.4914129Z  * License as published by the Free Software Foundation; either
+2024-06-18T08:00:50.4915239Z  * version 2.1 of the License, or (at your option) any later version.
+2024-06-18T08:00:50.4916396Z  *
+2024-06-18T08:00:50.4916921Z  * FFmpeg is distributed in the hope that it will be useful,
+2024-06-18T08:00:50.4917952Z  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+2024-06-18T08:00:50.4919082Z  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+2024-06-18T08:00:50.4919942Z  * Lesser General Public License for more details.
+2024-06-18T08:00:50.4920532Z  *
+2024-06-18T08:00:50.4921082Z  * You should have received a copy of the GNU Lesser General Public
+2024-06-18T08:00:50.4922008Z  * License along with FFmpeg; if not, write to the Free Software
+2024-06-18T08:00:50.4923175Z  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+2024-06-18T08:00:50.4923948Z  */
+2024-06-18T08:00:50.4924141Z 
+2024-06-18T08:00:50.4924290Z #include "config.h"
+2024-06-18T08:00:50.4924546Z 
+2024-06-18T08:00:50.4924710Z #include <stdio.h>
+2024-06-18T08:00:50.4924955Z 
+2024-06-18T08:00:50.4925107Z #include "cmdutils.h"
+2024-06-18T08:00:50.4925538Z #include "opt_common.h"
+2024-06-18T08:00:50.4925824Z 
+2024-06-18T08:00:50.4926002Z #include "libavutil/avassert.h"
+2024-06-18T08:00:50.4926506Z #include "libavutil/avstring.h"
+2024-06-18T08:00:50.4926894Z #include "libavutil/bprint.h"
+2024-06-18T08:00:50.4927205Z #include "libavutil/channel_layout.h"
+2024-06-18T08:00:50.4927525Z #include "libavutil/cpu.h"
+2024-06-18T08:00:50.4927810Z #include "libavutil/dict.h"
+2024-06-18T08:00:50.4928099Z #include "libavutil/error.h"
+2024-06-18T08:00:50.4928387Z #include "libavutil/ffversion.h"
+2024-06-18T08:00:50.4928689Z #include "libavutil/log.h"
+2024-06-18T08:00:50.4928968Z #include "libavutil/mem.h"
+2024-06-18T08:00:50.4929255Z #include "libavutil/parseutils.h"
+2024-06-18T08:00:50.4929577Z #include "libavutil/pixdesc.h"
+2024-06-18T08:00:50.4929876Z #include "libavutil/version.h"
+2024-06-18T08:00:50.4930074Z 
+2024-06-18T08:00:50.4930177Z #include "libavcodec/avcodec.h"
+2024-06-18T08:00:50.4930484Z #include "libavcodec/bsf.h"
+2024-06-18T08:00:50.4930771Z #include "libavcodec/codec.h"
+2024-06-18T08:00:50.4931060Z #include "libavcodec/codec_desc.h"
+2024-06-18T08:00:50.4931375Z #include "libavcodec/version.h"
+2024-06-18T08:00:50.4931571Z 
+2024-06-18T08:00:50.4931684Z #include "libavformat/avformat.h"
+2024-06-18T08:00:50.4931992Z #include "libavformat/version.h"
+2024-06-18T08:00:50.4932202Z 
+2024-06-18T08:00:50.4932307Z #include "libavdevice/avdevice.h"
+2024-06-18T08:00:50.4932613Z #include "libavdevice/version.h"
+2024-06-18T08:00:50.4932812Z 
+2024-06-18T08:00:50.4932923Z #include "libavfilter/avfilter.h"
+2024-06-18T08:00:50.4933226Z #include "libavfilter/version.h"
+2024-06-18T08:00:50.4933432Z 
+2024-06-18T08:00:50.4933533Z #include "libswscale/swscale.h"
+2024-06-18T08:00:50.4933833Z #include "libswscale/version.h"
+2024-06-18T08:00:50.4934028Z 
+2024-06-18T08:00:50.4934147Z #include "libswresample/swresample.h"
+2024-06-18T08:00:50.4934501Z #include "libswresample/version.h"
+2024-06-18T08:00:50.4934969Z 
+2024-06-18T08:00:50.4935097Z #include "libpostproc/postprocess.h"
+2024-06-18T08:00:50.4935434Z #include "libpostproc/version.h"
+2024-06-18T08:00:50.4935645Z 
+2024-06-18T08:00:50.4935742Z enum show_muxdemuxers {
+2024-06-18T08:00:50.4936005Z     SHOW_DEFAULT,
+2024-06-18T08:00:50.4936237Z     SHOW_DEMUXERS,
+2024-06-18T08:00:50.4936465Z     SHOW_MUXERS,
+2024-06-18T08:00:50.4936681Z };
+2024-06-18T08:00:50.4936788Z 
+2024-06-18T08:00:50.4936887Z static FILE *report_file;
+2024-06-18T08:00:50.4937203Z static int report_file_level = AV_LOG_DEBUG;
+2024-06-18T08:00:50.4937453Z 
+2024-06-18T08:00:50.4937662Z int show_license(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.4938216Z {
+2024-06-18T08:00:50.4938426Z #if CONFIG_NONFREE
+2024-06-18T08:00:50.4938668Z     printf(
+2024-06-18T08:00:50.4938969Z     "This version of %s has nonfree parts compiled in.\n"
+2024-06-18T08:00:50.4939434Z     "Therefore it is not legally redistributable.\n",
+2024-06-18T08:00:50.4939818Z     program_name );
+2024-06-18T08:00:50.4940056Z #elif CONFIG_GPLV3
+2024-06-18T08:00:50.4940290Z     printf(
+2024-06-18T08:00:50.4940625Z     "%s is free software; you can redistribute it and/or modify\n"
+2024-06-18T08:00:50.4941200Z     "it under the terms of the GNU General Public License as published by\n"
+2024-06-18T08:00:50.4941807Z     "the Free Software Foundation; either version 3 of the License, or\n"
+2024-06-18T08:00:50.4942284Z     "(at your option) any later version.\n"
+2024-06-18T08:00:50.4942605Z     "\n"
+2024-06-18T08:00:50.4942910Z     "%s is distributed in the hope that it will be useful,\n"
+2024-06-18T08:00:50.4943435Z     "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+2024-06-18T08:00:50.4944019Z     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+2024-06-18T08:00:50.4944515Z     "GNU General Public License for more details.\n"
+2024-06-18T08:00:50.4944871Z     "\n"
+2024-06-18T08:00:50.4945228Z     "You should have received a copy of the GNU General Public License\n"
+2024-06-18T08:00:50.4945808Z     "along with %s.  If not, see <http://www.gnu.org/licenses/>.\n",
+2024-06-18T08:00:50.4946292Z     program_name, program_name, program_name );
+2024-06-18T08:00:50.4946647Z #elif CONFIG_GPL
+2024-06-18T08:00:50.4946871Z     printf(
+2024-06-18T08:00:50.4947207Z     "%s is free software; you can redistribute it and/or modify\n"
+2024-06-18T08:00:50.4947779Z     "it under the terms of the GNU General Public License as published by\n"
+2024-06-18T08:00:50.4948379Z     "the Free Software Foundation; either version 2 of the License, or\n"
+2024-06-18T08:00:50.4948854Z     "(at your option) any later version.\n"
+2024-06-18T08:00:50.4949178Z     "\n"
+2024-06-18T08:00:50.4949472Z     "%s is distributed in the hope that it will be useful,\n"
+2024-06-18T08:00:50.4950008Z     "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+2024-06-18T08:00:50.4950583Z     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+2024-06-18T08:00:50.4951077Z     "GNU General Public License for more details.\n"
+2024-06-18T08:00:50.4951437Z     "\n"
+2024-06-18T08:00:50.4951793Z     "You should have received a copy of the GNU General Public License\n"
+2024-06-18T08:00:50.4952309Z     "along with %s; if not, write to the Free Software\n"
+2024-06-18T08:00:50.4952951Z     "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA\n",
+2024-06-18T08:00:50.4953479Z     program_name, program_name, program_name );
+2024-06-18T08:00:50.4953823Z #elif CONFIG_LGPLV3
+2024-06-18T08:00:50.4954059Z     printf(
+2024-06-18T08:00:50.4954385Z     "%s is free software; you can redistribute it and/or modify\n"
+2024-06-18T08:00:50.4954974Z     "it under the terms of the GNU Lesser General Public License as published by\n"
+2024-06-18T08:00:50.4955609Z     "the Free Software Foundation; either version 3 of the License, or\n"
+2024-06-18T08:00:50.4956089Z     "(at your option) any later version.\n"
+2024-06-18T08:00:50.4956431Z     "\n"
+2024-06-18T08:00:50.4956731Z     "%s is distributed in the hope that it will be useful,\n"
+2024-06-18T08:00:50.4957416Z     "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+2024-06-18T08:00:50.4957991Z     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n"
+2024-06-18T08:00:50.4958724Z     "GNU Lesser General Public License for more details.\n"
+2024-06-18T08:00:50.4959116Z     "\n"
+2024-06-18T08:00:50.4959506Z     "You should have received a copy of the GNU Lesser General Public License\n"
+2024-06-18T08:00:50.4960110Z     "along with %s.  If not, see <http://www.gnu.org/licenses/>.\n",
+2024-06-18T08:00:50.4960595Z     program_name, program_name, program_name );
+2024-06-18T08:00:50.4960933Z #else
+2024-06-18T08:00:50.4961132Z     printf(
+2024-06-18T08:00:50.4961603Z     "%s is free software; you can redistribute it and/or\n"
+2024-06-18T08:00:50.4962114Z     "modify it under the terms of the GNU Lesser General Public\n"
+2024-06-18T08:00:50.4962662Z     "License as published by the Free Software Foundation; either\n"
+2024-06-18T08:00:50.4963240Z     "version 2.1 of the License, or (at your option) any later version.\n"
+2024-06-18T08:00:50.4963673Z     "\n"
+2024-06-18T08:00:50.4963973Z     "%s is distributed in the hope that it will be useful,\n"
+2024-06-18T08:00:50.4964497Z     "but WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+2024-06-18T08:00:50.4965085Z     "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+2024-06-18T08:00:50.4965604Z     "Lesser General Public License for more details.\n"
+2024-06-18T08:00:50.4965972Z     "\n"
+2024-06-18T08:00:50.4966340Z     "You should have received a copy of the GNU Lesser General Public\n"
+2024-06-18T08:00:50.4966905Z     "License along with %s; if not, write to the Free Software\n"
+2024-06-18T08:00:50.4967582Z     "Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA\n",
+2024-06-18T08:00:50.4968127Z     program_name, program_name, program_name );
+2024-06-18T08:00:50.4968467Z #endif
+2024-06-18T08:00:50.4968582Z 
+2024-06-18T08:00:50.4968671Z     return 0;
+2024-06-18T08:00:50.4968884Z }
+2024-06-18T08:00:50.4968992Z 
+2024-06-18T08:00:50.4969096Z static int warned_cfg = 0;
+2024-06-18T08:00:50.4969276Z 
+2024-06-18T08:00:50.4969368Z #define INDENT        1
+2024-06-18T08:00:50.4969632Z #define SHOW_VERSION  2
+2024-06-18T08:00:50.4969888Z #define SHOW_CONFIG   4
+2024-06-18T08:00:50.4970139Z #define SHOW_COPYRIGHT 8
+2024-06-18T08:00:50.4970320Z 
+2024-06-18T08:00:50.4970559Z #define PRINT_LIB_INFO(libname, LIBNAME, flags, level)                  \
+2024-06-18T08:00:50.4971109Z     if (CONFIG_##LIBNAME) {                                             \
+2024-06-18T08:00:50.4971636Z         const char *indent = flags & INDENT? "  " : "";                 \
+2024-06-18T08:00:50.4972159Z         if (flags & SHOW_VERSION) {                                     \
+2024-06-18T08:00:50.4972671Z             unsigned int version = libname##_version();                 \
+2024-06-18T08:00:50.4973150Z             av_log(NULL, level,                                         \
+2024-06-18T08:00:50.4973685Z                    "%slib%-11s %2d.%3d.%3d / %2d.%3d.%3d\n",            \
+2024-06-18T08:00:50.4974131Z                    indent, #libname,                                    \
+2024-06-18T08:00:50.4974582Z                    LIB##LIBNAME##_VERSION_MAJOR,                        \
+2024-06-18T08:00:50.4975015Z                    LIB##LIBNAME##_VERSION_MINOR,                        \
+2024-06-18T08:00:50.4975458Z                    LIB##LIBNAME##_VERSION_MICRO,                        \
+2024-06-18T08:00:50.4975911Z                    AV_VERSION_MAJOR(version), AV_VERSION_MINOR(version),\
+2024-06-18T08:00:50.4976396Z                    AV_VERSION_MICRO(version));                          \
+2024-06-18T08:00:50.4976810Z         }                                                               \
+2024-06-18T08:00:50.4977242Z         if (flags & SHOW_CONFIG) {                                      \
+2024-06-18T08:00:50.4977729Z             const char *cfg = libname##_configuration();                \
+2024-06-18T08:00:50.4978730Z             if (strcmp(FFMPEG_CONFIGURATION, cfg)) {                    \
+2024-06-18T08:00:50.4979476Z                 if (!warned_cfg) {                                      \
+2024-06-18T08:00:50.4980193Z                     av_log(NULL, level,                                 \
+2024-06-18T08:00:50.4980970Z                             "%sWARNING: library configuration mismatch\n", \
+2024-06-18T08:00:50.4981727Z                             indent);                                    \
+2024-06-18T08:00:50.4982438Z                     warned_cfg = 1;                                     \
+2024-06-18T08:00:50.4983110Z                 }                                                       \
+2024-06-18T08:00:50.4984218Z                 av_log(NULL, level, "%s%-11s configuration: %s\n",      \
+2024-06-18T08:00:50.4984970Z                         indent, #libname, cfg);                         \
+2024-06-18T08:00:50.4985653Z             }                                                           \
+2024-06-18T08:00:50.4986432Z         }                                                               \
+2024-06-18T08:00:50.4986855Z     }                                                                   \
+2024-06-18T08:00:50.4987127Z 
+2024-06-18T08:00:50.4987301Z static void print_all_libs_info(int flags, int level)
+2024-06-18T08:00:50.4987673Z {
+2024-06-18T08:00:50.4987947Z     PRINT_LIB_INFO(avutil,     AVUTIL,     flags, level);
+2024-06-18T08:00:50.4988399Z     PRINT_LIB_INFO(avcodec,    AVCODEC,    flags, level);
+2024-06-18T08:00:50.4988844Z     PRINT_LIB_INFO(avformat,   AVFORMAT,   flags, level);
+2024-06-18T08:00:50.4989270Z     PRINT_LIB_INFO(avdevice,   AVDEVICE,   flags, level);
+2024-06-18T08:00:50.4989709Z     PRINT_LIB_INFO(avfilter,   AVFILTER,   flags, level);
+2024-06-18T08:00:50.4990147Z     PRINT_LIB_INFO(swscale,    SWSCALE,    flags, level);
+2024-06-18T08:00:50.4990587Z     PRINT_LIB_INFO(swresample, SWRESAMPLE, flags, level);
+2024-06-18T08:00:50.4991027Z     PRINT_LIB_INFO(postproc,   POSTPROC,   flags, level);
+2024-06-18T08:00:50.4991387Z }
+2024-06-18T08:00:50.4991497Z 
+2024-06-18T08:00:50.4991676Z static void print_program_info(int flags, int level)
+2024-06-18T08:00:50.4992032Z {
+2024-06-18T08:00:50.4992288Z     const char *indent = flags & INDENT? "  " : "";
+2024-06-18T08:00:50.4992556Z 
+2024-06-18T08:00:50.4992783Z     av_log(NULL, level, "%s version " FFMPEG_VERSION, program_name);
+2024-06-18T08:00:50.4993215Z     if (flags & SHOW_COPYRIGHT)
+2024-06-18T08:00:50.4993724Z         av_log(NULL, level, " Copyright (c) %d-%d the FFmpeg developers",
+2024-06-18T08:00:50.4994208Z                program_birth_year, CONFIG_THIS_YEAR);
+2024-06-18T08:00:50.4994582Z     av_log(NULL, level, "\n");
+2024-06-18T08:00:50.4994978Z     av_log(NULL, level, "%sbuilt with %s\n", indent, CC_IDENT);
+2024-06-18T08:00:50.4995284Z 
+2024-06-18T08:00:50.4995546Z     av_log(NULL, level, "%sconfiguration: " FFMPEG_CONFIGURATION "\n", indent);
+2024-06-18T08:00:50.4995986Z }
+2024-06-18T08:00:50.4996102Z 
+2024-06-18T08:00:50.4996255Z static void print_buildconf(int flags, int level)
+2024-06-18T08:00:50.4996601Z {
+2024-06-18T08:00:50.4996863Z     const char *indent = flags & INDENT ? "  " : "";
+2024-06-18T08:00:50.4997268Z     char str[] = { FFMPEG_CONFIGURATION };
+2024-06-18T08:00:50.4997646Z     char *conflist, *remove_tilde, *splitconf;
+2024-06-18T08:00:50.4997895Z 
+2024-06-18T08:00:50.4998088Z     // Change all the ' --' strings to '~--' so that
+2024-06-18T08:00:50.4998752Z     // they can be identified as tokens.
+2024-06-18T08:00:50.4999576Z     while ((conflist = strstr(str, " --")) != NULL) {
+2024-06-18T08:00:50.5000224Z         conflist[0] = '~';
+2024-06-18T08:00:50.5000623Z     }
+2024-06-18T08:00:50.5000815Z 
+2024-06-18T08:00:50.5001055Z     // Compensate for the weirdness this would cause
+2024-06-18T08:00:50.5001567Z     // when passing 'pkg-config --static'.
+2024-06-18T08:00:50.5002042Z     while ((remove_tilde = strstr(str, "pkg-config~")) != NULL) {
+2024-06-18T08:00:50.5002545Z         remove_tilde[sizeof("pkg-config~") - 2] = ' ';
+2024-06-18T08:00:50.5003140Z     }
+2024-06-18T08:00:50.5003253Z 
+2024-06-18T08:00:50.5003357Z     splitconf = strtok(str, "~");
+2024-06-18T08:00:50.5003728Z     av_log(NULL, level, "\n%sconfiguration:\n", indent);
+2024-06-18T08:00:50.5004115Z     while (splitconf != NULL) {
+2024-06-18T08:00:50.5004503Z         av_log(NULL, level, "%s%s%s\n", indent, indent, splitconf);
+2024-06-18T08:00:50.5004942Z         splitconf = strtok(NULL, "~");
+2024-06-18T08:00:50.5005246Z     }
+2024-06-18T08:00:50.5005427Z }
+2024-06-18T08:00:50.5005542Z 
+2024-06-18T08:00:50.5005753Z void show_banner(int argc, char **argv, const OptionDef *options)
+2024-06-18T08:00:50.5006163Z {
+2024-06-18T08:00:50.5006598Z     int idx = locate_option(argc, argv, options, "version");
+2024-06-18T08:00:50.5007001Z     if (hide_banner || idx)
+2024-06-18T08:00:50.5007272Z         return;
+2024-06-18T08:00:50.5007413Z 
+2024-06-18T08:00:50.5007596Z     print_program_info (INDENT|SHOW_COPYRIGHT, AV_LOG_INFO);
+2024-06-18T08:00:50.5008071Z     print_all_libs_info(INDENT|SHOW_CONFIG,  AV_LOG_INFO);
+2024-06-18T08:00:50.5008521Z     print_all_libs_info(INDENT|SHOW_VERSION, AV_LOG_INFO);
+2024-06-18T08:00:50.5008887Z }
+2024-06-18T08:00:50.5009001Z 
+2024-06-18T08:00:50.5009206Z int show_version(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5009609Z {
+2024-06-18T08:00:50.5009828Z     av_log_set_callback(log_callback_help);
+2024-06-18T08:00:50.5010227Z     print_program_info (SHOW_COPYRIGHT, AV_LOG_INFO);
+2024-06-18T08:00:50.5010644Z     print_all_libs_info(SHOW_VERSION, AV_LOG_INFO);
+2024-06-18T08:00:50.5010908Z 
+2024-06-18T08:00:50.5011003Z     return 0;
+2024-06-18T08:00:50.5011208Z }
+2024-06-18T08:00:50.5011320Z 
+2024-06-18T08:00:50.5011541Z int show_buildconf(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5011953Z {
+2024-06-18T08:00:50.5012172Z     av_log_set_callback(log_callback_help);
+2024-06-18T08:00:50.5012547Z     print_buildconf      (INDENT|0, AV_LOG_INFO);
+2024-06-18T08:00:50.5012805Z 
+2024-06-18T08:00:50.5012893Z     return 0;
+2024-06-18T08:00:50.5013095Z }
+2024-06-18T08:00:50.5013203Z 
+2024-06-18T08:00:50.5013460Z #define PRINT_CODEC_SUPPORTED(codec, field, type, list_name, term, get_name) \
+2024-06-18T08:00:50.5014098Z     if (codec->field) {                                                      \
+2024-06-18T08:00:50.5014676Z         const type *p = codec->field;                                        \
+2024-06-18T08:00:50.5015138Z                                                                              \
+2024-06-18T08:00:50.5015606Z         printf("    Supported " list_name ":");                              \
+2024-06-18T08:00:50.5016092Z         while (*p != term) {                                                 \
+2024-06-18T08:00:50.5016566Z             get_name(*p);                                                    \
+2024-06-18T08:00:50.5017028Z             printf(" %s", name);                                             \
+2024-06-18T08:00:50.5017469Z             p++;                                                             \
+2024-06-18T08:00:50.5017860Z         }                                                                    \
+2024-06-18T08:00:50.5018286Z         printf("\n");                                                        \
+2024-06-18T08:00:50.5018709Z     }                                                                        \
+2024-06-18T08:00:50.5018957Z 
+2024-06-18T08:00:50.5019085Z static void print_codec(const AVCodec *c)
+2024-06-18T08:00:50.5019406Z {
+2024-06-18T08:00:50.5019638Z     int encoder = av_codec_is_encoder(c);
+2024-06-18T08:00:50.5019869Z 
+2024-06-18T08:00:50.5020130Z     printf("%s %s [%s]:\n", encoder ? "Encoder" : "Decoder", c->name,
+2024-06-18T08:00:50.5020628Z            c->long_name ? c->long_name : "");
+2024-06-18T08:00:50.5020866Z 
+2024-06-18T08:00:50.5021000Z     printf("    General capabilities: ");
+2024-06-18T08:00:50.5021435Z     if (c->capabilities & AV_CODEC_CAP_DRAW_HORIZ_BAND)
+2024-06-18T08:00:50.5021819Z         printf("horizband ");
+2024-06-18T08:00:50.5022339Z     if (c->capabilities & AV_CODEC_CAP_DR1)
+2024-06-18T08:00:50.5022679Z         printf("dr1 ");
+2024-06-18T08:00:50.5022997Z     if (c->capabilities & AV_CODEC_CAP_DELAY)
+2024-06-18T08:00:50.5023336Z         printf("delay ");
+2024-06-18T08:00:50.5023704Z     if (c->capabilities & AV_CODEC_CAP_SMALL_LAST_FRAME)
+2024-06-18T08:00:50.5024081Z         printf("small ");
+2024-06-18T08:00:50.5024448Z     if (c->capabilities & AV_CODEC_CAP_EXPERIMENTAL)
+2024-06-18T08:00:50.5024817Z         printf("exp ");
+2024-06-18T08:00:50.5025160Z     if (c->capabilities & AV_CODEC_CAP_CHANNEL_CONF)
+2024-06-18T08:00:50.5025525Z         printf("chconf ");
+2024-06-18T08:00:50.5025883Z     if (c->capabilities & AV_CODEC_CAP_PARAM_CHANGE)
+2024-06-18T08:00:50.5026359Z         printf("paramchange ");
+2024-06-18T08:00:50.5026773Z     if (c->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE)
+2024-06-18T08:00:50.5027163Z         printf("variable ");
+2024-06-18T08:00:50.5027540Z     if (c->capabilities & (AV_CODEC_CAP_FRAME_THREADS |
+2024-06-18T08:00:50.5027952Z                            AV_CODEC_CAP_SLICE_THREADS |
+2024-06-18T08:00:50.5028318Z                            AV_CODEC_CAP_OTHER_THREADS))
+2024-06-18T08:00:50.5028642Z         printf("threads ");
+2024-06-18T08:00:50.5029018Z     if (c->capabilities & AV_CODEC_CAP_AVOID_PROBING)
+2024-06-18T08:00:50.5029392Z         printf("avoidprobe ");
+2024-06-18T08:00:50.5029749Z     if (c->capabilities & AV_CODEC_CAP_HARDWARE)
+2024-06-18T08:00:50.5030226Z         printf("hardware ");
+2024-06-18T08:00:50.5030587Z     if (c->capabilities & AV_CODEC_CAP_HYBRID)
+2024-06-18T08:00:50.5030926Z         printf("hybrid ");
+2024-06-18T08:00:50.5031226Z     if (!c->capabilities)
+2024-06-18T08:00:50.5031498Z         printf("none");
+2024-06-18T08:00:50.5031746Z     printf("\n");
+2024-06-18T08:00:50.5031898Z 
+2024-06-18T08:00:50.5032048Z     if (c->type == AVMEDIA_TYPE_VIDEO ||
+2024-06-18T08:00:50.5032428Z         c->type == AVMEDIA_TYPE_AUDIO) {
+2024-06-18T08:00:50.5032783Z         printf("    Threading capabilities: ");
+2024-06-18T08:00:50.5033265Z         switch (c->capabilities & (AV_CODEC_CAP_FRAME_THREADS |
+2024-06-18T08:00:50.5033708Z                                    AV_CODEC_CAP_SLICE_THREADS |
+2024-06-18T08:00:50.5034111Z                                    AV_CODEC_CAP_OTHER_THREADS)) {
+2024-06-18T08:00:50.5034496Z         case AV_CODEC_CAP_FRAME_THREADS |
+2024-06-18T08:00:50.5034930Z              AV_CODEC_CAP_SLICE_THREADS: printf("frame and slice"); break;
+2024-06-18T08:00:50.5035462Z         case AV_CODEC_CAP_FRAME_THREADS: printf("frame");           break;
+2024-06-18T08:00:50.5036001Z         case AV_CODEC_CAP_SLICE_THREADS: printf("slice");           break;
+2024-06-18T08:00:50.5036534Z         case AV_CODEC_CAP_OTHER_THREADS: printf("other");           break;
+2024-06-18T08:00:50.5037041Z         default:                         printf("none");            break;
+2024-06-18T08:00:50.5037413Z         }
+2024-06-18T08:00:50.5037626Z         printf("\n");
+2024-06-18T08:00:50.5037867Z     }
+2024-06-18T08:00:50.5037980Z 
+2024-06-18T08:00:50.5038088Z     if (avcodec_get_hw_config(c, 0)) {
+2024-06-18T08:00:50.5038722Z         printf("    Supported hardware devices: ");
+2024-06-18T08:00:50.5039095Z         for (int i = 0;; i++) {
+2024-06-18T08:00:50.5039501Z             const AVCodecHWConfig *config = avcodec_get_hw_config(c, i);
+2024-06-18T08:00:50.5039932Z             const char *name;
+2024-06-18T08:00:50.5040212Z             if (!config)
+2024-06-18T08:00:50.5040456Z                 break;
+2024-06-18T08:00:50.5040851Z             name = av_hwdevice_get_type_name(config->device_type);
+2024-06-18T08:00:50.5041234Z             if (name)
+2024-06-18T08:00:50.5041484Z                 printf("%s ", name);
+2024-06-18T08:00:50.5041792Z         }
+2024-06-18T08:00:50.5042005Z         printf("\n");
+2024-06-18T08:00:50.5042231Z     }
+2024-06-18T08:00:50.5042349Z 
+2024-06-18T08:00:50.5042492Z     if (c->supported_framerates) {
+2024-06-18T08:00:50.5042905Z         const AVRational *fps = c->supported_framerates;
+2024-06-18T08:00:50.5043375Z 
+2024-06-18T08:00:50.5043504Z         printf("    Supported framerates:");
+2024-06-18T08:00:50.5043877Z         while (fps->num) {
+2024-06-18T08:00:50.5044218Z             printf(" %d/%d", fps->num, fps->den);
+2024-06-18T08:00:50.5044546Z             fps++;
+2024-06-18T08:00:50.5044770Z         }
+2024-06-18T08:00:50.5044982Z         printf("\n");
+2024-06-18T08:00:50.5045206Z     }
+2024-06-18T08:00:50.5045566Z     PRINT_CODEC_SUPPORTED(c, pix_fmts, enum AVPixelFormat, "pixel formats",
+2024-06-18T08:00:50.5046079Z                           AV_PIX_FMT_NONE, GET_PIX_FMT_NAME);
+2024-06-18T08:00:50.5046586Z     PRINT_CODEC_SUPPORTED(c, supported_samplerates, int, "sample rates", 0,
+2024-06-18T08:00:50.5047220Z                           GET_SAMPLE_RATE_NAME);
+2024-06-18T08:00:50.5047721Z     PRINT_CODEC_SUPPORTED(c, sample_fmts, enum AVSampleFormat, "sample formats",
+2024-06-18T08:00:50.5048257Z                           AV_SAMPLE_FMT_NONE, GET_SAMPLE_FMT_NAME);
+2024-06-18T08:00:50.5048547Z 
+2024-06-18T08:00:50.5048676Z     if (c->ch_layouts) {
+2024-06-18T08:00:50.5049024Z         const AVChannelLayout *p = c->ch_layouts;
+2024-06-18T08:00:50.5049280Z 
+2024-06-18T08:00:50.5049428Z         printf("    Supported channel layouts:");
+2024-06-18T08:00:50.5049812Z         while (p->nb_channels) {
+2024-06-18T08:00:50.5050106Z             char name[128];
+2024-06-18T08:00:50.5050458Z             av_channel_layout_describe(p, name, sizeof(name));
+2024-06-18T08:00:50.5050836Z             printf(" %s", name);
+2024-06-18T08:00:50.5051115Z             p++;
+2024-06-18T08:00:50.5051337Z         }
+2024-06-18T08:00:50.5051543Z         printf("\n");
+2024-06-18T08:00:50.5051776Z     }
+2024-06-18T08:00:50.5051899Z 
+2024-06-18T08:00:50.5052025Z     if (c->priv_class) {
+2024-06-18T08:00:50.5052336Z         show_help_children(c->priv_class,
+2024-06-18T08:00:50.5052707Z                            AV_OPT_FLAG_ENCODING_PARAM |
+2024-06-18T08:00:50.5053094Z                            AV_OPT_FLAG_DECODING_PARAM);
+2024-06-18T08:00:50.5053412Z     }
+2024-06-18T08:00:50.5053603Z }
+2024-06-18T08:00:50.5053710Z 
+2024-06-18T08:00:50.5053952Z static const AVCodec *next_codec_for_id(enum AVCodecID id, void **iter,
+2024-06-18T08:00:50.5054431Z                                         int encoder)
+2024-06-18T08:00:50.5054751Z {
+2024-06-18T08:00:50.5054950Z     const AVCodec *c;
+2024-06-18T08:00:50.5055223Z     while ((c = av_codec_iterate(iter))) {
+2024-06-18T08:00:50.5055583Z         if (c->id == id &&
+2024-06-18T08:00:50.5055950Z             (encoder ? av_codec_is_encoder(c) : av_codec_is_decoder(c)))
+2024-06-18T08:00:50.5056348Z             return c;
+2024-06-18T08:00:50.5056579Z     }
+2024-06-18T08:00:50.5056778Z     return NULL;
+2024-06-18T08:00:50.5056995Z }
+2024-06-18T08:00:50.5057106Z 
+2024-06-18T08:00:50.5057287Z static void show_help_codec(const char *name, int encoder)
+2024-06-18T08:00:50.5057667Z {
+2024-06-18T08:00:50.5057878Z     const AVCodecDescriptor *desc;
+2024-06-18T08:00:50.5058185Z     const AVCodec *codec;
+2024-06-18T08:00:50.5058366Z 
+2024-06-18T08:00:50.5058458Z     if (!name) {
+2024-06-18T08:00:50.5058775Z         av_log(NULL, AV_LOG_ERROR, "No codec name specified.\n");
+2024-06-18T08:00:50.5059162Z         return;
+2024-06-18T08:00:50.5059375Z     }
+2024-06-18T08:00:50.5059487Z 
+2024-06-18T08:00:50.5059657Z     codec = encoder ? avcodec_find_encoder_by_name(name) :
+2024-06-18T08:00:50.5060085Z                       avcodec_find_decoder_by_name(name);
+2024-06-18T08:00:50.5060347Z 
+2024-06-18T08:00:50.5060439Z     if (codec)
+2024-06-18T08:00:50.5060663Z         print_codec(codec);
+2024-06-18T08:00:50.5061026Z     else if ((desc = avcodec_descriptor_get_by_name(name))) {
+2024-06-18T08:00:50.5061421Z         void *iter = NULL;
+2024-06-18T08:00:50.5061690Z         int printed = 0;
+2024-06-18T08:00:50.5061866Z 
+2024-06-18T08:00:50.5062121Z         while ((codec = next_codec_for_id(desc->id, &iter, encoder))) {
+2024-06-18T08:00:50.5062540Z             printed = 1;
+2024-06-18T08:00:50.5062950Z             print_codec(codec);
+2024-06-18T08:00:50.5063227Z         }
+2024-06-18T08:00:50.5063348Z 
+2024-06-18T08:00:50.5063446Z         if (!printed) {
+2024-06-18T08:00:50.5063863Z             av_log(NULL, AV_LOG_ERROR, "Codec '%s' is known to FFmpeg, "
+2024-06-18T08:00:50.5064392Z                    "but no %s for it are available. FFmpeg might need to be "
+2024-06-18T08:00:50.5064903Z                    "recompiled with additional external libraries.\n",
+2024-06-18T08:00:50.5065362Z                    name, encoder ? "encoders" : "decoders");
+2024-06-18T08:00:50.5065704Z         }
+2024-06-18T08:00:50.5065903Z     } else {
+2024-06-18T08:00:50.5066321Z         av_log(NULL, AV_LOG_ERROR, "Codec '%s' is not recognized by FFmpeg.\n",
+2024-06-18T08:00:50.5066906Z                name);
+2024-06-18T08:00:50.5067141Z     }
+2024-06-18T08:00:50.5067330Z }
+2024-06-18T08:00:50.5067435Z 
+2024-06-18T08:00:50.5067577Z static void show_help_demuxer(const char *name)
+2024-06-18T08:00:50.5067915Z {
+2024-06-18T08:00:50.5068202Z     const AVInputFormat *fmt = av_find_input_format(name);
+2024-06-18T08:00:50.5068495Z 
+2024-06-18T08:00:50.5068580Z     if (!fmt) {
+2024-06-18T08:00:50.5068962Z         av_log(NULL, AV_LOG_ERROR, "Unknown format '%s'.\n", name);
+2024-06-18T08:00:50.5069356Z         return;
+2024-06-18T08:00:50.5069560Z     }
+2024-06-18T08:00:50.5069678Z 
+2024-06-18T08:00:50.5069902Z     printf("Demuxer %s [%s]:\n", fmt->name, fmt->long_name);
+2024-06-18T08:00:50.5070199Z 
+2024-06-18T08:00:50.5070326Z     if (fmt->extensions)
+2024-06-18T08:00:50.5070713Z         printf("    Common extensions: %s.\n", fmt->extensions);
+2024-06-18T08:00:50.5071017Z 
+2024-06-18T08:00:50.5071134Z     if (fmt->priv_class)
+2024-06-18T08:00:50.5071568Z         show_help_children(fmt->priv_class, AV_OPT_FLAG_DECODING_PARAM);
+2024-06-18T08:00:50.5071979Z }
+2024-06-18T08:00:50.5072094Z 
+2024-06-18T08:00:50.5072241Z static void show_help_protocol(const char *name)
+2024-06-18T08:00:50.5072587Z {
+2024-06-18T08:00:50.5072790Z     const AVClass *proto_class;
+2024-06-18T08:00:50.5073003Z 
+2024-06-18T08:00:50.5073086Z     if (!name) {
+2024-06-18T08:00:50.5073428Z         av_log(NULL, AV_LOG_ERROR, "No protocol name specified.\n");
+2024-06-18T08:00:50.5073820Z         return;
+2024-06-18T08:00:50.5074030Z     }
+2024-06-18T08:00:50.5074142Z 
+2024-06-18T08:00:50.5074289Z     proto_class = avio_protocol_get_class(name);
+2024-06-18T08:00:50.5074631Z     if (!proto_class) {
+2024-06-18T08:00:50.5075044Z         av_log(NULL, AV_LOG_ERROR, "Unknown protocol '%s'.\n", name);
+2024-06-18T08:00:50.5075441Z         return;
+2024-06-18T08:00:50.5075647Z     }
+2024-06-18T08:00:50.5075765Z 
+2024-06-18T08:00:50.5076106Z     show_help_children(proto_class, AV_OPT_FLAG_DECODING_PARAM | AV_OPT_FLAG_ENCODING_PARAM);
+2024-06-18T08:00:50.5076623Z }
+2024-06-18T08:00:50.5076731Z 
+2024-06-18T08:00:50.5076877Z static void show_help_muxer(const char *name)
+2024-06-18T08:00:50.5077200Z {
+2024-06-18T08:00:50.5077420Z     const AVCodecDescriptor *desc;
+2024-06-18T08:00:50.5077849Z     const AVOutputFormat *fmt = av_guess_format(name, NULL, NULL);
+2024-06-18T08:00:50.5078185Z 
+2024-06-18T08:00:50.5078269Z     if (!fmt) {
+2024-06-18T08:00:50.5078880Z         av_log(NULL, AV_LOG_ERROR, "Unknown format '%s'.\n", name);
+2024-06-18T08:00:50.5079281Z         return;
+2024-06-18T08:00:50.5079488Z     }
+2024-06-18T08:00:50.5079608Z 
+2024-06-18T08:00:50.5079823Z     printf("Muxer %s [%s]:\n", fmt->name, fmt->long_name);
+2024-06-18T08:00:50.5080114Z 
+2024-06-18T08:00:50.5080242Z     if (fmt->extensions)
+2024-06-18T08:00:50.5080628Z         printf("    Common extensions: %s.\n", fmt->extensions);
+2024-06-18T08:00:50.5081047Z     if (fmt->mime_type)
+2024-06-18T08:00:50.5081399Z         printf("    Mime type: %s.\n", fmt->mime_type);
+2024-06-18T08:00:50.5081846Z     if (fmt->video_codec != AV_CODEC_ID_NONE &&
+2024-06-18T08:00:50.5082313Z         (desc = avcodec_descriptor_get(fmt->video_codec))) {
+2024-06-18T08:00:50.5082814Z         printf("    Default video codec: %s.\n", desc->name);
+2024-06-18T08:00:50.5083360Z     }
+2024-06-18T08:00:50.5083646Z     if (fmt->audio_codec != AV_CODEC_ID_NONE &&
+2024-06-18T08:00:50.5084104Z         (desc = avcodec_descriptor_get(fmt->audio_codec))) {
+2024-06-18T08:00:50.5084589Z         printf("    Default audio codec: %s.\n", desc->name);
+2024-06-18T08:00:50.5084957Z     }
+2024-06-18T08:00:50.5085250Z     if (fmt->subtitle_codec != AV_CODEC_ID_NONE &&
+2024-06-18T08:00:50.5085728Z         (desc = avcodec_descriptor_get(fmt->subtitle_codec))) {
+2024-06-18T08:00:50.5086245Z         printf("    Default subtitle codec: %s.\n", desc->name);
+2024-06-18T08:00:50.5086621Z     }
+2024-06-18T08:00:50.5086733Z 
+2024-06-18T08:00:50.5086858Z     if (fmt->priv_class)
+2024-06-18T08:00:50.5087288Z         show_help_children(fmt->priv_class, AV_OPT_FLAG_ENCODING_PARAM);
+2024-06-18T08:00:50.5087849Z }
+2024-06-18T08:00:50.5087958Z 
+2024-06-18T08:00:50.5088054Z #if CONFIG_AVFILTER
+2024-06-18T08:00:50.5088341Z static void show_help_filter(const char *name)
+2024-06-18T08:00:50.5088672Z {
+2024-06-18T08:00:50.5088876Z #if CONFIG_AVFILTER
+2024-06-18T08:00:50.5089163Z     const AVFilter *f = avfilter_get_by_name(name);
+2024-06-18T08:00:50.5089521Z     int i, count;
+2024-06-18T08:00:50.5089664Z 
+2024-06-18T08:00:50.5089754Z     if (!name) {
+2024-06-18T08:00:50.5090079Z         av_log(NULL, AV_LOG_ERROR, "No filter name specified.\n");
+2024-06-18T08:00:50.5090471Z         return;
+2024-06-18T08:00:50.5090693Z     } else if (!f) {
+2024-06-18T08:00:50.5091086Z         av_log(NULL, AV_LOG_ERROR, "Unknown filter '%s'.\n", name);
+2024-06-18T08:00:50.5091476Z         return;
+2024-06-18T08:00:50.5091687Z     }
+2024-06-18T08:00:50.5091799Z 
+2024-06-18T08:00:50.5091937Z     printf("Filter %s\n", f->name);
+2024-06-18T08:00:50.5092272Z     if (f->description)
+2024-06-18T08:00:50.5092596Z         printf("  %s\n", f->description);
+2024-06-18T08:00:50.5092826Z 
+2024-06-18T08:00:50.5092999Z     if (f->flags & AVFILTER_FLAG_SLICE_THREADS)
+2024-06-18T08:00:50.5093391Z         printf("    slice threading supported\n");
+2024-06-18T08:00:50.5093401Z 
+2024-06-18T08:00:50.5093500Z     printf("    Inputs:\n");
+2024-06-18T08:00:50.5093638Z     count = avfilter_filter_pad_count(f, 0);
+2024-06-18T08:00:50.5093745Z     for (i = 0; i < count; i++) {
+2024-06-18T08:00:50.5094008Z         printf("       #%d: %s (%s)\n", i, avfilter_pad_get_name(f->inputs, i),
+2024-06-18T08:00:50.5094277Z                av_get_media_type_string(avfilter_pad_get_type(f->inputs, i)));
+2024-06-18T08:00:50.5094356Z     }
+2024-06-18T08:00:50.5094534Z     if (f->flags & AVFILTER_FLAG_DYNAMIC_INPUTS)
+2024-06-18T08:00:50.5094709Z         printf("        dynamic (depending on the options)\n");
+2024-06-18T08:00:50.5094802Z     else if (!count)
+2024-06-18T08:00:50.5094940Z         printf("        none (source filter)\n");
+2024-06-18T08:00:50.5094949Z 
+2024-06-18T08:00:50.5095051Z     printf("    Outputs:\n");
+2024-06-18T08:00:50.5095179Z     count = avfilter_filter_pad_count(f, 1);
+2024-06-18T08:00:50.5095290Z     for (i = 0; i < count; i++) {
+2024-06-18T08:00:50.5095552Z         printf("       #%d: %s (%s)\n", i, avfilter_pad_get_name(f->outputs, i),
+2024-06-18T08:00:50.5095827Z                av_get_media_type_string(avfilter_pad_get_type(f->outputs, i)));
+2024-06-18T08:00:50.5095913Z     }
+2024-06-18T08:00:50.5096086Z     if (f->flags & AVFILTER_FLAG_DYNAMIC_OUTPUTS)
+2024-06-18T08:00:50.5096257Z         printf("        dynamic (depending on the options)\n");
+2024-06-18T08:00:50.5096354Z     else if (!count)
+2024-06-18T08:00:50.5096481Z         printf("        none (sink filter)\n");
+2024-06-18T08:00:50.5096485Z 
+2024-06-18T08:00:50.5096606Z     if (f->priv_class)
+2024-06-18T08:00:50.5096976Z         show_help_children(f->priv_class, AV_OPT_FLAG_VIDEO_PARAM | AV_OPT_FLAG_FILTERING_PARAM |
+2024-06-18T08:00:50.5097126Z                                           AV_OPT_FLAG_AUDIO_PARAM);
+2024-06-18T08:00:50.5097320Z     if (f->flags & AVFILTER_FLAG_SUPPORT_TIMELINE)
+2024-06-18T08:00:50.5097652Z         printf("This filter has support for timeline through the 'enable' option.\n");
+2024-06-18T08:00:50.5097866Z #else
+2024-06-18T08:00:50.5098056Z     av_log(NULL, AV_LOG_ERROR, "Build without libavfilter; "
+2024-06-18T08:00:50.5098176Z            "can not to satisfy request\n");
+2024-06-18T08:00:50.5098255Z #endif
+2024-06-18T08:00:50.5098339Z }
+2024-06-18T08:00:50.5098416Z #endif
+2024-06-18T08:00:50.5098421Z 
+2024-06-18T08:00:50.5098548Z static void show_help_bsf(const char *name)
+2024-06-18T08:00:50.5098632Z {
+2024-06-18T08:00:50.5098816Z     const AVBitStreamFilter *bsf = av_bsf_get_by_name(name);
+2024-06-18T08:00:50.5098822Z 
+2024-06-18T08:00:50.5098913Z     if (!name) {
+2024-06-18T08:00:50.5099142Z         av_log(NULL, AV_LOG_ERROR, "No bitstream filter name specified.\n");
+2024-06-18T08:00:50.5099224Z         return;
+2024-06-18T08:00:50.5099438Z     } else if (!bsf) {
+2024-06-18T08:00:50.5099723Z         av_log(NULL, AV_LOG_ERROR, "Unknown bit stream filter '%s'.\n", name);
+2024-06-18T08:00:50.5099805Z         return;
+2024-06-18T08:00:50.5099889Z     }
+2024-06-18T08:00:50.5099894Z 
+2024-06-18T08:00:50.5100072Z     printf("Bit stream filter %s\n", bsf->name);
+2024-06-18T08:00:50.5100281Z     PRINT_CODEC_SUPPORTED(bsf, codec_ids, enum AVCodecID, "codecs",
+2024-06-18T08:00:50.5100432Z                           AV_CODEC_ID_NONE, GET_CODEC_NAME);
+2024-06-18T08:00:50.5100555Z     if (bsf->priv_class)
+2024-06-18T08:00:50.5100795Z         show_help_children(bsf->priv_class, AV_OPT_FLAG_BSF_PARAM);
+2024-06-18T08:00:50.5100876Z }
+2024-06-18T08:00:50.5100881Z 
+2024-06-18T08:00:50.5101077Z int show_help(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5101162Z {
+2024-06-18T08:00:50.5101257Z     char *topic, *par;
+2024-06-18T08:00:50.5101379Z     av_log_set_callback(log_callback_help);
+2024-06-18T08:00:50.5101389Z 
+2024-06-18T08:00:50.5101506Z     topic = av_strdup(arg ? arg : "");
+2024-06-18T08:00:50.5101593Z     if (!topic)
+2024-06-18T08:00:50.5101693Z         return AVERROR(ENOMEM);
+2024-06-18T08:00:50.5101831Z     par = strchr(topic, '=');
+2024-06-18T08:00:50.5101917Z     if (par)
+2024-06-18T08:00:50.5102009Z         *par++ = 0;
+2024-06-18T08:00:50.5102014Z 
+2024-06-18T08:00:50.5102106Z     if (!*topic) {
+2024-06-18T08:00:50.5102215Z         show_help_default(topic, par);
+2024-06-18T08:00:50.5102337Z     } else if (!strcmp(topic, "decoder")) {
+2024-06-18T08:00:50.5102448Z         show_help_codec(par, 0);
+2024-06-18T08:00:50.5102567Z     } else if (!strcmp(topic, "encoder")) {
+2024-06-18T08:00:50.5102666Z         show_help_codec(par, 1);
+2024-06-18T08:00:50.5102787Z     } else if (!strcmp(topic, "demuxer")) {
+2024-06-18T08:00:50.5102886Z         show_help_demuxer(par);
+2024-06-18T08:00:50.5103003Z     } else if (!strcmp(topic, "muxer")) {
+2024-06-18T08:00:50.5103107Z         show_help_muxer(par);
+2024-06-18T08:00:50.5103243Z     } else if (!strcmp(topic, "protocol")) {
+2024-06-18T08:00:50.5103350Z         show_help_protocol(par);
+2024-06-18T08:00:50.5103442Z #if CONFIG_AVFILTER
+2024-06-18T08:00:50.5103560Z     } else if (!strcmp(topic, "filter")) {
+2024-06-18T08:00:50.5103663Z         show_help_filter(par);
+2024-06-18T08:00:50.5103745Z #endif
+2024-06-18T08:00:50.5103856Z     } else if (!strcmp(topic, "bsf")) {
+2024-06-18T08:00:50.5103956Z         show_help_bsf(par);
+2024-06-18T08:00:50.5104039Z     } else {
+2024-06-18T08:00:50.5104147Z         show_help_default(topic, par);
+2024-06-18T08:00:50.5104229Z     }
+2024-06-18T08:00:50.5104234Z 
+2024-06-18T08:00:50.5104323Z     av_freep(&topic);
+2024-06-18T08:00:50.5104406Z     return 0;
+2024-06-18T08:00:50.5104488Z }
+2024-06-18T08:00:50.5104492Z 
+2024-06-18T08:00:50.5104883Z static void print_codecs_for_id(enum AVCodecID id, int encoder)
+2024-06-18T08:00:50.5104968Z {
+2024-06-18T08:00:50.5105061Z     void *iter = NULL;
+2024-06-18T08:00:50.5105157Z     const AVCodec *codec;
+2024-06-18T08:00:50.5105168Z 
+2024-06-18T08:00:50.5105337Z     printf(" (%s:", encoder ? "encoders" : "decoders");
+2024-06-18T08:00:50.5105342Z 
+2024-06-18T08:00:50.5105509Z     while ((codec = next_codec_for_id(id, &iter, encoder)))
+2024-06-18T08:00:50.5105648Z         printf(" %s", codec->name);
+2024-06-18T08:00:50.5105786Z 
+2024-06-18T08:00:50.5105884Z     printf(")");
+2024-06-18T08:00:50.5105962Z }
+2024-06-18T08:00:50.5105967Z 
+2024-06-18T08:00:50.5106155Z static int compare_codec_desc(const void *a, const void *b)
+2024-06-18T08:00:50.5106243Z {
+2024-06-18T08:00:50.5106381Z     const AVCodecDescriptor * const *da = a;
+2024-06-18T08:00:50.5106512Z     const AVCodecDescriptor * const *db = b;
+2024-06-18T08:00:50.5106524Z 
+2024-06-18T08:00:50.5106805Z     return (*da)->type != (*db)->type ? FFDIFFSIGN((*da)->type, (*db)->type) :
+2024-06-18T08:00:50.5106957Z            strcmp((*da)->name, (*db)->name);
+2024-06-18T08:00:50.5107042Z }
+2024-06-18T08:00:50.5107047Z 
+2024-06-18T08:00:50.5107255Z static int get_codecs_sorted(const AVCodecDescriptor ***rcodecs)
+2024-06-18T08:00:50.5107442Z {
+2024-06-18T08:00:50.5107573Z     const AVCodecDescriptor *desc = NULL;
+2024-06-18T08:00:50.5107687Z     const AVCodecDescriptor **codecs;
+2024-06-18T08:00:50.5107795Z     unsigned nb_codecs = 0, i = 0;
+2024-06-18T08:00:50.5107805Z 
+2024-06-18T08:00:50.5107960Z     while ((desc = avcodec_descriptor_next(desc)))
+2024-06-18T08:00:50.5108050Z         nb_codecs++;
+2024-06-18T08:00:50.5108218Z     if (!(codecs = av_calloc(nb_codecs, sizeof(*codecs))))
+2024-06-18T08:00:50.5108327Z         return AVERROR(ENOMEM);
+2024-06-18T08:00:50.5108415Z     desc = NULL;
+2024-06-18T08:00:50.5108566Z     while ((desc = avcodec_descriptor_next(desc)))
+2024-06-18T08:00:50.5108659Z         codecs[i++] = desc;
+2024-06-18T08:00:50.5108759Z     av_assert0(i == nb_codecs);
+2024-06-18T08:00:50.5108969Z     qsort(codecs, nb_codecs, sizeof(*codecs), compare_codec_desc);
+2024-06-18T08:00:50.5109060Z     *rcodecs = codecs;
+2024-06-18T08:00:50.5109150Z     return nb_codecs;
+2024-06-18T08:00:50.5109237Z }
+2024-06-18T08:00:50.5109242Z 
+2024-06-18T08:00:50.5109415Z static char get_media_type_char(enum AVMediaType type)
+2024-06-18T08:00:50.5109493Z {
+2024-06-18T08:00:50.5109591Z     switch (type) {
+2024-06-18T08:00:50.5109767Z         case AVMEDIA_TYPE_VIDEO:    return 'V';
+2024-06-18T08:00:50.5109933Z         case AVMEDIA_TYPE_AUDIO:    return 'A';
+2024-06-18T08:00:50.5110106Z         case AVMEDIA_TYPE_DATA:     return 'D';
+2024-06-18T08:00:50.5110270Z         case AVMEDIA_TYPE_SUBTITLE: return 'S';
+2024-06-18T08:00:50.5110442Z         case AVMEDIA_TYPE_ATTACHMENT:return 'T';
+2024-06-18T08:00:50.5110606Z         default:                    return '?';
+2024-06-18T08:00:50.5110685Z     }
+2024-06-18T08:00:50.5110761Z }
+2024-06-18T08:00:50.5110774Z 
+2024-06-18T08:00:50.5110979Z int show_codecs(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5111056Z {
+2024-06-18T08:00:50.5111181Z     const AVCodecDescriptor **codecs;
+2024-06-18T08:00:50.5111270Z     unsigned i;
+2024-06-18T08:00:50.5111406Z     int nb_codecs = get_codecs_sorted(&codecs);
+2024-06-18T08:00:50.5111411Z 
+2024-06-18T08:00:50.5111511Z     if (nb_codecs < 0)
+2024-06-18T08:00:50.5111604Z         return nb_codecs;
+2024-06-18T08:00:50.5111609Z 
+2024-06-18T08:00:50.5111700Z     printf("Codecs:\n"
+2024-06-18T08:00:50.5111831Z            " D..... = Decoding supported\n"
+2024-06-18T08:00:50.5111949Z            " .E.... = Encoding supported\n"
+2024-06-18T08:00:50.5112050Z            " ..V... = Video codec\n"
+2024-06-18T08:00:50.5112155Z            " ..A... = Audio codec\n"
+2024-06-18T08:00:50.5112259Z            " ..S... = Subtitle codec\n"
+2024-06-18T08:00:50.5112357Z            " ..D... = Data codec\n"
+2024-06-18T08:00:50.5112477Z            " ..T... = Attachment codec\n"
+2024-06-18T08:00:50.5112639Z            " ...I.. = Intra frame-only codec\n"
+2024-06-18T08:00:50.5112760Z            " ....L. = Lossy compression\n"
+2024-06-18T08:00:50.5112886Z            " .....S = Lossless compression\n"
+2024-06-18T08:00:50.5113002Z            " -------\n");
+2024-06-18T08:00:50.5113121Z     for (i = 0; i < nb_codecs; i++) {
+2024-06-18T08:00:50.5113266Z         const AVCodecDescriptor *desc = codecs[i];
+2024-06-18T08:00:50.5113364Z         const AVCodec *codec;
+2024-06-18T08:00:50.5113464Z         void *iter = NULL;
+2024-06-18T08:00:50.5113601Z 
+2024-06-18T08:00:50.5113770Z         if (strstr(desc->name, "_deprecated"))
+2024-06-18T08:00:50.5113858Z             continue;
+2024-06-18T08:00:50.5113863Z 
+2024-06-18T08:00:50.5113972Z         printf(" %c%c%c%c%c%c",
+2024-06-18T08:00:50.5114168Z                avcodec_find_decoder(desc->id) ? 'D' : '.',
+2024-06-18T08:00:50.5114356Z                avcodec_find_encoder(desc->id) ? 'E' : '.',
+2024-06-18T08:00:50.5114527Z                get_media_type_char(desc->type),
+2024-06-18T08:00:50.5114752Z                (desc->props & AV_CODEC_PROP_INTRA_ONLY) ? 'I' : '.',
+2024-06-18T08:00:50.5114977Z                (desc->props & AV_CODEC_PROP_LOSSY)      ? 'L' : '.',
+2024-06-18T08:00:50.5115338Z                (desc->props & AV_CODEC_PROP_LOSSLESS)   ? 'S' : '.');
+2024-06-18T08:00:50.5115344Z 
+2024-06-18T08:00:50.5115630Z         printf(" %-20s %s", desc->name, desc->long_name ? desc->long_name : "");
+2024-06-18T08:00:50.5115636Z 
+2024-06-18T08:00:50.5115905Z         /* print decoders/encoders when there's more than one or their
+2024-06-18T08:00:50.5116046Z          * names are different from codec name */
+2024-06-18T08:00:50.5116276Z         while ((codec = next_codec_for_id(desc->id, &iter, 0))) {
+2024-06-18T08:00:50.5116455Z             if (strcmp(codec->name, desc->name)) {
+2024-06-18T08:00:50.5116620Z                 print_codecs_for_id(desc->id, 0);
+2024-06-18T08:00:50.5116716Z                 break;
+2024-06-18T08:00:50.5116798Z             }
+2024-06-18T08:00:50.5116879Z         }
+2024-06-18T08:00:50.5116974Z         iter = NULL;
+2024-06-18T08:00:50.5117199Z         while ((codec = next_codec_for_id(desc->id, &iter, 1))) {
+2024-06-18T08:00:50.5117366Z             if (strcmp(codec->name, desc->name)) {
+2024-06-18T08:00:50.5117539Z                 print_codecs_for_id(desc->id, 1);
+2024-06-18T08:00:50.5117624Z                 break;
+2024-06-18T08:00:50.5117705Z             }
+2024-06-18T08:00:50.5117793Z         }
+2024-06-18T08:00:50.5117798Z 
+2024-06-18T08:00:50.5117893Z         printf("\n");
+2024-06-18T08:00:50.5117972Z     }
+2024-06-18T08:00:50.5118071Z     av_free(codecs);
+2024-06-18T08:00:50.5118155Z     return 0;
+2024-06-18T08:00:50.5118231Z }
+2024-06-18T08:00:50.5118235Z 
+2024-06-18T08:00:50.5118541Z static int print_codecs(int encoder)
+2024-06-18T08:00:50.5118637Z {
+2024-06-18T08:00:50.5118759Z     const AVCodecDescriptor **codecs;
+2024-06-18T08:00:50.5118910Z     int i, nb_codecs = get_codecs_sorted(&codecs);
+2024-06-18T08:00:50.5118916Z 
+2024-06-18T08:00:50.5119013Z     if (nb_codecs < 0)
+2024-06-18T08:00:50.5119117Z         return nb_codecs;
+2024-06-18T08:00:50.5119122Z 
+2024-06-18T08:00:50.5119210Z     printf("%s:\n"
+2024-06-18T08:00:50.5119306Z            " V..... = Video\n"
+2024-06-18T08:00:50.5119417Z            " A..... = Audio\n"
+2024-06-18T08:00:50.5119516Z            " S..... = Subtitle\n"
+2024-06-18T08:00:50.5119705Z            " .F.... = Frame-level multithreading\n"
+2024-06-18T08:00:50.5119891Z            " ..S... = Slice-level multithreading\n"
+2024-06-18T08:00:50.5120023Z            " ...X.. = Codec is experimental\n"
+2024-06-18T08:00:50.5120150Z            " ....B. = Supports draw_horiz_band\n"
+2024-06-18T08:00:50.5120314Z            " .....D = Supports direct rendering method 1\n"
+2024-06-18T08:00:50.5120428Z            " ------\n",
+2024-06-18T08:00:50.5120557Z            encoder ? "Encoders" : "Decoders");
+2024-06-18T08:00:50.5120672Z     for (i = 0; i < nb_codecs; i++) {
+2024-06-18T08:00:50.5120814Z         const AVCodecDescriptor *desc = codecs[i];
+2024-06-18T08:00:50.5120913Z         const AVCodec *codec;
+2024-06-18T08:00:50.5121020Z         void *iter = NULL;
+2024-06-18T08:00:50.5121025Z 
+2024-06-18T08:00:50.5121283Z         while ((codec = next_codec_for_id(desc->id, &iter, encoder))) {
+2024-06-18T08:00:50.5121397Z             printf(" %c%c%c%c%c%c",
+2024-06-18T08:00:50.5121568Z                    get_media_type_char(desc->type),
+2024-06-18T08:00:50.5121853Z                    (codec->capabilities & AV_CODEC_CAP_FRAME_THREADS)   ? 'F' : '.',
+2024-06-18T08:00:50.5122325Z                    (codec->capabilities & AV_CODEC_CAP_SLICE_THREADS)   ? 'S' : '.',
+2024-06-18T08:00:50.5122608Z                    (codec->capabilities & AV_CODEC_CAP_EXPERIMENTAL)    ? 'X' : '.',
+2024-06-18T08:00:50.5122879Z                    (codec->capabilities & AV_CODEC_CAP_DRAW_HORIZ_BAND) ? 'B' : '.',
+2024-06-18T08:00:50.5123156Z                    (codec->capabilities & AV_CODEC_CAP_DR1)             ? 'D' : '.');
+2024-06-18T08:00:50.5123163Z 
+2024-06-18T08:00:50.5123470Z             printf(" %-20s %s", codec->name, codec->long_name ? codec->long_name : "");
+2024-06-18T08:00:50.5123647Z             if (strcmp(codec->name, desc->name))
+2024-06-18T08:00:50.5123815Z                 printf(" (codec %s)", desc->name);
+2024-06-18T08:00:50.5123966Z 
+2024-06-18T08:00:50.5124062Z             printf("\n");
+2024-06-18T08:00:50.5124152Z         }
+2024-06-18T08:00:50.5124231Z     }
+2024-06-18T08:00:50.5124321Z     av_free(codecs);
+2024-06-18T08:00:50.5124411Z     return 0;
+2024-06-18T08:00:50.5124491Z }
+2024-06-18T08:00:50.5124495Z 
+2024-06-18T08:00:50.5124710Z int show_decoders(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5124792Z {
+2024-06-18T08:00:50.5124893Z     return print_codecs(0);
+2024-06-18T08:00:50.5124970Z }
+2024-06-18T08:00:50.5124974Z 
+2024-06-18T08:00:50.5125185Z int show_encoders(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5125263Z {
+2024-06-18T08:00:50.5125363Z     return print_codecs(1);
+2024-06-18T08:00:50.5125448Z }
+2024-06-18T08:00:50.5125453Z 
+2024-06-18T08:00:50.5125640Z int show_bsfs(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5125725Z {
+2024-06-18T08:00:50.5125847Z     const AVBitStreamFilter *bsf = NULL;
+2024-06-18T08:00:50.5125949Z     void *opaque = NULL;
+2024-06-18T08:00:50.5125954Z 
+2024-06-18T08:00:50.5126071Z     printf("Bitstream filters:\n");
+2024-06-18T08:00:50.5126195Z     while ((bsf = av_bsf_iterate(&opaque)))
+2024-06-18T08:00:50.5126335Z         printf("%s\n", bsf->name);
+2024-06-18T08:00:50.5126438Z     printf("\n");
+2024-06-18T08:00:50.5126523Z     return 0;
+2024-06-18T08:00:50.5126606Z }
+2024-06-18T08:00:50.5126610Z 
+2024-06-18T08:00:50.5126824Z int show_filters(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5126903Z {
+2024-06-18T08:00:50.5126996Z #if CONFIG_AVFILTER
+2024-06-18T08:00:50.5127110Z     const AVFilter *filter = NULL;
+2024-06-18T08:00:50.5127210Z     char descr[64], *descr_cur;
+2024-06-18T08:00:50.5127304Z     void *opaque = NULL;
+2024-06-18T08:00:50.5127397Z     int i, j;
+2024-06-18T08:00:50.5127500Z     const AVFilterPad *pad;
+2024-06-18T08:00:50.5127505Z 
+2024-06-18T08:00:50.5127607Z     printf("Filters:\n"
+2024-06-18T08:00:50.5127720Z            "  T.. = Timeline support\n"
+2024-06-18T08:00:50.5127832Z            "  .S. = Slice threading\n"
+2024-06-18T08:00:50.5127946Z            "  ..C = Command support\n"
+2024-06-18T08:00:50.5128054Z            "  A = Audio input/output\n"
+2024-06-18T08:00:50.5128157Z            "  V = Video input/output\n"
+2024-06-18T08:00:50.5128342Z            "  N = Dynamic number and/or type of input/output\n"
+2024-06-18T08:00:50.5128468Z            "  | = Source or sink filter\n");
+2024-06-18T08:00:50.5128619Z     while ((filter = av_filter_iterate(&opaque))) {
+2024-06-18T08:00:50.5128722Z         descr_cur = descr;
+2024-06-18T08:00:50.5128825Z         for (i = 0; i < 2; i++) {
+2024-06-18T08:00:50.5128922Z             unsigned nb_pads;
+2024-06-18T08:00:50.5129017Z             if (i) {
+2024-06-18T08:00:50.5129154Z                 *(descr_cur++) = '-';
+2024-06-18T08:00:50.5129284Z                 *(descr_cur++) = '>';
+2024-06-18T08:00:50.5129375Z             }
+2024-06-18T08:00:50.5129567Z             pad = i ? filter->outputs : filter->inputs;
+2024-06-18T08:00:50.5129737Z             nb_pads = avfilter_filter_pad_count(filter, i);
+2024-06-18T08:00:50.5129857Z             for (j = 0; j < nb_pads; j++) {
+2024-06-18T08:00:50.5130053Z                 if (descr_cur >= descr + sizeof(descr) - 4)
+2024-06-18T08:00:50.5130148Z                     break;
+2024-06-18T08:00:50.5130509Z                 *(descr_cur++) = get_media_type_char(avfilter_pad_get_type(pad, j));
+2024-06-18T08:00:50.5130593Z             }
+2024-06-18T08:00:50.5130685Z             if (!j)
+2024-06-18T08:00:50.5130986Z                 *(descr_cur++) = ((!i && (filter->flags & AVFILTER_FLAG_DYNAMIC_INPUTS)) ||
+2024-06-18T08:00:50.5131286Z                                   ( i && (filter->flags & AVFILTER_FLAG_DYNAMIC_OUTPUTS))) ? 'N' : '|';
+2024-06-18T08:00:50.5131377Z         }
+2024-06-18T08:00:50.5131470Z         *descr_cur = 0;
+2024-06-18T08:00:50.5131621Z         printf(" %c%c%c %-17s %-10s %s\n",
+2024-06-18T08:00:50.5131883Z                filter->flags & AVFILTER_FLAG_SUPPORT_TIMELINE ? 'T' : '.',
+2024-06-18T08:00:50.5132248Z                filter->flags & AVFILTER_FLAG_SLICE_THREADS    ? 'S' : '.',
+2024-06-18T08:00:50.5132492Z                filter->process_command                        ? 'C' : '.',
+2024-06-18T08:00:50.5132694Z                filter->name, descr, filter->description);
+2024-06-18T08:00:50.5132779Z     }
+2024-06-18T08:00:50.5132867Z #else
+2024-06-18T08:00:50.5133049Z     printf("No filters available: libavfilter disabled\n");
+2024-06-18T08:00:50.5133128Z #endif
+2024-06-18T08:00:50.5133220Z     return 0;
+2024-06-18T08:00:50.5133296Z }
+2024-06-18T08:00:50.5133300Z 
+2024-06-18T08:00:50.5133436Z static int is_device(const AVClass *avclass)
+2024-06-18T08:00:50.5133518Z {
+2024-06-18T08:00:50.5133603Z     if (!avclass)
+2024-06-18T08:00:50.5133688Z         return 0;
+2024-06-18T08:00:50.5134054Z     return AV_IS_INPUT_DEVICE(avclass->category) || AV_IS_OUTPUT_DEVICE(avclass->category);
+2024-06-18T08:00:50.5134131Z }
+2024-06-18T08:00:50.5134136Z 
+2024-06-18T08:00:50.5134537Z static int show_formats_devices(void *optctx, const char *opt, const char *arg, int device_only, int muxdemuxers)
+2024-06-18T08:00:50.5134629Z {
+2024-06-18T08:00:50.5134731Z     void *ifmt_opaque = NULL;
+2024-06-18T08:00:50.5134850Z     const AVInputFormat *ifmt  = NULL;
+2024-06-18T08:00:50.5134960Z     void *ofmt_opaque = NULL;
+2024-06-18T08:00:50.5135074Z     const AVOutputFormat *ofmt = NULL;
+2024-06-18T08:00:50.5135176Z     const char *last_name;
+2024-06-18T08:00:50.5135262Z     int is_dev;
+2024-06-18T08:00:50.5135454Z     const char *is_device_placeholder = device_only ? "" : ".";
+2024-06-18T08:00:50.5135459Z 
+2024-06-18T08:00:50.5135557Z     printf("%s:\n"
+2024-06-18T08:00:50.5135677Z            " D.%s = Demuxing supported\n"
+2024-06-18T08:00:50.5135789Z            " .E%s = Muxing supported\n"
+2024-06-18T08:00:50.5135882Z            "%s"
+2024-06-18T08:00:50.5135991Z            " ---\n",
+2024-06-18T08:00:50.5136123Z            device_only ? "Devices" : "Formats",
+2024-06-18T08:00:50.5136288Z            is_device_placeholder, is_device_placeholder,
+2024-06-18T08:00:50.5136440Z            device_only ? "": " ..d = Is a device\n");
+2024-06-18T08:00:50.5136445Z 
+2024-06-18T08:00:50.5136537Z     last_name = "000";
+2024-06-18T08:00:50.5136632Z     for (;;) {
+2024-06-18T08:00:50.5136723Z         int decode = 0;
+2024-06-18T08:00:50.5136816Z         int encode = 0;
+2024-06-18T08:00:50.5136914Z         int device = 0;
+2024-06-18T08:00:50.5137022Z         const char *name      = NULL;
+2024-06-18T08:00:50.5137136Z         const char *long_name = NULL;
+2024-06-18T08:00:50.5137141Z 
+2024-06-18T08:00:50.5137261Z         if (muxdemuxers !=SHOW_DEMUXERS) {
+2024-06-18T08:00:50.5137361Z             ofmt_opaque = NULL;
+2024-06-18T08:00:50.5137535Z             while ((ofmt = av_muxer_iterate(&ofmt_opaque))) {
+2024-06-18T08:00:50.5137714Z                 is_dev = is_device(ofmt->priv_class);
+2024-06-18T08:00:50.5137827Z                 if (!is_dev && device_only)
+2024-06-18T08:00:50.5137928Z                     continue;
+2024-06-18T08:00:50.5138135Z                 if ((!name || strcmp(ofmt->name, name) < 0) &&
+2024-06-18T08:00:50.5138316Z                     strcmp(ofmt->name, last_name) > 0) {
+2024-06-18T08:00:50.5138466Z                     name      = ofmt->name;
+2024-06-18T08:00:50.5138623Z                     long_name = ofmt->long_name;
+2024-06-18T08:00:50.5138861Z                     encode    = 1;
+2024-06-18T08:00:50.5138972Z                     device    = is_dev;
+2024-06-18T08:00:50.5139054Z                 }
+2024-06-18T08:00:50.5139142Z             }
+2024-06-18T08:00:50.5139221Z         }
+2024-06-18T08:00:50.5139338Z         if (muxdemuxers != SHOW_MUXERS) {
+2024-06-18T08:00:50.5139445Z             ifmt_opaque = NULL;
+2024-06-18T08:00:50.5139615Z             while ((ifmt = av_demuxer_iterate(&ifmt_opaque))) {
+2024-06-18T08:00:50.5139792Z                 is_dev = is_device(ifmt->priv_class);
+2024-06-18T08:00:50.5139911Z                 if (!is_dev && device_only)
+2024-06-18T08:00:50.5140001Z                     continue;
+2024-06-18T08:00:50.5140333Z                 if ((!name || strcmp(ifmt->name, name) < 0) &&
+2024-06-18T08:00:50.5140520Z                     strcmp(ifmt->name, last_name) > 0) {
+2024-06-18T08:00:50.5140665Z                     name      = ifmt->name;
+2024-06-18T08:00:50.5140823Z                     long_name = ifmt->long_name;
+2024-06-18T08:00:50.5140935Z                     encode    = 0;
+2024-06-18T08:00:50.5141035Z                     device    = is_dev;
+2024-06-18T08:00:50.5141121Z                 }
+2024-06-18T08:00:50.5141325Z                 if (name && strcmp(ifmt->name, name) == 0) {
+2024-06-18T08:00:50.5141422Z                     decode = 1;
+2024-06-18T08:00:50.5141521Z                     device = is_dev;
+2024-06-18T08:00:50.5141611Z                 }
+2024-06-18T08:00:50.5141692Z             }
+2024-06-18T08:00:50.5141783Z         }
+2024-06-18T08:00:50.5141870Z         if (!name)
+2024-06-18T08:00:50.5141955Z             break;
+2024-06-18T08:00:50.5142054Z         last_name = name;
+2024-06-18T08:00:50.5142059Z 
+2024-06-18T08:00:50.5142197Z         printf(" %c%c%s %-15s %s\n",
+2024-06-18T08:00:50.5142323Z                decode ? 'D' : ' ',
+2024-06-18T08:00:50.5142453Z                encode ? 'E' : ' ',
+2024-06-18T08:00:50.5142591Z                device_only ? "" : (device ? "d" : " "),
+2024-06-18T08:00:50.5142678Z                name,
+2024-06-18T08:00:50.5142801Z             long_name ? long_name : " ");
+2024-06-18T08:00:50.5142879Z     }
+2024-06-18T08:00:50.5142962Z     return 0;
+2024-06-18T08:00:50.5143047Z }
+2024-06-18T08:00:50.5143052Z 
+2024-06-18T08:00:50.5143260Z int show_formats(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5143338Z {
+2024-06-18T08:00:50.5143554Z     return show_formats_devices(optctx, opt, arg, 0, SHOW_DEFAULT);
+2024-06-18T08:00:50.5143632Z }
+2024-06-18T08:00:50.5143637Z 
+2024-06-18T08:00:50.5143834Z int show_muxers(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5143920Z {
+2024-06-18T08:00:50.5144122Z     return show_formats_devices(optctx, opt, arg, 0, SHOW_MUXERS);
+2024-06-18T08:00:50.5144212Z }
+2024-06-18T08:00:50.5144216Z 
+2024-06-18T08:00:50.5144423Z int show_demuxers(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5144500Z {
+2024-06-18T08:00:50.5144718Z     return show_formats_devices(optctx, opt, arg, 0, SHOW_DEMUXERS);
+2024-06-18T08:00:50.5144799Z }
+2024-06-18T08:00:50.5144804Z 
+2024-06-18T08:00:50.5145004Z int show_devices(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5145088Z {
+2024-06-18T08:00:50.5145290Z     return show_formats_devices(optctx, opt, arg, 1, SHOW_DEFAULT);
+2024-06-18T08:00:50.5145367Z }
+2024-06-18T08:00:50.5145371Z 
+2024-06-18T08:00:50.5145590Z int show_protocols(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5145667Z {
+2024-06-18T08:00:50.5145762Z     void *opaque = NULL;
+2024-06-18T08:00:50.5145862Z     const char *name;
+2024-06-18T08:00:50.5145867Z 
+2024-06-18T08:00:50.5145992Z     printf("Supported file protocols:\n"
+2024-06-18T08:00:50.5146090Z            "Input:\n");
+2024-06-18T08:00:50.5146246Z     while ((name = avio_enum_protocols(&opaque, 0)))
+2024-06-18T08:00:50.5146345Z         printf("  %s\n", name);
+2024-06-18T08:00:50.5146448Z     printf("Output:\n");
+2024-06-18T08:00:50.5146595Z     while ((name = avio_enum_protocols(&opaque, 1)))
+2024-06-18T08:00:50.5146850Z         printf("  %s\n", name);
+2024-06-18T08:00:50.5146948Z     return 0;
+2024-06-18T08:00:50.5147025Z }
+2024-06-18T08:00:50.5147030Z 
+2024-06-18T08:00:50.5147226Z int show_colors(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5147312Z {
+2024-06-18T08:00:50.5147404Z     const char *name;
+2024-06-18T08:00:50.5147496Z     const uint8_t *rgb;
+2024-06-18T08:00:50.5147582Z     int i;
+2024-06-18T08:00:50.5147587Z 
+2024-06-18T08:00:50.5147734Z     printf("%-32s #RRGGBB\n", "name");
+2024-06-18T08:00:50.5147740Z 
+2024-06-18T08:00:50.5147920Z     for (i = 0; name = av_get_known_color_name(i, &rgb); i++)
+2024-06-18T08:00:50.5148170Z         printf("%-32s #%02x%02x%02x\n", name, rgb[0], rgb[1], rgb[2]);
+2024-06-18T08:00:50.5148285Z 
+2024-06-18T08:00:50.5148369Z     return 0;
+2024-06-18T08:00:50.5148452Z }
+2024-06-18T08:00:50.5148457Z 
+2024-06-18T08:00:50.5148666Z int show_pix_fmts(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5148744Z {
+2024-06-18T08:00:50.5148902Z     const AVPixFmtDescriptor *pix_desc = NULL;
+2024-06-18T08:00:50.5148907Z 
+2024-06-18T08:00:50.5149015Z     printf("Pixel formats:\n"
+2024-06-18T08:00:50.5149181Z            "I.... = Supported Input  format for conversion\n"
+2024-06-18T08:00:50.5149355Z            ".O... = Supported Output format for conversion\n"
+2024-06-18T08:00:50.5149491Z            "..H.. = Hardware accelerated format\n"
+2024-06-18T08:00:50.5149607Z            "...P. = Paletted format\n"
+2024-06-18T08:00:50.5149714Z            "....B = Bitstream format\n"
+2024-06-18T08:00:50.5149919Z            "FLAGS NAME            NB_COMPONENTS BITS_PER_PIXEL BIT_DEPTHS\n"
+2024-06-18T08:00:50.5150040Z            "-----\n");
+2024-06-18T08:00:50.5150045Z 
+2024-06-18T08:00:50.5150140Z #if !CONFIG_SWSCALE
+2024-06-18T08:00:50.5150262Z #   define sws_isSupportedInput(x)  0
+2024-06-18T08:00:50.5150387Z #   define sws_isSupportedOutput(x) 0
+2024-06-18T08:00:50.5150465Z #endif
+2024-06-18T08:00:50.5150470Z 
+2024-06-18T08:00:50.5150638Z     while ((pix_desc = av_pix_fmt_desc_next(pix_desc))) {
+2024-06-18T08:00:50.5150903Z         enum AVPixelFormat av_unused pix_fmt = av_pix_fmt_desc_get_id(pix_desc);
+2024-06-18T08:00:50.5151129Z         printf("%c%c%c%c%c %-16s       %d            %3d      %d",
+2024-06-18T08:00:50.5151371Z                sws_isSupportedInput (pix_fmt)              ? 'I' : '.',
+2024-06-18T08:00:50.5151605Z                sws_isSupportedOutput(pix_fmt)              ? 'O' : '.',
+2024-06-18T08:00:50.5151831Z                pix_desc->flags & AV_PIX_FMT_FLAG_HWACCEL   ? 'H' : '.',
+2024-06-18T08:00:50.5152060Z                pix_desc->flags & AV_PIX_FMT_FLAG_PAL       ? 'P' : '.',
+2024-06-18T08:00:50.5152280Z                pix_desc->flags & AV_PIX_FMT_FLAG_BITSTREAM ? 'B' : '.',
+2024-06-18T08:00:50.5152408Z                pix_desc->name,
+2024-06-18T08:00:50.5152559Z                pix_desc->nb_components,
+2024-06-18T08:00:50.5152690Z                av_get_bits_per_pixel(pix_desc),
+2024-06-18T08:00:50.5152835Z                pix_desc->comp[0].depth);
+2024-06-18T08:00:50.5152844Z 
+2024-06-18T08:00:50.5153079Z         for (unsigned i = 1; i < pix_desc->nb_components; i++)
+2024-06-18T08:00:50.5153253Z             printf("-%d", pix_desc->comp[i].depth);
+2024-06-18T08:00:50.5153353Z         printf("\n");
+2024-06-18T08:00:50.5153431Z     }
+2024-06-18T08:00:50.5153515Z     return 0;
+2024-06-18T08:00:50.5153600Z }
+2024-06-18T08:00:50.5153604Z 
+2024-06-18T08:00:50.5153815Z int show_layouts(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5153891Z {
+2024-06-18T08:00:50.5154014Z     const AVChannelLayout *ch_layout;
+2024-06-18T08:00:50.5154106Z     void *iter = NULL;
+2024-06-18T08:00:50.5154204Z     char buf[128], buf2[128];
+2024-06-18T08:00:50.5154297Z     int i = 0;
+2024-06-18T08:00:50.5154306Z 
+2024-06-18T08:00:50.5154414Z     printf("Individual channels:\n"
+2024-06-18T08:00:50.5154533Z            "NAME           DESCRIPTION\n");
+2024-06-18T08:00:50.5154639Z     for (i = 0; i < 63; i++) {
+2024-06-18T08:00:50.5154765Z         av_channel_name(buf, sizeof(buf), i);
+2024-06-18T08:00:50.5154998Z         if (strstr(buf, "USR"))
+2024-06-18T08:00:50.5155096Z             continue;
+2024-06-18T08:00:50.5155249Z         av_channel_description(buf2, sizeof(buf2), i);
+2024-06-18T08:00:50.5155399Z         printf("%-14s %s\n", buf, buf2);
+2024-06-18T08:00:50.5155486Z     }
+2024-06-18T08:00:50.5155610Z     printf("\nStandard channel layouts:\n"
+2024-06-18T08:00:50.5155738Z            "NAME           DECOMPOSITION\n");
+2024-06-18T08:00:50.5155914Z     while (ch_layout = av_channel_layout_standard(&iter)) {
+2024-06-18T08:00:50.5156101Z             av_channel_layout_describe(ch_layout, buf, sizeof(buf));
+2024-06-18T08:00:50.5156241Z             printf("%-14s ", buf);
+2024-06-18T08:00:50.5156459Z             for (i = 0; i < 63; i++) {
+2024-06-18T08:00:50.5156667Z                 int idx = av_channel_layout_index_from_channel(ch_layout, i);
+2024-06-18T08:00:50.5156771Z                 if (idx >= 0) {
+2024-06-18T08:00:50.5156917Z                     av_channel_name(buf2, sizeof(buf2), i);
+2024-06-18T08:00:50.5157060Z                     printf("%s%s", idx ? "+" : "", buf2);
+2024-06-18T08:00:50.5157151Z                 }
+2024-06-18T08:00:50.5157232Z             }
+2024-06-18T08:00:50.5157324Z             printf("\n");
+2024-06-18T08:00:50.5157408Z     }
+2024-06-18T08:00:50.5157492Z     return 0;
+2024-06-18T08:00:50.5157568Z }
+2024-06-18T08:00:50.5157573Z 
+2024-06-18T08:00:50.5157805Z int show_sample_fmts(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5157881Z {
+2024-06-18T08:00:50.5157962Z     int i;
+2024-06-18T08:00:50.5158063Z     char fmt_str[128];
+2024-06-18T08:00:50.5158226Z     for (i = -1; i < AV_SAMPLE_FMT_NB; i++)
+2024-06-18T08:00:50.5158665Z         printf("%s\n", av_get_sample_fmt_string(fmt_str, sizeof(fmt_str), i));
+2024-06-18T08:00:50.5158769Z     return 0;
+2024-06-18T08:00:50.5158847Z }
+2024-06-18T08:00:50.5158852Z 
+2024-06-18T08:00:50.5159087Z int show_dispositions(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5159168Z {
+2024-06-18T08:00:50.5159270Z     for (int i = 0; i < 32; i++) {
+2024-06-18T08:00:50.5159450Z         const char *str = av_disposition_to_string(1U << i);
+2024-06-18T08:00:50.5159534Z         if (str)
+2024-06-18T08:00:50.5159635Z             printf("%s\n", str);
+2024-06-18T08:00:50.5159719Z     }
+2024-06-18T08:00:50.5159802Z     return 0;
+2024-06-18T08:00:50.5159879Z }
+2024-06-18T08:00:50.5159883Z 
+2024-06-18T08:00:50.5160097Z int opt_cpuflags(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5160173Z {
+2024-06-18T08:00:50.5160259Z     int ret;
+2024-06-18T08:00:50.5160386Z     unsigned flags = av_get_cpu_flags();
+2024-06-18T08:00:50.5160391Z 
+2024-06-18T08:00:50.5160536Z     if ((ret = av_parse_cpu_caps(&flags, arg)) < 0)
+2024-06-18T08:00:50.5160634Z         return ret;
+2024-06-18T08:00:50.5160639Z 
+2024-06-18T08:00:50.5160737Z     av_force_cpu_flags(flags);
+2024-06-18T08:00:50.5160821Z     return 0;
+2024-06-18T08:00:50.5160904Z }
+2024-06-18T08:00:50.5160909Z 
+2024-06-18T08:00:50.5161115Z int opt_cpucount(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5161194Z {
+2024-06-18T08:00:50.5161283Z     int ret;
+2024-06-18T08:00:50.5161367Z     int count;
+2024-06-18T08:00:50.5161373Z 
+2024-06-18T08:00:50.5161482Z     static const AVOption opts[] = {
+2024-06-18T08:00:50.5161750Z         {"count", NULL, 0, AV_OPT_TYPE_INT, { .i64 = -1}, -1, INT_MAX},
+2024-06-18T08:00:50.5161835Z         {NULL},
+2024-06-18T08:00:50.5161915Z     };
+2024-06-18T08:00:50.5162033Z     static const AVClass class = {
+2024-06-18T08:00:50.5162137Z         .class_name = "cpucount",
+2024-06-18T08:00:50.5162253Z         .item_name  = av_default_item_name,
+2024-06-18T08:00:50.5162355Z         .option     = opts,
+2024-06-18T08:00:50.5162485Z         .version    = LIBAVUTIL_VERSION_INT,
+2024-06-18T08:00:50.5162567Z     };
+2024-06-18T08:00:50.5162673Z     const AVClass *pclass = &class;
+2024-06-18T08:00:50.5162679Z 
+2024-06-18T08:00:50.5162831Z     ret = av_opt_eval_int(&pclass, opts, arg, &count);
+2024-06-18T08:00:50.5163006Z 
+2024-06-18T08:00:50.5163101Z     if (!ret) {
+2024-06-18T08:00:50.5163201Z         av_cpu_force_count(count);
+2024-06-18T08:00:50.5163278Z     }
+2024-06-18T08:00:50.5163282Z 
+2024-06-18T08:00:50.5163376Z     return ret;
+2024-06-18T08:00:50.5163451Z }
+2024-06-18T08:00:50.5163456Z 
+2024-06-18T08:00:50.5163707Z static void expand_filename_template(AVBPrint *bp, const char *template,
+2024-06-18T08:00:50.5163837Z                                      struct tm *tm)
+2024-06-18T08:00:50.5163915Z {
+2024-06-18T08:00:50.5163995Z     int c;
+2024-06-18T08:00:50.5164008Z 
+2024-06-18T08:00:50.5164112Z     while ((c = *(template++))) {
+2024-06-18T08:00:50.5164234Z         if (c == '%') {
+2024-06-18T08:00:50.5164346Z             if (!(c = *(template++)))
+2024-06-18T08:00:50.5164567Z                 break;
+2024-06-18T08:00:50.5164659Z             switch (c) {
+2024-06-18T08:00:50.5164779Z             case 'p':
+2024-06-18T08:00:50.5164917Z                 av_bprintf(bp, "%s", program_name);
+2024-06-18T08:00:50.5165009Z                 break;
+2024-06-18T08:00:50.5165126Z             case 't':
+2024-06-18T08:00:50.5165322Z                 av_bprintf(bp, "%04d%02d%02d-%02d%02d%02d",
+2024-06-18T08:00:50.5165548Z                            tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+2024-06-18T08:00:50.5165743Z                            tm->tm_hour, tm->tm_min, tm->tm_sec);
+2024-06-18T08:00:50.5165827Z                 break;
+2024-06-18T08:00:50.5165937Z             case '%':
+2024-06-18T08:00:50.5166058Z                 av_bprint_chars(bp, c, 1);
+2024-06-18T08:00:50.5166142Z                 break;
+2024-06-18T08:00:50.5166223Z             }
+2024-06-18T08:00:50.5166314Z         } else {
+2024-06-18T08:00:50.5166423Z             av_bprint_chars(bp, c, 1);
+2024-06-18T08:00:50.5166508Z         }
+2024-06-18T08:00:50.5166592Z     }
+2024-06-18T08:00:50.5166668Z }
+2024-06-18T08:00:50.5166673Z 
+2024-06-18T08:00:50.5166964Z static void log_callback_report(void *ptr, int level, const char *fmt, va_list vl)
+2024-06-18T08:00:50.5167045Z {
+2024-06-18T08:00:50.5167132Z     va_list vl2;
+2024-06-18T08:00:50.5167229Z     char line[1024];
+2024-06-18T08:00:50.5167338Z     static int print_prefix = 1;
+2024-06-18T08:00:50.5167343Z 
+2024-06-18T08:00:50.5167434Z     va_copy(vl2, vl);
+2024-06-18T08:00:50.5167587Z     av_log_default_callback(ptr, level, fmt, vl);
+2024-06-18T08:00:50.5167838Z     av_log_format_line(ptr, level, fmt, vl2, line, sizeof(line), &print_prefix);
+2024-06-18T08:00:50.5167926Z     va_end(vl2);
+2024-06-18T08:00:50.5168047Z     if (report_file_level >= level) {
+2024-06-18T08:00:50.5168151Z         fputs(line, report_file);
+2024-06-18T08:00:50.5168247Z         fflush(report_file);
+2024-06-18T08:00:50.5168332Z     }
+2024-06-18T08:00:50.5168411Z }
+2024-06-18T08:00:50.5168416Z 
+2024-06-18T08:00:50.5168553Z int init_report(const char *env, FILE **file)
+2024-06-18T08:00:50.5168635Z {
+2024-06-18T08:00:50.5168743Z     char *filename_template = NULL;
+2024-06-18T08:00:50.5168835Z     char *key, *val;
+2024-06-18T08:00:50.5168934Z     int ret, count = 0;
+2024-06-18T08:00:50.5169049Z     int prog_loglevel, envlevel = 0;
+2024-06-18T08:00:50.5169141Z     time_t now;
+2024-06-18T08:00:50.5169230Z     struct tm *tm;
+2024-06-18T08:00:50.5169323Z     AVBPrint filename;
+2024-06-18T08:00:50.5169328Z 
+2024-06-18T08:00:50.5169460Z     if (report_file) /* already opened */
+2024-06-18T08:00:50.5169545Z         return 0;
+2024-06-18T08:00:50.5169630Z     time(&now);
+2024-06-18T08:00:50.5169738Z     tm = localtime(&now);
+2024-06-18T08:00:50.5169743Z 
+2024-06-18T08:00:50.5169834Z     while (env && *env) {
+2024-06-18T08:00:50.5170051Z         if ((ret = av_opt_get_key_value(&env, "=", ":", 0, &key, &val)) < 0) {
+2024-06-18T08:00:50.5170146Z             if (count)
+2024-06-18T08:00:50.5170267Z                 av_log(NULL, AV_LOG_ERROR,
+2024-06-18T08:00:50.5170472Z                        "Failed to parse FFREPORT environment variable: %s\n",
+2024-06-18T08:00:50.5170588Z                        av_err2str(ret));
+2024-06-18T08:00:50.5170672Z             break;
+2024-06-18T08:00:50.5170885Z         }
+2024-06-18T08:00:50.5170978Z         if (*env)
+2024-06-18T08:00:50.5171060Z             env++;
+2024-06-18T08:00:50.5171150Z         count++;
+2024-06-18T08:00:50.5171255Z         if (!strcmp(key, "file")) {
+2024-06-18T08:00:50.5171364Z             av_free(filename_template);
+2024-06-18T08:00:50.5171476Z             filename_template = val;
+2024-06-18T08:00:50.5171568Z             val = NULL;
+2024-06-18T08:00:50.5171688Z         } else if (!strcmp(key, "level")) {
+2024-06-18T08:00:50.5171784Z             char *tail;
+2024-06-18T08:00:50.5171931Z             report_file_level = strtol(val, &tail, 10);
+2024-06-18T08:00:50.5172022Z             if (*tail) {
+2024-06-18T08:00:50.5172229Z                 av_log(NULL, AV_LOG_FATAL, "Invalid report file level\n");
+2024-06-18T08:00:50.5172435Z                 av_free(key);
+2024-06-18T08:00:50.5172525Z                 av_free(val);
+2024-06-18T08:00:50.5172649Z                 av_free(filename_template);
+2024-06-18T08:00:50.5172756Z                 return AVERROR(EINVAL);
+2024-06-18T08:00:50.5172842Z             }
+2024-06-18T08:00:50.5172941Z             envlevel = 1;
+2024-06-18T08:00:50.5173025Z         } else {
+2024-06-18T08:00:50.5173299Z             av_log(NULL, AV_LOG_ERROR, "Unknown key '%s' in FFREPORT\n", key);
+2024-06-18T08:00:50.5173387Z         }
+2024-06-18T08:00:50.5173475Z         av_free(val);
+2024-06-18T08:00:50.5173563Z         av_free(key);
+2024-06-18T08:00:50.5173650Z     }
+2024-06-18T08:00:50.5173656Z 
+2024-06-18T08:00:50.5173830Z     av_bprint_init(&filename, 0, AV_BPRINT_SIZE_AUTOMATIC);
+2024-06-18T08:00:50.5173950Z     expand_filename_template(&filename,
+2024-06-18T08:00:50.5174188Z                              av_x_if_null(filename_template, "%p-%t.log"), tm);
+2024-06-18T08:00:50.5174295Z     av_free(filename_template);
+2024-06-18T08:00:50.5174431Z     if (!av_bprint_is_complete(&filename)) {
+2024-06-18T08:00:50.5174670Z         av_log(NULL, AV_LOG_ERROR, "Out of memory building report file name\n");
+2024-06-18T08:00:50.5174773Z         return AVERROR(ENOMEM);
+2024-06-18T08:00:50.5174859Z     }
+2024-06-18T08:00:50.5174863Z 
+2024-06-18T08:00:50.5174974Z     prog_loglevel = av_log_get_level();
+2024-06-18T08:00:50.5175060Z     if (!envlevel)
+2024-06-18T08:00:50.5175267Z         report_file_level = FFMAX(report_file_level, prog_loglevel);
+2024-06-18T08:00:50.5175272Z 
+2024-06-18T08:00:50.5175398Z     report_file = fopen(filename.str, "w");
+2024-06-18T08:00:50.5175495Z     if (!report_file) {
+2024-06-18T08:00:50.5175595Z         int ret = AVERROR(errno);
+2024-06-18T08:00:50.5175801Z         av_log(NULL, AV_LOG_ERROR, "Failed to open report \"%s\": %s\n",
+2024-06-18T08:00:50.5175935Z                filename.str, strerror(errno));
+2024-06-18T08:00:50.5176025Z         return ret;
+2024-06-18T08:00:50.5176132Z     }
+2024-06-18T08:00:50.5176266Z     av_log_set_callback(log_callback_report);
+2024-06-18T08:00:50.5176363Z     av_log(NULL, AV_LOG_INFO,
+2024-06-18T08:00:50.5176572Z            "%s started on %04d-%02d-%02d at %02d:%02d:%02d\n"
+2024-06-18T08:00:50.5176691Z            "Report written to \"%s\"\n"
+2024-06-18T08:00:50.5176784Z            "Log level: %d\n",
+2024-06-18T08:00:50.5176877Z            program_name,
+2024-06-18T08:00:50.5177081Z            tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
+2024-06-18T08:00:50.5177237Z            tm->tm_hour, tm->tm_min, tm->tm_sec,
+2024-06-18T08:00:50.5177363Z            filename.str, report_file_level);
+2024-06-18T08:00:50.5177488Z     av_bprint_finalize(&filename, NULL);
+2024-06-18T08:00:50.5177492Z 
+2024-06-18T08:00:50.5177575Z     if (file)
+2024-06-18T08:00:50.5177681Z         *file = report_file;
+2024-06-18T08:00:50.5177687Z 
+2024-06-18T08:00:50.5177770Z     return 0;
+2024-06-18T08:00:50.5177846Z }
+2024-06-18T08:00:50.5177855Z 
+2024-06-18T08:00:50.5178064Z int opt_report(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5178141Z {
+2024-06-18T08:00:50.5178248Z     return init_report(NULL, NULL);
+2024-06-18T08:00:50.5178332Z }
+2024-06-18T08:00:50.5178336Z 
+2024-06-18T08:00:50.5178700Z int opt_max_alloc(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5178779Z {
+2024-06-18T08:00:50.5178873Z     char *tail;
+2024-06-18T08:00:50.5178957Z     size_t max;
+2024-06-18T08:00:50.5178962Z 
+2024-06-18T08:00:50.5179062Z     max = strtol(arg, &tail, 10);
+2024-06-18T08:00:50.5179155Z     if (*tail) {
+2024-06-18T08:00:50.5179359Z         av_log(NULL, AV_LOG_FATAL, "Invalid max_alloc \"%s\".\n", arg);
+2024-06-18T08:00:50.5179459Z         return AVERROR(EINVAL);
+2024-06-18T08:00:50.5179544Z     }
+2024-06-18T08:00:50.5179634Z     av_max_alloc(max);
+2024-06-18T08:00:50.5179728Z     return 0;
+2024-06-18T08:00:50.5179803Z }
+2024-06-18T08:00:50.5179808Z 
+2024-06-18T08:00:50.5180009Z int opt_loglevel(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5180201Z {
+2024-06-18T08:00:50.5180405Z     const struct { const char *name; int level; } log_levels[] = {
+2024-06-18T08:00:50.5180518Z         { "quiet"  , AV_LOG_QUIET   },
+2024-06-18T08:00:50.5180634Z         { "panic"  , AV_LOG_PANIC   },
+2024-06-18T08:00:50.5180742Z         { "fatal"  , AV_LOG_FATAL   },
+2024-06-18T08:00:50.5180845Z         { "error"  , AV_LOG_ERROR   },
+2024-06-18T08:00:50.5180957Z         { "warning", AV_LOG_WARNING },
+2024-06-18T08:00:50.5181060Z         { "info"   , AV_LOG_INFO    },
+2024-06-18T08:00:50.5181163Z         { "verbose", AV_LOG_VERBOSE },
+2024-06-18T08:00:50.5181272Z         { "debug"  , AV_LOG_DEBUG   },
+2024-06-18T08:00:50.5181373Z         { "trace"  , AV_LOG_TRACE   },
+2024-06-18T08:00:50.5181453Z     };
+2024-06-18T08:00:50.5181554Z     const char *token;
+2024-06-18T08:00:50.5181639Z     char *tail;
+2024-06-18T08:00:50.5181742Z     int flags = av_log_get_flags();
+2024-06-18T08:00:50.5181851Z     int level = av_log_get_level();
+2024-06-18T08:00:50.5181944Z     int cmd, i = 0;
+2024-06-18T08:00:50.5181949Z 
+2024-06-18T08:00:50.5182043Z     av_assert0(arg);
+2024-06-18T08:00:50.5182133Z     while (*arg) {
+2024-06-18T08:00:50.5182224Z         token = arg;
+2024-06-18T08:00:50.5182399Z         if (*token == '+' || *token == '-') {
+2024-06-18T08:00:50.5182494Z             cmd = *token++;
+2024-06-18T08:00:50.5182577Z         } else {
+2024-06-18T08:00:50.5182668Z             cmd = 0;
+2024-06-18T08:00:50.5182747Z         }
+2024-06-18T08:00:50.5182839Z         if (!i && !cmd) {
+2024-06-18T08:00:50.5183058Z             flags = 0;  /* missing relative prefix, build absolute value */
+2024-06-18T08:00:50.5183139Z         }
+2024-06-18T08:00:50.5183274Z         if (av_strstart(token, "repeat", &arg)) {
+2024-06-18T08:00:50.5183403Z             if (cmd == '-') {
+2024-06-18T08:00:50.5183533Z                 flags |= AV_LOG_SKIP_REPEATED;
+2024-06-18T08:00:50.5183618Z             } else {
+2024-06-18T08:00:50.5183752Z                 flags &= ~AV_LOG_SKIP_REPEATED;
+2024-06-18T08:00:50.5183841Z             }
+2024-06-18T08:00:50.5183989Z         } else if (av_strstart(token, "level", &arg)) {
+2024-06-18T08:00:50.5184118Z             if (cmd == '-') {
+2024-06-18T08:00:50.5184238Z                 flags &= ~AV_LOG_PRINT_LEVEL;
+2024-06-18T08:00:50.5184326Z             } else {
+2024-06-18T08:00:50.5184451Z                 flags |= AV_LOG_PRINT_LEVEL;
+2024-06-18T08:00:50.5184532Z             }
+2024-06-18T08:00:50.5184620Z         } else {
+2024-06-18T08:00:50.5184702Z             break;
+2024-06-18T08:00:50.5184782Z         }
+2024-06-18T08:00:50.5184871Z         i++;
+2024-06-18T08:00:50.5184948Z     }
+2024-06-18T08:00:50.5185034Z     if (!*arg) {
+2024-06-18T08:00:50.5185123Z         goto end;
+2024-06-18T08:00:50.5185249Z     } else if (*arg == '+') {
+2024-06-18T08:00:50.5185338Z         arg++;
+2024-06-18T08:00:50.5185435Z     } else if (!i) {
+2024-06-18T08:00:50.5185676Z         flags = av_log_get_flags();  /* level value without prefix, reset flags */
+2024-06-18T08:00:50.5185758Z     }
+2024-06-18T08:00:50.5185763Z 
+2024-06-18T08:00:50.5185928Z     for (i = 0; i < FF_ARRAY_ELEMS(log_levels); i++) {
+2024-06-18T08:00:50.5186058Z         if (!strcmp(log_levels[i].name, arg)) {
+2024-06-18T08:00:50.5186170Z             level = log_levels[i].level;
+2024-06-18T08:00:50.5186405Z             goto end;
+2024-06-18T08:00:50.5186484Z         }
+2024-06-18T08:00:50.5186561Z     }
+2024-06-18T08:00:50.5186566Z 
+2024-06-18T08:00:50.5186678Z     level = strtol(arg, &tail, 10);
+2024-06-18T08:00:50.5186764Z     if (*tail) {
+2024-06-18T08:00:50.5186946Z         av_log(NULL, AV_LOG_FATAL, "Invalid loglevel \"%s\". "
+2024-06-18T08:00:50.5187102Z                "Possible levels are numbers or:\n", arg);
+2024-06-18T08:00:50.5187259Z         for (i = 0; i < FF_ARRAY_ELEMS(log_levels); i++)
+2024-06-18T08:00:50.5187457Z             av_log(NULL, AV_LOG_FATAL, "\"%s\"\n", log_levels[i].name);
+2024-06-18T08:00:50.5187558Z         return AVERROR(EINVAL);
+2024-06-18T08:00:50.5187741Z     }
+2024-06-18T08:00:50.5187746Z 
+2024-06-18T08:00:50.5187829Z end:
+2024-06-18T08:00:50.5187928Z     av_log_set_flags(flags);
+2024-06-18T08:00:50.5188024Z     av_log_set_level(level);
+2024-06-18T08:00:50.5188122Z     return 0;
+2024-06-18T08:00:50.5188197Z }
+2024-06-18T08:00:50.5188207Z 
+2024-06-18T08:00:50.5188296Z #if CONFIG_AVDEVICE
+2024-06-18T08:00:50.5188533Z static void print_device_list(const AVDeviceInfoList *device_list)
+2024-06-18T08:00:50.5188610Z {
+2024-06-18T08:00:50.5188700Z     // print devices
+2024-06-18T08:00:50.5188912Z     for (int i = 0; i < device_list->nb_devices; i++) {
+2024-06-18T08:00:50.5189130Z         const AVDeviceInfo *device = device_list->devices[i];
+2024-06-18T08:00:50.5189391Z         printf("%c %s [%s] (", device_list->default_device == i ? '*' : ' ',
+2024-06-18T08:00:50.5189613Z             device->device_name, device->device_description);
+2024-06-18T08:00:50.5189765Z         if (device->nb_media_types > 0) {
+2024-06-18T08:00:50.5189977Z             for (int j = 0; j < device->nb_media_types; ++j) {
+2024-06-18T08:00:50.5190298Z                 const char* media_type = av_get_media_type_string(device->media_types[j]);
+2024-06-18T08:00:50.5190388Z                 if (j > 0)
+2024-06-18T08:00:50.5190492Z                     printf(", ");
+2024-06-18T08:00:50.5190664Z                 printf("%s", media_type ? media_type : "unknown");
+2024-06-18T08:00:50.5190748Z             }
+2024-06-18T08:00:50.5190838Z         } else {
+2024-06-18T08:00:50.5190931Z             printf("none");
+2024-06-18T08:00:50.5191012Z         }
+2024-06-18T08:00:50.5191112Z         printf(")\n");
+2024-06-18T08:00:50.5191189Z     }
+2024-06-18T08:00:50.5191265Z }
+2024-06-18T08:00:50.5191270Z 
+2024-06-18T08:00:50.5191544Z static int print_device_sources(const AVInputFormat *fmt, AVDictionary *opts)
+2024-06-18T08:00:50.5191622Z {
+2024-06-18T08:00:50.5191706Z     int ret;
+2024-06-18T08:00:50.5191836Z     AVDeviceInfoList *device_list = NULL;
+2024-06-18T08:00:50.5191841Z 
+2024-06-18T08:00:50.5192152Z     if (!fmt || !fmt->priv_class  || !AV_IS_INPUT_DEVICE(fmt->priv_class->category))
+2024-06-18T08:00:50.5192266Z         return AVERROR(EINVAL);
+2024-06-18T08:00:50.5192270Z 
+2024-06-18T08:00:50.5192481Z     printf("Auto-detected sources for %s:\n", fmt->name);
+2024-06-18T08:00:50.5192726Z     if ((ret = avdevice_list_input_sources(fmt, NULL, opts, &device_list)) < 0) {
+2024-06-18T08:00:50.5192910Z         printf("Cannot list sources: %s\n", av_err2str(ret));
+2024-06-18T08:00:50.5192997Z         goto fail;
+2024-06-18T08:00:50.5193077Z     }
+2024-06-18T08:00:50.5193081Z 
+2024-06-18T08:00:50.5193195Z     print_device_list(device_list);
+2024-06-18T08:00:50.5193200Z 
+2024-06-18T08:00:50.5193280Z   fail:
+2024-06-18T08:00:50.5193416Z     avdevice_free_list_devices(&device_list);
+2024-06-18T08:00:50.5193502Z     return ret;
+2024-06-18T08:00:50.5193578Z }
+2024-06-18T08:00:50.5193583Z 
+2024-06-18T08:00:50.5193848Z static int print_device_sinks(const AVOutputFormat *fmt, AVDictionary *opts)
+2024-06-18T08:00:50.5193925Z {
+2024-06-18T08:00:50.5194012Z     int ret;
+2024-06-18T08:00:50.5194141Z     AVDeviceInfoList *device_list = NULL;
+2024-06-18T08:00:50.5194146Z 
+2024-06-18T08:00:50.5194451Z     if (!fmt || !fmt->priv_class  || !AV_IS_OUTPUT_DEVICE(fmt->priv_class->category))
+2024-06-18T08:00:50.5194552Z         return AVERROR(EINVAL);
+2024-06-18T08:00:50.5194687Z 
+2024-06-18T08:00:50.5194904Z     printf("Auto-detected sinks for %s:\n", fmt->name);
+2024-06-18T08:00:50.5195146Z     if ((ret = avdevice_list_output_sinks(fmt, NULL, opts, &device_list)) < 0) {
+2024-06-18T08:00:50.5195312Z         printf("Cannot list sinks: %s\n", av_err2str(ret));
+2024-06-18T08:00:50.5195407Z         goto fail;
+2024-06-18T08:00:50.5195484Z     }
+2024-06-18T08:00:50.5195488Z 
+2024-06-18T08:00:50.5195601Z     print_device_list(device_list);
+2024-06-18T08:00:50.5195606Z 
+2024-06-18T08:00:50.5195686Z   fail:
+2024-06-18T08:00:50.5195813Z     avdevice_free_list_devices(&device_list);
+2024-06-18T08:00:50.5195907Z     return ret;
+2024-06-18T08:00:50.5195983Z }
+2024-06-18T08:00:50.5196097Z 
+2024-06-18T08:00:50.5196402Z static int show_sinks_sources_parse_arg(const char *arg, char **dev, AVDictionary **opts)
+2024-06-18T08:00:50.5196487Z {
+2024-06-18T08:00:50.5196569Z     int ret;
+2024-06-18T08:00:50.5196653Z     if (arg) {
+2024-06-18T08:00:50.5196767Z         char *opts_str = NULL;
+2024-06-18T08:00:50.5196869Z         av_assert0(dev && opts);
+2024-06-18T08:00:50.5196967Z         *dev = av_strdup(arg);
+2024-06-18T08:00:50.5197059Z         if (!*dev)
+2024-06-18T08:00:50.5197161Z             return AVERROR(ENOMEM);
+2024-06-18T08:00:50.5197326Z         if ((opts_str = strchr(*dev, ','))) {
+2024-06-18T08:00:50.5197459Z             *(opts_str++) = '\0';
+2024-06-18T08:00:50.5197722Z             if (opts_str[0] && ((ret = av_dict_parse_string(opts, opts_str, "=", ":", 0)) < 0)) {
+2024-06-18T08:00:50.5197827Z                 av_freep(dev);
+2024-06-18T08:00:50.5197920Z                 return ret;
+2024-06-18T08:00:50.5198001Z             }
+2024-06-18T08:00:50.5198087Z         }
+2024-06-18T08:00:50.5198172Z     } else
+2024-06-18T08:00:50.5198314Z         printf("\nDevice name is not provided.\n"
+2024-06-18T08:00:50.5198780Z                 "You can pass devicename[,opt1=val1[,opt2=val2...]] as an argument.\n\n");
+2024-06-18T08:00:50.5198870Z     return 0;
+2024-06-18T08:00:50.5198954Z }
+2024-06-18T08:00:50.5198959Z 
+2024-06-18T08:00:50.5199176Z int show_sources(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5199263Z {
+2024-06-18T08:00:50.5199376Z     const AVInputFormat *fmt = NULL;
+2024-06-18T08:00:50.5199477Z     char *dev = NULL;
+2024-06-18T08:00:50.5199580Z     AVDictionary *opts = NULL;
+2024-06-18T08:00:50.5199666Z     int ret = 0;
+2024-06-18T08:00:50.5199792Z     int error_level = av_log_get_level();
+2024-06-18T08:00:50.5199797Z 
+2024-06-18T08:00:50.5199906Z     av_log_set_level(AV_LOG_WARNING);
+2024-06-18T08:00:50.5199911Z 
+2024-06-18T08:00:50.5200111Z     if ((ret = show_sinks_sources_parse_arg(arg, &dev, &opts)) < 0)
+2024-06-18T08:00:50.5200196Z         goto fail;
+2024-06-18T08:00:50.5200206Z 
+2024-06-18T08:00:50.5200285Z     do {
+2024-06-18T08:00:50.5200421Z         fmt = av_input_audio_device_next(fmt);
+2024-06-18T08:00:50.5200506Z         if (fmt) {
+2024-06-18T08:00:50.5200669Z             if (!strcmp(fmt->name, "lavfi"))
+2024-06-18T08:00:50.5200877Z                 continue; //it's pointless to probe lavfi
+2024-06-18T08:00:50.5201062Z             if (dev && !av_match_name(dev, fmt->name))
+2024-06-18T08:00:50.5201152Z                 continue;
+2024-06-18T08:00:50.5201283Z             print_device_sources(fmt, opts);
+2024-06-18T08:00:50.5201363Z         }
+2024-06-18T08:00:50.5201450Z     } while (fmt);
+2024-06-18T08:00:50.5201538Z     do {
+2024-06-18T08:00:50.5201666Z         fmt = av_input_video_device_next(fmt);
+2024-06-18T08:00:50.5201754Z         if (fmt) {
+2024-06-18T08:00:50.5201939Z             if (dev && !av_match_name(dev, fmt->name))
+2024-06-18T08:00:50.5202027Z                 continue;
+2024-06-18T08:00:50.5202155Z             print_device_sources(fmt, opts);
+2024-06-18T08:00:50.5202239Z         }
+2024-06-18T08:00:50.5202326Z     } while (fmt);
+2024-06-18T08:00:50.5202416Z   fail:
+2024-06-18T08:00:50.5202511Z     av_dict_free(&opts);
+2024-06-18T08:00:50.5202599Z     av_free(dev);
+2024-06-18T08:00:50.5202710Z     av_log_set_level(error_level);
+2024-06-18T08:00:50.5202968Z     return ret;
+2024-06-18T08:00:50.5203046Z }
+2024-06-18T08:00:50.5203050Z 
+2024-06-18T08:00:50.5203259Z int show_sinks(void *optctx, const char *opt, const char *arg)
+2024-06-18T08:00:50.5203335Z {
+2024-06-18T08:00:50.5203451Z     const AVOutputFormat *fmt = NULL;
+2024-06-18T08:00:50.5203548Z     char *dev = NULL;
+2024-06-18T08:00:50.5203649Z     AVDictionary *opts = NULL;
+2024-06-18T08:00:50.5203736Z     int ret = 0;
+2024-06-18T08:00:50.5203859Z     int error_level = av_log_get_level();
+2024-06-18T08:00:50.5203864Z 
+2024-06-18T08:00:50.5203969Z     av_log_set_level(AV_LOG_WARNING);
+2024-06-18T08:00:50.5203974Z 
+2024-06-18T08:00:50.5204172Z     if ((ret = show_sinks_sources_parse_arg(arg, &dev, &opts)) < 0)
+2024-06-18T08:00:50.5204410Z         goto fail;
+2024-06-18T08:00:50.5204416Z 
+2024-06-18T08:00:50.5204499Z     do {
+2024-06-18T08:00:50.5204641Z         fmt = av_output_audio_device_next(fmt);
+2024-06-18T08:00:50.5204725Z         if (fmt) {
+2024-06-18T08:00:50.5204911Z             if (dev && !av_match_name(dev, fmt->name))
+2024-06-18T08:00:50.5205006Z                 continue;
+2024-06-18T08:00:50.5205120Z             print_device_sinks(fmt, opts);
+2024-06-18T08:00:50.5205203Z         }
+2024-06-18T08:00:50.5205299Z     } while (fmt);
+2024-06-18T08:00:50.5205379Z     do {
+2024-06-18T08:00:50.5205507Z         fmt = av_output_video_device_next(fmt);
+2024-06-18T08:00:50.5205597Z         if (fmt) {
+2024-06-18T08:00:50.5205772Z             if (dev && !av_match_name(dev, fmt->name))
+2024-06-18T08:00:50.5205859Z                 continue;
+2024-06-18T08:00:50.5205980Z             print_device_sinks(fmt, opts);
+2024-06-18T08:00:50.5206062Z         }
+2024-06-18T08:00:50.5206150Z     } while (fmt);
+2024-06-18T08:00:50.5206244Z   fail:
+2024-06-18T08:00:50.5206338Z     av_dict_free(&opts);
+2024-06-18T08:00:50.5206424Z     av_free(dev);
+2024-06-18T08:00:50.5206532Z     av_log_set_level(error_level);
+2024-06-18T08:00:50.5206619Z     return ret;
+2024-06-18T08:00:50.5206697Z }
+2024-06-18T08:00:50.5206813Z #endif /* CONFIG_AVDEVICE */
