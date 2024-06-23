@@ -1,0 +1,1457 @@
+﻿2024-06-23T18:33:54.6817268Z ##[group]Run cd $GITHUB_WORKSPACE/ffmpeg-7.0.1
+2024-06-23T18:33:54.6817726Z [36;1mcd $GITHUB_WORKSPACE/ffmpeg-7.0.1[0m
+2024-06-23T18:33:54.6818174Z [36;1mgrep -rn 'typedef struct AVFilter' --include='*.h'[0m
+2024-06-23T18:33:54.6818603Z [36;1mcat libavfilter/avfilter.h[0m
+2024-06-23T18:33:54.6882308Z shell: /usr/bin/bash -e {0}
+2024-06-23T18:33:54.6882602Z env:
+2024-06-23T18:33:54.6882829Z   TT: armv7a-linux-androideabi
+2024-06-23T18:33:54.6883169Z   NDK: /usr/local/lib/android/sdk/ndk/25.2.9519653
+2024-06-23T18:33:54.6883523Z ##[endgroup]
+2024-06-23T18:33:54.7197400Z libavfilter/avfilter.h:73:typedef struct AVFilterContext AVFilterContext;
+2024-06-23T18:33:54.7198256Z libavfilter/avfilter.h:74:typedef struct AVFilterLink    AVFilterLink;
+2024-06-23T18:33:54.7199012Z libavfilter/avfilter.h:75:typedef struct AVFilterPad     AVFilterPad;
+2024-06-23T18:33:54.7199748Z libavfilter/avfilter.h:76:typedef struct AVFilterFormats AVFilterFormats;
+2024-06-23T18:33:54.7200547Z libavfilter/avfilter.h:77:typedef struct AVFilterChannelLayouts AVFilterChannelLayouts;
+2024-06-23T18:33:54.7201333Z libavfilter/avfilter.h:166:typedef struct AVFilter {
+2024-06-23T18:33:54.7201905Z libavfilter/avfilter.h:505:typedef struct AVFilterFormatsConfig {
+2024-06-23T18:33:54.7202480Z libavfilter/avfilter.h:813:typedef struct AVFilterGraph {
+2024-06-23T18:33:54.7202995Z libavfilter/avfilter.h:956:typedef struct AVFilterInOut {
+2024-06-23T18:33:54.7203588Z libavfilter/avfilter.h:1058:typedef struct AVFilterPadParams {
+2024-06-23T18:33:54.7204245Z libavfilter/avfilter.h:1075:typedef struct AVFilterParams {
+2024-06-23T18:33:54.7204890Z libavfilter/avfilter.h:1142:typedef struct AVFilterChain {
+2024-06-23T18:33:54.7205551Z libavfilter/avfilter.h:1156:typedef struct AVFilterGraphSegment {
+2024-06-23T18:33:54.7206239Z libavfilter/formats.h:385:typedef struct AVFilterFormatMerger {
+2024-06-23T18:33:54.7206827Z libavfilter/formats.h:476:typedef struct AVFilterNegotiation {
+2024-06-23T18:33:54.7207515Z libavfilter/avfilter_internal.h:87:typedef struct AVFilterCommand {
+2024-06-23T18:33:54.7213202Z /*
+2024-06-23T18:33:54.7213579Z  * filter layer
+2024-06-23T18:33:54.7214044Z  * Copyright (c) 2007 Bobby Bingham
+2024-06-23T18:33:54.7214552Z  *
+2024-06-23T18:33:54.7214917Z  * This file is part of FFmpeg.
+2024-06-23T18:33:54.7215391Z  *
+2024-06-23T18:33:54.7215860Z  * FFmpeg is free software; you can redistribute it and/or
+2024-06-23T18:33:54.7216715Z  * modify it under the terms of the GNU Lesser General Public
+2024-06-23T18:33:54.7218368Z  * License as published by the Free Software Foundation; either
+2024-06-23T18:33:54.7219481Z  * version 2.1 of the License, or (at your option) any later version.
+2024-06-23T18:33:54.7219907Z  *
+2024-06-23T18:33:54.7220208Z  * FFmpeg is distributed in the hope that it will be useful,
+2024-06-23T18:33:54.7220743Z  * but WITHOUT ANY WARRANTY; without even the implied warranty of
+2024-06-23T18:33:54.7221314Z  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+2024-06-23T18:33:54.7221822Z  * Lesser General Public License for more details.
+2024-06-23T18:33:54.7222174Z  *
+2024-06-23T18:33:54.7222526Z  * You should have received a copy of the GNU Lesser General Public
+2024-06-23T18:33:54.7223084Z  * License along with FFmpeg; if not, write to the Free Software
+2024-06-23T18:33:54.7223936Z  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+2024-06-23T18:33:54.7224386Z  */
+2024-06-23T18:33:54.7224503Z 
+2024-06-23T18:33:54.7224608Z #ifndef AVFILTER_AVFILTER_H
+2024-06-23T18:33:54.7224892Z #define AVFILTER_AVFILTER_H
+2024-06-23T18:33:54.7225083Z 
+2024-06-23T18:33:54.7225157Z /**
+2024-06-23T18:33:54.7225348Z  * @file
+2024-06-23T18:33:54.7225561Z  * @ingroup lavfi
+2024-06-23T18:33:54.7225823Z  * Main libavfilter public API header
+2024-06-23T18:33:54.7226132Z  */
+2024-06-23T18:33:54.7226237Z 
+2024-06-23T18:33:54.7226316Z /**
+2024-06-23T18:33:54.7226522Z  * @defgroup lavfi libavfilter
+2024-06-23T18:33:54.7227160Z  * Graph-based frame editing library.
+2024-06-23T18:33:54.7227473Z  *
+2024-06-23T18:33:54.7227907Z  * @{
+2024-06-23T18:33:54.7228097Z  */
+2024-06-23T18:33:54.7228202Z 
+2024-06-23T18:33:54.7228298Z #include <stddef.h>
+2024-06-23T18:33:54.7228452Z 
+2024-06-23T18:33:54.7228558Z #include "libavutil/attributes.h"
+2024-06-23T18:33:54.7228869Z #include "libavutil/avutil.h"
+2024-06-23T18:33:54.7229159Z #include "libavutil/buffer.h"
+2024-06-23T18:33:54.7229436Z #include "libavutil/dict.h"
+2024-06-23T18:33:54.7229711Z #include "libavutil/frame.h"
+2024-06-23T18:33:54.7229994Z #include "libavutil/log.h"
+2024-06-23T18:33:54.7230271Z #include "libavutil/samplefmt.h"
+2024-06-23T18:33:54.7230578Z #include "libavutil/pixfmt.h"
+2024-06-23T18:33:54.7230868Z #include "libavutil/rational.h"
+2024-06-23T18:33:54.7231070Z 
+2024-06-23T18:33:54.7231182Z #include "libavfilter/version_major.h"
+2024-06-23T18:33:54.7231504Z #ifndef HAVE_AV_CONFIG_H
+2024-06-23T18:33:54.7231935Z /* When included as part of the ffmpeg build, only include the major version
+2024-06-23T18:33:54.7232563Z  * to avoid unnecessary rebuilds. When included externally, keep including
+2024-06-23T18:33:54.7233049Z  * the full version information. */
+2024-06-23T18:33:54.7233375Z #include "libavfilter/version.h"
+2024-06-23T18:33:54.7233650Z #endif
+2024-06-23T18:33:54.7233769Z 
+2024-06-23T18:33:54.7233847Z /**
+2024-06-23T18:33:54.7234095Z  * Return the LIBAVFILTER_VERSION_INT constant.
+2024-06-23T18:33:54.7234421Z  */
+2024-06-23T18:33:54.7234637Z unsigned avfilter_version(void);
+2024-06-23T18:33:54.7234839Z 
+2024-06-23T18:33:54.7234919Z /**
+2024-06-23T18:33:54.7235221Z  * Return the libavfilter build-time configuration.
+2024-06-23T18:33:54.7235579Z  */
+2024-06-23T18:33:54.7235807Z const char *avfilter_configuration(void);
+2024-06-23T18:33:54.7236047Z 
+2024-06-23T18:33:54.7236123Z /**
+2024-06-23T18:33:54.7236333Z  * Return the libavfilter license.
+2024-06-23T18:33:54.7236623Z  */
+2024-06-23T18:33:54.7236826Z const char *avfilter_license(void);
+2024-06-23T18:33:54.7237046Z 
+2024-06-23T18:33:54.7237197Z typedef struct AVFilterContext AVFilterContext;
+2024-06-23T18:33:54.7237608Z typedef struct AVFilterLink    AVFilterLink;
+2024-06-23T18:33:54.7237984Z typedef struct AVFilterPad     AVFilterPad;
+2024-06-23T18:33:54.7238374Z typedef struct AVFilterFormats AVFilterFormats;
+2024-06-23T18:33:54.7238848Z typedef struct AVFilterChannelLayouts AVFilterChannelLayouts;
+2024-06-23T18:33:54.7239182Z 
+2024-06-23T18:33:54.7239256Z /**
+2024-06-23T18:33:54.7239471Z  * Get the name of an AVFilterPad.
+2024-06-23T18:33:54.7239758Z  *
+2024-06-23T18:33:54.7239975Z  * @param pads an array of AVFilterPads
+2024-06-23T18:33:54.7240607Z  * @param pad_idx index of the pad in the array; it is the caller's
+2024-06-23T18:33:54.7241108Z  *                responsibility to ensure the index is valid
+2024-06-23T18:33:54.7241461Z  *
+2024-06-23T18:33:54.7241745Z  * @return name of the pad_idx'th pad in pads
+2024-06-23T18:33:54.7242069Z  */
+2024-06-23T18:33:54.7242408Z const char *avfilter_pad_get_name(const AVFilterPad *pads, int pad_idx);
+2024-06-23T18:33:54.7242779Z 
+2024-06-23T18:33:54.7242853Z /**
+2024-06-23T18:33:54.7243069Z  * Get the type of an AVFilterPad.
+2024-06-23T18:33:54.7243350Z  *
+2024-06-23T18:33:54.7243569Z  * @param pads an array of AVFilterPads
+2024-06-23T18:33:54.7244037Z  * @param pad_idx index of the pad in the array; it is the caller's
+2024-06-23T18:33:54.7244523Z  *                responsibility to ensure the index is valid
+2024-06-23T18:33:54.7244876Z  *
+2024-06-23T18:33:54.7245154Z  * @return type of the pad_idx'th pad in pads
+2024-06-23T18:33:54.7245473Z  */
+2024-06-23T18:33:54.7245839Z enum AVMediaType avfilter_pad_get_type(const AVFilterPad *pads, int pad_idx);
+2024-06-23T18:33:54.7246237Z 
+2024-06-23T18:33:54.7246311Z /**
+2024-06-23T18:33:54.7246668Z  * The number of the filter inputs is not determined just by AVFilter.inputs.
+2024-06-23T18:33:54.7247316Z  * The filter might add additional inputs during initialization depending on the
+2024-06-23T18:33:54.7247840Z  * options supplied to it.
+2024-06-23T18:33:54.7248098Z  */
+2024-06-23T18:33:54.7248357Z #define AVFILTER_FLAG_DYNAMIC_INPUTS        (1 << 0)
+2024-06-23T18:33:54.7248852Z /**
+2024-06-23T18:33:54.7249230Z  * The number of the filter outputs is not determined just by AVFilter.outputs.
+2024-06-23T18:33:54.7249870Z  * The filter might add additional outputs during initialization depending on
+2024-06-23T18:33:54.7250355Z  * the options supplied to it.
+2024-06-23T18:33:54.7250628Z  */
+2024-06-23T18:33:54.7250884Z #define AVFILTER_FLAG_DYNAMIC_OUTPUTS       (1 << 1)
+2024-06-23T18:33:54.7251237Z /**
+2024-06-23T18:33:54.7251612Z  * The filter supports multithreading by splitting frames into multiple parts
+2024-06-23T18:33:54.7252113Z  * and processing them concurrently.
+2024-06-23T18:33:54.7252415Z  */
+2024-06-23T18:33:54.7252678Z #define AVFILTER_FLAG_SLICE_THREADS         (1 << 2)
+2024-06-23T18:33:54.7253017Z /**
+2024-06-23T18:33:54.7253443Z  * The filter is a "metadata" filter - it does not modify the frame data in any
+2024-06-23T18:33:54.7254036Z  * way. It may only affect the metadata (i.e. those fields copied by
+2024-06-23T18:33:54.7254472Z  * av_frame_copy_props()).
+2024-06-23T18:33:54.7254725Z  *
+2024-06-23T18:33:54.7254938Z  * More precisely, this means:
+2024-06-23T18:33:54.7255442Z  * - video: the data of any frame output by the filter must be exactly equal to
+2024-06-23T18:33:54.7256071Z  *   some frame that is received on one of its inputs. Furthermore, all frames
+2024-06-23T18:33:54.7256695Z  *   produced on a given output must correspond to frames received on the same
+2024-06-23T18:33:54.7257312Z  *   input and their order must be unchanged. Note that the filter may still
+2024-06-23T18:33:54.7257794Z  *   drop or duplicate the frames.
+2024-06-23T18:33:54.7258530Z  * - audio: the data produced by the filter on any of its outputs (viewed e.g.
+2024-06-23T18:33:54.7259140Z  *   as an array of interleaved samples) must be exactly equal to the data
+2024-06-23T18:33:54.7259641Z  *   received by the filter on one of its inputs.
+2024-06-23T18:33:54.7259981Z  */
+2024-06-23T18:33:54.7260242Z #define AVFILTER_FLAG_METADATA_ONLY         (1 << 3)
+2024-06-23T18:33:54.7260518Z 
+2024-06-23T18:33:54.7260592Z /**
+2024-06-23T18:33:54.7260973Z  * The filter can create hardware frames using AVFilterContext.hw_device_ctx.
+2024-06-23T18:33:54.7261430Z  */
+2024-06-23T18:33:54.7261679Z #define AVFILTER_FLAG_HWDEVICE              (1 << 4)
+2024-06-23T18:33:54.7262024Z /**
+2024-06-23T18:33:54.7262389Z  * Some filters support a generic "enable" expression option that can be used
+2024-06-23T18:33:54.7263001Z  * to enable or disable a filter in the timeline. Filters supporting this
+2024-06-23T18:33:54.7263868Z  * option have this flag set. When the enable expression is false, the default
+2024-06-23T18:33:54.7264541Z  * no-op filter_frame() function is called in place of the filter_frame()
+2024-06-23T18:33:54.7265143Z  * callback defined on each input pad, thus the frame is passed unchanged to
+2024-06-23T18:33:54.7265608Z  * the next filters.
+2024-06-23T18:33:54.7265839Z  */
+2024-06-23T18:33:54.7266117Z #define AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC  (1 << 16)
+2024-06-23T18:33:54.7266493Z /**
+2024-06-23T18:33:54.7267078Z  * Same as AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC, except that the filter will
+2024-06-23T18:33:54.7267696Z  * have its filter_frame() callback(s) called as usual even when the enable
+2024-06-23T18:33:54.7268288Z  * expression is false. The filter will disable filtering within the
+2024-06-23T18:33:54.7268883Z  * filter_frame() callback(s) itself, for example executing code depending on
+2024-06-23T18:33:54.7269452Z  * the AVFilterContext->is_disabled value.
+2024-06-23T18:33:54.7269790Z  */
+2024-06-23T18:33:54.7270073Z #define AVFILTER_FLAG_SUPPORT_TIMELINE_INTERNAL (1 << 17)
+2024-06-23T18:33:54.7270433Z /**
+2024-06-23T18:33:54.7270791Z  * Handy mask to test whether the filter supports or no the timeline feature
+2024-06-23T18:33:54.7271268Z  * (internally or generically).
+2024-06-23T18:33:54.7271547Z  */
+2024-06-23T18:33:54.7272073Z #define AVFILTER_FLAG_SUPPORT_TIMELINE (AVFILTER_FLAG_SUPPORT_TIMELINE_GENERIC | AVFILTER_FLAG_SUPPORT_TIMELINE_INTERNAL)
+2024-06-23T18:33:54.7272794Z 
+2024-06-23T18:33:54.7272870Z /**
+2024-06-23T18:33:54.7273220Z  * Filter definition. This defines the pads a filter contains, and all the
+2024-06-23T18:33:54.7273753Z  * callback functions used to interact with the filter.
+2024-06-23T18:33:54.7274116Z  */
+2024-06-23T18:33:54.7274323Z typedef struct AVFilter {
+2024-06-23T18:33:54.7274576Z     /**
+2024-06-23T18:33:54.7274927Z      * Filter name. Must be non-NULL and unique among filters.
+2024-06-23T18:33:54.7275312Z      */
+2024-06-23T18:33:54.7275510Z     const char *name;
+2024-06-23T18:33:54.7275685Z 
+2024-06-23T18:33:54.7275762Z     /**
+2024-06-23T18:33:54.7276012Z      * A description of the filter. May be NULL.
+2024-06-23T18:33:54.7276339Z      *
+2024-06-23T18:33:54.7276656Z      * You should use the NULL_IF_CONFIG_SMALL() macro to define it.
+2024-06-23T18:33:54.7277061Z      */
+2024-06-23T18:33:54.7277268Z     const char *description;
+2024-06-23T18:33:54.7277465Z 
+2024-06-23T18:33:54.7277541Z     /**
+2024-06-23T18:33:54.7277753Z      * List of static inputs.
+2024-06-23T18:33:54.7278012Z      *
+2024-06-23T18:33:54.7278333Z      * NULL if there are no (static) inputs. Instances of filters with
+2024-06-23T18:33:54.7278900Z      * AVFILTER_FLAG_DYNAMIC_INPUTS set may have more inputs than present in
+2024-06-23T18:33:54.7279345Z      * this list.
+2024-06-23T18:33:54.7279564Z      */
+2024-06-23T18:33:54.7279779Z     const AVFilterPad *inputs;
+2024-06-23T18:33:54.7279972Z 
+2024-06-23T18:33:54.7280050Z     /**
+2024-06-23T18:33:54.7280259Z      * List of static outputs.
+2024-06-23T18:33:54.7280533Z      *
+2024-06-23T18:33:54.7280855Z      * NULL if there are no (static) outputs. Instances of filters with
+2024-06-23T18:33:54.7281434Z      * AVFILTER_FLAG_DYNAMIC_OUTPUTS set may have more outputs than present in
+2024-06-23T18:33:54.7281885Z      * this list.
+2024-06-23T18:33:54.7282097Z      */
+2024-06-23T18:33:54.7282310Z     const AVFilterPad *outputs;
+2024-06-23T18:33:54.7282509Z 
+2024-06-23T18:33:54.7282591Z     /**
+2024-06-23T18:33:54.7282949Z      * A class for the private data, used to declare filter private AVOptions.
+2024-06-23T18:33:54.7283531Z      * This field is NULL for filters that do not declare any options.
+2024-06-23T18:33:54.7283944Z      *
+2024-06-23T18:33:54.7284353Z      * If this field is non-NULL, the first member of the filter private data
+2024-06-23T18:33:54.7284952Z      * must be a pointer to AVClass, which will be set by libavfilter generic
+2024-06-23T18:33:54.7285412Z      * code to this class.
+2024-06-23T18:33:54.7285658Z      */
+2024-06-23T18:33:54.7286018Z     const AVClass *priv_class;
+2024-06-23T18:33:54.7286213Z 
+2024-06-23T18:33:54.7286297Z     /**
+2024-06-23T18:33:54.7286512Z      * A combination of AVFILTER_FLAG_*
+2024-06-23T18:33:54.7286824Z      */
+2024-06-23T18:33:54.7287020Z     int flags;
+2024-06-23T18:33:54.7287155Z 
+2024-06-23T18:33:54.7287291Z     /*****************************************************************
+2024-06-23T18:33:54.7287777Z      * All fields below this line are not part of the public API. They
+2024-06-23T18:33:54.7288333Z      * may not be used outside of libavfilter and can be changed and
+2024-06-23T18:33:54.7288744Z      * removed at will.
+2024-06-23T18:33:54.7289066Z      * New public fields should be added right above.
+2024-06-23T18:33:54.7289464Z      *****************************************************************
+2024-06-23T18:33:54.7289798Z      */
+2024-06-23T18:33:54.7289908Z 
+2024-06-23T18:33:54.7289985Z     /**
+2024-06-23T18:33:54.7290239Z      * The number of entries in the list of inputs.
+2024-06-23T18:33:54.7290588Z      */
+2024-06-23T18:33:54.7290784Z     uint8_t nb_inputs;
+2024-06-23T18:33:54.7290950Z 
+2024-06-23T18:33:54.7291028Z     /**
+2024-06-23T18:33:54.7291283Z      * The number of entries in the list of outputs.
+2024-06-23T18:33:54.7291619Z      */
+2024-06-23T18:33:54.7291821Z     uint8_t nb_outputs;
+2024-06-23T18:33:54.7291982Z 
+2024-06-23T18:33:54.7292064Z     /**
+2024-06-23T18:33:54.7292339Z      * This field determines the state of the formats union.
+2024-06-23T18:33:54.7292915Z      * It is an enum FilterFormatsState value.
+2024-06-23T18:33:54.7293247Z      */
+2024-06-23T18:33:54.7293444Z     uint8_t formats_state;
+2024-06-23T18:33:54.7293624Z 
+2024-06-23T18:33:54.7293702Z     /**
+2024-06-23T18:33:54.7293976Z      * Filter pre-initialization function
+2024-06-23T18:33:54.7294282Z      *
+2024-06-23T18:33:54.7294641Z      * This callback will be called immediately after the filter context is
+2024-06-23T18:33:54.7295240Z      * allocated, to allow allocating and initing sub-objects.
+2024-06-23T18:33:54.7295623Z      *
+2024-06-23T18:33:54.7295964Z      * If this callback is not NULL, the uninit callback will be called on
+2024-06-23T18:33:54.7296415Z      * allocation failure.
+2024-06-23T18:33:54.7296659Z      *
+2024-06-23T18:33:54.7296865Z      * @return 0 on success,
+2024-06-23T18:33:54.7297203Z      *         AVERROR code on failure (but the code will be
+2024-06-23T18:33:54.7297654Z      *           dropped and treated as ENOMEM by the calling code)
+2024-06-23T18:33:54.7298039Z      */
+2024-06-23T18:33:54.7298275Z     int (*preinit)(AVFilterContext *ctx);
+2024-06-23T18:33:54.7298509Z 
+2024-06-23T18:33:54.7298587Z     /**
+2024-06-23T18:33:54.7298812Z      * Filter initialization function.
+2024-06-23T18:33:54.7299116Z      *
+2024-06-23T18:33:54.7299472Z      * This callback will be called only once during the filter lifetime, after
+2024-06-23T18:33:54.7300074Z      * all the options have been set, but before links between filters are
+2024-06-23T18:33:54.7300568Z      * established and format negotiation is done.
+2024-06-23T18:33:54.7300906Z      *
+2024-06-23T18:33:54.7301262Z      * Basic filter initialization should be done here. Filters with dynamic
+2024-06-23T18:33:54.7301921Z      * inputs and/or outputs should create those inputs/outputs here based on
+2024-06-23T18:33:54.7302593Z      * provided options. No more changes to this filter's inputs/outputs can be
+2024-06-23T18:33:54.7303077Z      * done after this callback.
+2024-06-23T18:33:54.7303366Z      *
+2024-06-23T18:33:54.7303702Z      * This callback must not assume that the filter links exist or frame
+2024-06-23T18:33:54.7304154Z      * parameters are known.
+2024-06-23T18:33:54.7304422Z      *
+2024-06-23T18:33:54.7304748Z      * @ref AVFilter.uninit "uninit" is guaranteed to be called even if
+2024-06-23T18:33:54.7305317Z      * initialization fails, so this callback does not have to clean up on
+2024-06-23T18:33:54.7305755Z      * failure.
+2024-06-23T18:33:54.7305961Z      *
+2024-06-23T18:33:54.7306235Z      * @return 0 on success, a negative AVERROR on failure
+2024-06-23T18:33:54.7307053Z      */
+2024-06-23T18:33:54.7307278Z     int (*init)(AVFilterContext *ctx);
+2024-06-23T18:33:54.7307513Z 
+2024-06-23T18:33:54.7307592Z     /**
+2024-06-23T18:33:54.7307824Z      * Filter uninitialization function.
+2024-06-23T18:33:54.7308126Z      *
+2024-06-23T18:33:54.7308490Z      * Called only once right before the filter is freed. Should deallocate any
+2024-06-23T18:33:54.7309105Z      * memory held by the filter, release any buffer references, etc. It does
+2024-06-23T18:33:54.7309688Z      * not need to deallocate the AVFilterContext.priv memory itself.
+2024-06-23T18:33:54.7310100Z      *
+2024-06-23T18:33:54.7310448Z      * This callback may be called even if @ref AVFilter.init "init" was not
+2024-06-23T18:33:54.7311051Z      * called or failed, so it must be prepared to handle such a situation.
+2024-06-23T18:33:54.7311480Z      */
+2024-06-23T18:33:54.7311714Z     void (*uninit)(AVFilterContext *ctx);
+2024-06-23T18:33:54.7311947Z 
+2024-06-23T18:33:54.7312037Z     /**
+2024-06-23T18:33:54.7312360Z      * The state of the following union is determined by formats_state.
+2024-06-23T18:33:54.7312921Z      * See the documentation of enum FilterFormatsState in internal.h.
+2024-06-23T18:33:54.7313340Z      */
+2024-06-23T18:33:54.7313525Z     union {
+2024-06-23T18:33:54.7313728Z         /**
+2024-06-23T18:33:54.7314083Z          * Query formats supported by the filter on its inputs and outputs.
+2024-06-23T18:33:54.7314505Z          *
+2024-06-23T18:33:54.7315037Z          * This callback is called after the filter is initialized (so the inputs
+2024-06-23T18:33:54.7315643Z          * and outputs are fixed), shortly before the format negotiation. This
+2024-06-23T18:33:54.7316132Z          * callback may be called more than once.
+2024-06-23T18:33:54.7316460Z          *
+2024-06-23T18:33:54.7328579Z          * This callback must set ::AVFilterLink's
+2024-06-23T18:33:54.7329080Z          * @ref AVFilterFormatsConfig.formats "outcfg.formats"
+2024-06-23T18:33:54.7329512Z          * on every input link and
+2024-06-23T18:33:54.7329916Z          * @ref AVFilterFormatsConfig.formats "incfg.formats"
+2024-06-23T18:33:54.7330471Z          * on every output link to a list of pixel/sample formats that the filter
+2024-06-23T18:33:54.7330964Z          * supports on that link.
+2024-06-23T18:33:54.7331319Z          * For video links, this filter may also set
+2024-06-23T18:33:54.7331798Z          * @ref AVFilterFormatsConfig.color_spaces "incfg.color_spaces"
+2024-06-23T18:33:54.7332217Z          *  /
+2024-06-23T18:33:54.7332563Z          * @ref AVFilterFormatsConfig.color_spaces "outcfg.color_spaces"
+2024-06-23T18:33:54.7333127Z          * and @ref AVFilterFormatsConfig.color_ranges "incfg.color_ranges"
+2024-06-23T18:33:54.7333552Z          *  /
+2024-06-23T18:33:54.7333894Z          * @ref AVFilterFormatsConfig.color_ranges "outcfg.color_ranges"
+2024-06-23T18:33:54.7334326Z          * analogously.
+2024-06-23T18:33:54.7334632Z          * For audio links, this filter must also set
+2024-06-23T18:33:54.7335121Z          * @ref AVFilterFormatsConfig.samplerates "incfg.samplerates"
+2024-06-23T18:33:54.7335544Z          *  /
+2024-06-23T18:33:54.7335883Z          * @ref AVFilterFormatsConfig.samplerates "outcfg.samplerates"
+2024-06-23T18:33:54.7336474Z          * and @ref AVFilterFormatsConfig.channel_layouts "incfg.channel_layouts"
+2024-06-23T18:33:54.7336938Z          *  /
+2024-06-23T18:33:54.7337295Z          * @ref AVFilterFormatsConfig.channel_layouts "outcfg.channel_layouts"
+2024-06-23T18:33:54.7337759Z          * analogously.
+2024-06-23T18:33:54.7338005Z          *
+2024-06-23T18:33:54.7338343Z          * This callback must never be NULL if the union is in this state.
+2024-06-23T18:33:54.7338766Z          *
+2024-06-23T18:33:54.7339097Z          * @return zero on success, a negative value corresponding to an
+2024-06-23T18:33:54.7339529Z          * AVERROR code otherwise
+2024-06-23T18:33:54.7339825Z          */
+2024-06-23T18:33:54.7340078Z         int (*query_func)(AVFilterContext *);
+2024-06-23T18:33:54.7340611Z         /**
+2024-06-23T18:33:54.7340943Z          * A pointer to an array of admissible pixel formats delimited
+2024-06-23T18:33:54.7341461Z          * by AV_PIX_FMT_NONE. The generic code will use this list
+2024-06-23T18:33:54.7341997Z          * to indicate that this filter supports each of these pixel formats,
+2024-06-23T18:33:54.7342570Z          * provided that all inputs and outputs use the same pixel format.
+2024-06-23T18:33:54.7342995Z          *
+2024-06-23T18:33:54.7343311Z          * In addition to that the generic code will mark all inputs
+2024-06-23T18:33:54.7343836Z          * and all outputs as supporting all color spaces and ranges, as
+2024-06-23T18:33:54.7344385Z          * long as all inputs and outputs use the same color space/range.
+2024-06-23T18:33:54.7344804Z          *
+2024-06-23T18:33:54.7345119Z          * This list must never be NULL if the union is in this state.
+2024-06-23T18:33:54.7345647Z          * The type of all inputs and outputs of filters using this must
+2024-06-23T18:33:54.7346085Z          * be AVMEDIA_TYPE_VIDEO.
+2024-06-23T18:33:54.7346361Z          */
+2024-06-23T18:33:54.7346853Z         const enum AVPixelFormat *pixels_list;
+2024-06-23T18:33:54.7347244Z         /**
+2024-06-23T18:33:54.7347561Z          * Analogous to pixels, but delimited by AV_SAMPLE_FMT_NONE
+2024-06-23T18:33:54.7348077Z          * and restricted to filters that only have AVMEDIA_TYPE_AUDIO
+2024-06-23T18:33:54.7348502Z          * inputs and outputs.
+2024-06-23T18:33:54.7348939Z          *
+2024-06-23T18:33:54.7349259Z          * In addition to that the generic code will mark all inputs
+2024-06-23T18:33:54.7349767Z          * and all outputs as supporting all sample rates and every
+2024-06-23T18:33:54.7350251Z          * channel count and channel layout, as long as all inputs
+2024-06-23T18:33:54.7350767Z          * and outputs use the same sample rate and channel count/layout.
+2024-06-23T18:33:54.7351180Z          */
+2024-06-23T18:33:54.7351437Z         const enum AVSampleFormat *samples_list;
+2024-06-23T18:33:54.7351799Z         /**
+2024-06-23T18:33:54.7352129Z          * Equivalent to { pix_fmt, AV_PIX_FMT_NONE } as pixels_list.
+2024-06-23T18:33:54.7352519Z          */
+2024-06-23T18:33:54.7352752Z         enum AVPixelFormat  pix_fmt;
+2024-06-23T18:33:54.7353054Z         /**
+2024-06-23T18:33:54.7353387Z          * Equivalent to { sample_fmt, AV_SAMPLE_FMT_NONE } as samples_list.
+2024-06-23T18:33:54.7353809Z          */
+2024-06-23T18:33:54.7354038Z         enum AVSampleFormat sample_fmt;
+2024-06-23T18:33:54.7354352Z     } formats;
+2024-06-23T18:33:54.7354495Z 
+2024-06-23T18:33:54.7354731Z     int priv_size;      ///< size of private data to allocate for the filter
+2024-06-23T18:33:54.7355092Z 
+2024-06-23T18:33:54.7355336Z     int flags_internal; ///< Additional flags for avfilter internal use only.
+2024-06-23T18:33:54.7355698Z 
+2024-06-23T18:33:54.7355783Z     /**
+2024-06-23T18:33:54.7356038Z      * Make the filter instance process a command.
+2024-06-23T18:33:54.7356387Z      *
+2024-06-23T18:33:54.7356869Z      * @param cmd    the command to process, for handling simplicity all commands must be alphanumeric only
+2024-06-23T18:33:54.7357477Z      * @param arg    the argument for the command
+2024-06-23T18:33:54.7358239Z      * @param res    a buffer with size res_size where the filter(s) can return a response. This must not change when the command is not supported.
+2024-06-23T18:33:54.7359100Z      * @param flags  if AVFILTER_CMD_FLAG_FAST is set and the command would be
+2024-06-23T18:33:54.7359726Z      *               time consuming then a filter should treat it like an unsupported command
+2024-06-23T18:33:54.7360197Z      *
+2024-06-23T18:33:54.7360467Z      * @returns >=0 on success otherwise an error code.
+2024-06-23T18:33:54.7360879Z      *          AVERROR(ENOSYS) on unsupported commands
+2024-06-23T18:33:54.7361213Z      */
+2024-06-23T18:33:54.7361716Z     int (*process_command)(AVFilterContext *, const char *cmd, const char *arg, char *res, int res_len, int flags);
+2024-06-23T18:33:54.7362216Z 
+2024-06-23T18:33:54.7362448Z     /**
+2024-06-23T18:33:54.7362659Z      * Filter activation function.
+2024-06-23T18:33:54.7362946Z      *
+2024-06-23T18:33:54.7363304Z      * Called when any processing is needed from the filter, instead of any
+2024-06-23T18:33:54.7363791Z      * filter_frame and request_frame on pads.
+2024-06-23T18:33:54.7364115Z      *
+2024-06-23T18:33:54.7364450Z      * The function must examine inlinks and outlinks and perform a single
+2024-06-23T18:33:54.7365037Z      * step of processing. If there is nothing to do, the function must do
+2024-06-23T18:33:54.7365586Z      * nothing and not return an error. If more steps are or may be
+2024-06-23T18:33:54.7366123Z      * possible, it must use ff_filter_set_ready() to schedule another
+2024-06-23T18:33:54.7366537Z      * activation.
+2024-06-23T18:33:54.7366760Z      */
+2024-06-23T18:33:54.7366995Z     int (*activate)(AVFilterContext *ctx);
+2024-06-23T18:33:54.7367312Z } AVFilter;
+2024-06-23T18:33:54.7367447Z 
+2024-06-23T18:33:54.7367522Z /**
+2024-06-23T18:33:54.7367984Z  * Get the number of elements in an AVFilter's inputs or outputs array.
+2024-06-23T18:33:54.7368410Z  */
+2024-06-23T18:33:54.7368755Z unsigned avfilter_filter_pad_count(const AVFilter *filter, int is_output);
+2024-06-23T18:33:54.7369130Z 
+2024-06-23T18:33:54.7369213Z /**
+2024-06-23T18:33:54.7369474Z  * Process multiple parts of the frame concurrently.
+2024-06-23T18:33:54.7369829Z  */
+2024-06-23T18:33:54.7370046Z #define AVFILTER_THREAD_SLICE (1 << 0)
+2024-06-23T18:33:54.7370471Z 
+2024-06-23T18:33:54.7370576Z /** An instance of a filter */
+2024-06-23T18:33:54.7370870Z struct AVFilterContext {
+2024-06-23T18:33:54.7371309Z     const AVClass *av_class;        ///< needed for av_log() and filters common options
+2024-06-23T18:33:54.7371698Z 
+2024-06-23T18:33:54.7371943Z     const AVFilter *filter;         ///< the AVFilter of which this is an instance
+2024-06-23T18:33:54.7372320Z 
+2024-06-23T18:33:54.7372507Z     char *name;                     ///< name of this filter instance
+2024-06-23T18:33:54.7372830Z 
+2024-06-23T18:33:54.7373014Z     AVFilterPad   *input_pads;      ///< array of input pads
+2024-06-23T18:33:54.7373535Z     AVFilterLink **inputs;          ///< array of pointers to input links
+2024-06-23T18:33:54.7374039Z     unsigned    nb_inputs;          ///< number of input pads
+2024-06-23T18:33:54.7374342Z 
+2024-06-23T18:33:54.7374515Z     AVFilterPad   *output_pads;     ///< array of output pads
+2024-06-23T18:33:54.7375024Z     AVFilterLink **outputs;         ///< array of pointers to output links
+2024-06-23T18:33:54.7375542Z     unsigned    nb_outputs;         ///< number of output pads
+2024-06-23T18:33:54.7375847Z 
+2024-06-23T18:33:54.7376040Z     void *priv;                     ///< private data for use by the filter
+2024-06-23T18:33:54.7376362Z 
+2024-06-23T18:33:54.7376594Z     struct AVFilterGraph *graph;    ///< filtergraph this filter belongs to
+2024-06-23T18:33:54.7376958Z 
+2024-06-23T18:33:54.7377041Z     /**
+2024-06-23T18:33:54.7377352Z      * Type of multithreading being allowed/used. A combination of
+2024-06-23T18:33:54.7377781Z      * AVFILTER_THREAD_* flags.
+2024-06-23T18:33:54.7378055Z      *
+2024-06-23T18:33:54.7378399Z      * May be set by the caller before initializing the filter to forbid some
+2024-06-23T18:33:54.7379008Z      * or all kinds of multithreading for this filter. The default is allowing
+2024-06-23T18:33:54.7379464Z      * everything.
+2024-06-23T18:33:54.7379677Z      *
+2024-06-23T18:33:54.7380039Z      * When the filter is initialized, this field is combined using bit AND with
+2024-06-23T18:33:54.7380662Z      * AVFilterGraph.thread_type to get the final mask used for determining
+2024-06-23T18:33:54.7381261Z      * allowed threading types. I.e. a threading type needs to be set in both
+2024-06-23T18:33:54.7381716Z      * to be allowed.
+2024-06-23T18:33:54.7381947Z      *
+2024-06-23T18:33:54.7382280Z      * After the filter is initialized, libavfilter sets this field to the
+2024-06-23T18:33:54.7382850Z      * threading type that is actually used (0 for no multithreading).
+2024-06-23T18:33:54.7383393Z      */
+2024-06-23T18:33:54.7383587Z     int thread_type;
+2024-06-23T18:33:54.7383747Z 
+2024-06-23T18:33:54.7383824Z     /**
+2024-06-23T18:33:54.7384108Z      * Max number of threads allowed in this filter instance.
+2024-06-23T18:33:54.7384506Z      * If <= 0, its value is ignored.
+2024-06-23T18:33:54.7384913Z      * Overrides global number of threads set per filter graph.
+2024-06-23T18:33:54.7385298Z      */
+2024-06-23T18:33:54.7385499Z     int nb_threads;
+2024-06-23T18:33:54.7385644Z 
+2024-06-23T18:33:54.7385767Z     struct AVFilterCommand *command_queue;
+2024-06-23T18:33:54.7386018Z 
+2024-06-23T18:33:54.7386203Z     char *enable_str;               ///< enable expression string
+2024-06-23T18:33:54.7386932Z     void *enable;                   ///< parsed expression (AVExpr*)
+2024-06-23T18:33:54.7387476Z     double *var_values;             ///< variable values for the enable expression
+2024-06-23T18:33:54.7388090Z     int is_disabled;                ///< the enabled state from the last expression evaluation
+2024-06-23T18:33:54.7388481Z 
+2024-06-23T18:33:54.7388565Z     /**
+2024-06-23T18:33:54.7388896Z      * For filters which will create hardware frames, sets the device the
+2024-06-23T18:33:54.7389497Z      * filter should create them in.  All other filters will ignore this field:
+2024-06-23T18:33:54.7390113Z      * in particular, a filter which consumes or processes hardware frames will
+2024-06-23T18:33:54.7390695Z      * instead use the hw_frames_ctx field in AVFilterLink to carry the
+2024-06-23T18:33:54.7391318Z      * hardware context information.
+2024-06-23T18:33:54.7391613Z      *
+2024-06-23T18:33:54.7391964Z      * May be set by the caller on filters flagged with AVFILTER_FLAG_HWDEVICE
+2024-06-23T18:33:54.7392157Z      * before initializing the filter with avfilter_init_str() or
+2024-06-23T18:33:54.7392252Z      * avfilter_init_dict().
+2024-06-23T18:33:54.7392334Z      */
+2024-06-23T18:33:54.7392437Z     AVBufferRef *hw_device_ctx;
+2024-06-23T18:33:54.7392442Z 
+2024-06-23T18:33:54.7392521Z     /**
+2024-06-23T18:33:54.7392630Z      * Ready status of the filter.
+2024-06-23T18:33:54.7392873Z      * A non-0 value means that the filter needs activating;
+2024-06-23T18:33:54.7393036Z      * a higher value suggests a more urgent activation.
+2024-06-23T18:33:54.7393118Z      */
+2024-06-23T18:33:54.7393205Z     unsigned ready;
+2024-06-23T18:33:54.7393210Z 
+2024-06-23T18:33:54.7393286Z     /**
+2024-06-23T18:33:54.7393501Z      * Sets the number of extra hardware frames which the filter will
+2024-06-23T18:33:54.7393717Z      * allocate on its output links for use in following filters or by
+2024-06-23T18:33:54.7393800Z      * the caller.
+2024-06-23T18:33:54.7393881Z      *
+2024-06-23T18:33:54.7394089Z      * Some hardware filters require all frames that they will use for
+2024-06-23T18:33:54.7394316Z      * output to be defined in advance before filtering starts.  For such
+2024-06-23T18:33:54.7394542Z      * filters, any hardware frame pools used for output must therefore be
+2024-06-23T18:33:54.7394768Z      * of fixed size.  The extra frames set here are on top of any number
+2024-06-23T18:33:54.7394988Z      * that the filter needs internally in order to operate normally.
+2024-06-23T18:33:54.7395064Z      *
+2024-06-23T18:33:54.7395285Z      * This field must be set before the graph containing this filter is
+2024-06-23T18:33:54.7395376Z      * configured.
+2024-06-23T18:33:54.7395454Z      */
+2024-06-23T18:33:54.7395544Z     int extra_hw_frames;
+2024-06-23T18:33:54.7395632Z };
+2024-06-23T18:33:54.7395638Z 
+2024-06-23T18:33:54.7395711Z /**
+2024-06-23T18:33:54.7395882Z  * Lists of formats / etc. supported by an end of a link.
+2024-06-23T18:33:54.7395965Z  *
+2024-06-23T18:33:54.7396177Z  * This structure is directly part of AVFilterLink, in two copies:
+2024-06-23T18:33:54.7396364Z  * one for the source filter, one for the destination filter.
+2024-06-23T18:33:54.7396375Z 
+2024-06-23T18:33:54.7396602Z  * These lists are used for negotiating the format to actually be used,
+2024-06-23T18:33:54.7396964Z  * which will be loaded into the format and channel_layout members of
+2024-06-23T18:33:54.7397071Z  * AVFilterLink, when chosen.
+2024-06-23T18:33:54.7397147Z  */
+2024-06-23T18:33:54.7397269Z typedef struct AVFilterFormatsConfig {
+2024-06-23T18:33:54.7397274Z 
+2024-06-23T18:33:54.7397355Z     /**
+2024-06-23T18:33:54.7397498Z      * List of supported formats (pixel or sample).
+2024-06-23T18:33:54.7397575Z      */
+2024-06-23T18:33:54.7397683Z     AVFilterFormats *formats;
+2024-06-23T18:33:54.7397691Z 
+2024-06-23T18:33:54.7397767Z     /**
+2024-06-23T18:33:54.7397923Z      * Lists of supported sample rates, only for audio.
+2024-06-23T18:33:54.7398007Z      */
+2024-06-23T18:33:54.7398115Z     AVFilterFormats  *samplerates;
+2024-06-23T18:33:54.7398120Z 
+2024-06-23T18:33:54.7398202Z     /**
+2024-06-23T18:33:54.7398363Z      * Lists of supported channel layouts, only for audio.
+2024-06-23T18:33:54.7398439Z      */
+2024-06-23T18:33:54.7398585Z     AVFilterChannelLayouts  *channel_layouts;
+2024-06-23T18:33:54.7398594Z 
+2024-06-23T18:33:54.7398669Z     /**
+2024-06-23T18:33:54.7398858Z      * Lists of supported YUV color metadata, only for YUV video.
+2024-06-23T18:33:54.7398939Z      */
+2024-06-23T18:33:54.7399095Z     AVFilterFormats *color_spaces;  ///< AVColorSpace
+2024-06-23T18:33:54.7399247Z     AVFilterFormats *color_ranges;  ///< AVColorRange
+2024-06-23T18:33:54.7399252Z 
+2024-06-23T18:33:54.7399359Z } AVFilterFormatsConfig;
+2024-06-23T18:33:54.7399364Z 
+2024-06-23T18:33:54.7399553Z /**
+2024-06-23T18:33:54.7399782Z  * A link between two filters. This contains pointers to the source and
+2024-06-23T18:33:54.7400023Z  * destination filters between which this link exists, and the indexes of
+2024-06-23T18:33:54.7400256Z  * the pads involved. In addition, this link also contains the parameters
+2024-06-23T18:33:54.7400493Z  * which have been negotiated and agreed upon between the filter, such as
+2024-06-23T18:33:54.7400600Z  * image dimensions, format, etc.
+2024-06-23T18:33:54.7400674Z  *
+2024-06-23T18:33:54.7400899Z  * Applications must not normally access the link structure directly.
+2024-06-23T18:33:54.7401042Z  * Use the buffersrc and buffersink API instead.
+2024-06-23T18:33:54.7401247Z  * In the future, access to the header may be reserved for filters
+2024-06-23T18:33:54.7401342Z  * implementation.
+2024-06-23T18:33:54.7401415Z  */
+2024-06-23T18:33:54.7401508Z struct AVFilterLink {
+2024-06-23T18:33:54.7401653Z     AVFilterContext *src;       ///< source filter
+2024-06-23T18:33:54.7401903Z     AVFilterPad *srcpad;        ///< output pad on the source filter
+2024-06-23T18:33:54.7401908Z 
+2024-06-23T18:33:54.7402037Z     AVFilterContext *dst;       ///< dest filter
+2024-06-23T18:33:54.7402237Z     AVFilterPad *dstpad;        ///< input pad on the dest filter
+2024-06-23T18:33:54.7402242Z 
+2024-06-23T18:33:54.7402400Z     enum AVMediaType type;      ///< filter media type
+2024-06-23T18:33:54.7402405Z 
+2024-06-23T18:33:54.7402574Z     int format;                 ///< agreed upon media format
+2024-06-23T18:33:54.7402579Z 
+2024-06-23T18:33:54.7402717Z     /* These parameters apply only to video */
+2024-06-23T18:33:54.7402869Z     int w;                      ///< agreed upon image width
+2024-06-23T18:33:54.7403027Z     int h;                      ///< agreed upon image height
+2024-06-23T18:33:54.7403261Z     AVRational sample_aspect_ratio; ///< agreed upon sample aspect ratio
+2024-06-23T18:33:54.7403346Z     /**
+2024-06-23T18:33:54.7403644Z      * For non-YUV links, these are respectively set to fallback values (as
+2024-06-23T18:33:54.7403768Z      * appropriate for that colorspace).
+2024-06-23T18:33:54.7403849Z      *
+2024-06-23T18:33:54.7404082Z      * Note: This includes grayscale formats, as these are currently treated
+2024-06-23T18:33:54.7404186Z      * as forced full range always.
+2024-06-23T18:33:54.7404269Z      */
+2024-06-23T18:33:54.7404476Z     enum AVColorSpace colorspace;   ///< agreed upon YUV color space
+2024-06-23T18:33:54.7404682Z     enum AVColorRange color_range;  ///< agreed upon YUV color range
+2024-06-23T18:33:54.7404807Z 
+2024-06-23T18:33:54.7404950Z     /* These parameters apply only to audio */
+2024-06-23T18:33:54.7405101Z     int sample_rate;            ///< samples per second
+2024-06-23T18:33:54.7405442Z     AVChannelLayout ch_layout;  ///< channel layout of current buffer (see libavutil/channel_layout.h)
+2024-06-23T18:33:54.7405456Z 
+2024-06-23T18:33:54.7405530Z     /**
+2024-06-23T18:33:54.7405721Z      * Define the time base used by the PTS of the frames/samples
+2024-06-23T18:33:54.7405849Z      * which will pass through this link.
+2024-06-23T18:33:54.7406041Z      * During the configuration stage, each filter is supposed to
+2024-06-23T18:33:54.7406225Z      * change only the output timebase, while the timebase of the
+2024-06-23T18:33:54.7406405Z      * input link is assumed to be an unchangeable property.
+2024-06-23T18:33:54.7406481Z      */
+2024-06-23T18:33:54.7406574Z     AVRational time_base;
+2024-06-23T18:33:54.7406579Z 
+2024-06-23T18:33:54.7406716Z     /*****************************************************************
+2024-06-23T18:33:54.7406934Z      * All fields below this line are not part of the public API. They
+2024-06-23T18:33:54.7407134Z      * may not be used outside of libavfilter and can be changed and
+2024-06-23T18:33:54.7407231Z      * removed at will.
+2024-06-23T18:33:54.7407381Z      * New public fields should be added right above.
+2024-06-23T18:33:54.7407510Z      *****************************************************************
+2024-06-23T18:33:54.7407695Z      */
+2024-06-23T18:33:54.7407699Z 
+2024-06-23T18:33:54.7407773Z     /**
+2024-06-23T18:33:54.7408001Z      * Lists of supported formats / etc. supported by the input filter.
+2024-06-23T18:33:54.7408078Z      */
+2024-06-23T18:33:54.7408185Z     AVFilterFormatsConfig incfg;
+2024-06-23T18:33:54.7408191Z 
+2024-06-23T18:33:54.7408271Z     /**
+2024-06-23T18:33:54.7408487Z      * Lists of supported formats / etc. supported by the output filter.
+2024-06-23T18:33:54.7408565Z      */
+2024-06-23T18:33:54.7408679Z     AVFilterFormatsConfig outcfg;
+2024-06-23T18:33:54.7408688Z 
+2024-06-23T18:33:54.7408763Z     /**
+2024-06-23T18:33:54.7408867Z      * Graph the filter belongs to.
+2024-06-23T18:33:54.7408949Z      */
+2024-06-23T18:33:54.7409051Z     struct AVFilterGraph *graph;
+2024-06-23T18:33:54.7409056Z 
+2024-06-23T18:33:54.7409136Z     /**
+2024-06-23T18:33:54.7409337Z      * Current timestamp of the link, as defined by the most recent
+2024-06-23T18:33:54.7409450Z      * frame(s), in link time_base units.
+2024-06-23T18:33:54.7409536Z      */
+2024-06-23T18:33:54.7409628Z     int64_t current_pts;
+2024-06-23T18:33:54.7409633Z 
+2024-06-23T18:33:54.7409706Z     /**
+2024-06-23T18:33:54.7409910Z      * Current timestamp of the link, as defined by the most recent
+2024-06-23T18:33:54.7410017Z      * frame(s), in AV_TIME_BASE units.
+2024-06-23T18:33:54.7410092Z      */
+2024-06-23T18:33:54.7410192Z     int64_t current_pts_us;
+2024-06-23T18:33:54.7410197Z 
+2024-06-23T18:33:54.7410275Z     /**
+2024-06-23T18:33:54.7410501Z      * Frame rate of the stream on the link, or 1/0 if unknown or variable;
+2024-06-23T18:33:54.7410727Z      * if left to 0/0, will be automatically copied from the first input
+2024-06-23T18:33:54.7410841Z      * of the source filter if it exists.
+2024-06-23T18:33:54.7410919Z      *
+2024-06-23T18:33:54.7411157Z      * Sources should set it to the best estimation of the real frame rate.
+2024-06-23T18:33:54.7411372Z      * If the source frame rate is unknown or variable, set this to 1/0.
+2024-06-23T18:33:54.7411604Z      * Filters should update it if necessary depending on their function.
+2024-06-23T18:33:54.7411772Z      * Sinks can use it to set a default output frame rate.
+2024-06-23T18:33:54.7411936Z      * It is similar to the r_frame_rate field in AVStream.
+2024-06-23T18:33:54.7412021Z      */
+2024-06-23T18:33:54.7412125Z     AVRational frame_rate;
+2024-06-23T18:33:54.7412130Z 
+2024-06-23T18:33:54.7412207Z     /**
+2024-06-23T18:33:54.7412430Z      * Minimum number of samples to filter at once. If filter_frame() is
+2024-06-23T18:33:54.7412625Z      * called with fewer samples, it will accumulate them in fifo.
+2024-06-23T18:33:54.7412974Z      * This field and the related ones must not be changed after filtering
+2024-06-23T18:33:54.7413065Z      * has started.
+2024-06-23T18:33:54.7413187Z      * If 0, all related fields are ignored.
+2024-06-23T18:33:54.7413266Z      */
+2024-06-23T18:33:54.7413361Z     int min_samples;
+2024-06-23T18:33:54.7413366Z 
+2024-06-23T18:33:54.7413440Z     /**
+2024-06-23T18:33:54.7413662Z      * Maximum number of samples to filter at once. If filter_frame() is
+2024-06-23T18:33:54.7413813Z      * called with more samples, it will split them.
+2024-06-23T18:33:54.7413888Z      */
+2024-06-23T18:33:54.7413980Z     int max_samples;
+2024-06-23T18:33:54.7413985Z 
+2024-06-23T18:33:54.7414059Z     /**
+2024-06-23T18:33:54.7414198Z      * Number of past frames sent through the link.
+2024-06-23T18:33:54.7414280Z      */
+2024-06-23T18:33:54.7414401Z     int64_t frame_count_in, frame_count_out;
+2024-06-23T18:33:54.7414406Z 
+2024-06-23T18:33:54.7414491Z     /**
+2024-06-23T18:33:54.7414639Z      * Number of past samples sent through the link.
+2024-06-23T18:33:54.7414715Z      */
+2024-06-23T18:33:54.7414842Z     int64_t sample_count_in, sample_count_out;
+2024-06-23T18:33:54.7414853Z 
+2024-06-23T18:33:54.7414927Z     /**
+2024-06-23T18:33:54.7415137Z      * True if a frame is currently wanted on the output of this filter.
+2024-06-23T18:33:54.7415310Z      * Set when ff_request_frame() is called by the output,
+2024-06-23T18:33:54.7415562Z      * cleared when a frame is filtered.
+2024-06-23T18:33:54.7415636Z      */
+2024-06-23T18:33:54.7415734Z     int frame_wanted_out;
+2024-06-23T18:33:54.7415739Z 
+2024-06-23T18:33:54.7415814Z     /**
+2024-06-23T18:33:54.7416012Z      * For hwaccel pixel formats, this should be a reference to the
+2024-06-23T18:33:54.7416158Z      * AVHWFramesContext describing the frames.
+2024-06-23T18:33:54.7416234Z      */
+2024-06-23T18:33:54.7416333Z     AVBufferRef *hw_frames_ctx;
+2024-06-23T18:33:54.7416414Z };
+2024-06-23T18:33:54.7416422Z 
+2024-06-23T18:33:54.7416496Z /**
+2024-06-23T18:33:54.7416603Z  * Link two filters together.
+2024-06-23T18:33:54.7416703Z  *
+2024-06-23T18:33:54.7416808Z  * @param src    the source filter
+2024-06-23T18:33:54.7416996Z  * @param srcpad index of the output pad on the source filter
+2024-06-23T18:33:54.7417114Z  * @param dst    the destination filter
+2024-06-23T18:33:54.7417315Z  * @param dstpad index of the input pad on the destination filter
+2024-06-23T18:33:54.7417423Z  * @return       zero on success
+2024-06-23T18:33:54.7417497Z  */
+2024-06-23T18:33:54.7417674Z int avfilter_link(AVFilterContext *src, unsigned srcpad,
+2024-06-23T18:33:54.7417826Z                   AVFilterContext *dst, unsigned dstpad);
+2024-06-23T18:33:54.7417832Z 
+2024-06-23T18:33:54.7417921Z #if FF_API_LINK_PUBLIC
+2024-06-23T18:33:54.7417994Z /**
+2024-06-23T18:33:54.7418180Z  * @deprecated this function should never be called by users
+2024-06-23T18:33:54.7418256Z  */
+2024-06-23T18:33:54.7418344Z attribute_deprecated
+2024-06-23T18:33:54.7418487Z void avfilter_link_free(AVFilterLink **link);
+2024-06-23T18:33:54.7418492Z 
+2024-06-23T18:33:54.7418566Z /**
+2024-06-23T18:33:54.7418743Z  * @deprecated this function should never be called by users
+2024-06-23T18:33:54.7418822Z  */
+2024-06-23T18:33:54.7418912Z attribute_deprecated
+2024-06-23T18:33:54.7419062Z int avfilter_config_links(AVFilterContext *filter);
+2024-06-23T18:33:54.7419143Z #endif
+2024-06-23T18:33:54.7419148Z 
+2024-06-23T18:33:54.7419675Z #define AVFILTER_CMD_FLAG_ONE   1 ///< Stop once a filter understood the command (for target=all for example), fast filters are favored automatically
+2024-06-23T18:33:54.7420145Z #define AVFILTER_CMD_FLAG_FAST  2 ///< Only execute command when its fast (like a video out that supports contrast adjustment in hw)
+2024-06-23T18:33:54.7420151Z 
+2024-06-23T18:33:54.7420224Z /**
+2024-06-23T18:33:54.7420361Z  * Make the filter instance process a command.
+2024-06-23T18:33:54.7420540Z  * It is recommended to use avfilter_graph_send_command().
+2024-06-23T18:33:54.7420732Z  */
+2024-06-23T18:33:54.7421169Z int avfilter_process_command(AVFilterContext *filter, const char *cmd, const char *arg, char *res, int res_len, int flags);
+2024-06-23T18:33:54.7421176Z 
+2024-06-23T18:33:54.7421254Z /**
+2024-06-23T18:33:54.7421366Z  * Iterate over all registered filters.
+2024-06-23T18:33:54.7421445Z  *
+2024-06-23T18:33:54.7421712Z  * @param opaque a pointer where libavfilter will store the iteration state. Must
+2024-06-23T18:33:54.7421861Z  *               point to NULL to start the iteration.
+2024-06-23T18:33:54.7421945Z  *
+2024-06-23T18:33:54.7422155Z  * @return the next registered filter or NULL when the iteration is
+2024-06-23T18:33:54.7422237Z  *         finished
+2024-06-23T18:33:54.7422323Z  */
+2024-06-23T18:33:54.7422468Z const AVFilter *av_filter_iterate(void **opaque);
+2024-06-23T18:33:54.7422474Z 
+2024-06-23T18:33:54.7422546Z /**
+2024-06-23T18:33:54.7422698Z  * Get a filter definition matching the given name.
+2024-06-23T18:33:54.7422771Z  *
+2024-06-23T18:33:54.7422880Z  * @param name the filter name to find
+2024-06-23T18:33:54.7423105Z  * @return     the filter definition, if any matching one is registered.
+2024-06-23T18:33:54.7423204Z  *             NULL if none found.
+2024-06-23T18:33:54.7423276Z  */
+2024-06-23T18:33:54.7423449Z const AVFilter *avfilter_get_by_name(const char *name);
+2024-06-23T18:33:54.7423454Z 
+2024-06-23T18:33:54.7423458Z 
+2024-06-23T18:33:54.7423530Z /**
+2024-06-23T18:33:54.7423694Z  * Initialize a filter with the supplied parameters.
+2024-06-23T18:33:54.7423880Z  *
+2024-06-23T18:33:54.7424053Z  * @param ctx  uninitialized filter context to initialize
+2024-06-23T18:33:54.7424275Z  * @param args Options to initialize the filter with. This must be a
+2024-06-23T18:33:54.7424513Z  *             ':'-separated list of options in the 'key=value' form.
+2024-06-23T18:33:54.7424715Z  *             May be NULL if the options have been set directly using the
+2024-06-23T18:33:54.7424921Z  *             AVOptions API or there are no options that need to be set.
+2024-06-23T18:33:54.7425082Z  * @return 0 on success, a negative AVERROR on failure
+2024-06-23T18:33:54.7425156Z  */
+2024-06-23T18:33:54.7425358Z int avfilter_init_str(AVFilterContext *ctx, const char *args);
+2024-06-23T18:33:54.7425363Z 
+2024-06-23T18:33:54.7425435Z /**
+2024-06-23T18:33:54.7425632Z  * Initialize a filter with the supplied dictionary of options.
+2024-06-23T18:33:54.7425717Z  *
+2024-06-23T18:33:54.7425896Z  * @param ctx     uninitialized filter context to initialize
+2024-06-23T18:33:54.7426144Z  * @param options An AVDictionary filled with options for this filter. On
+2024-06-23T18:33:54.7426343Z  *                return this parameter will be destroyed and replaced with
+2024-06-23T18:33:54.7426754Z  *                a dict containing options that were not found. This dictionary
+2024-06-23T18:33:54.7426975Z  *                must be freed by the caller.
+2024-06-23T18:33:54.7427224Z  *                May be NULL, then this function is equivalent to
+2024-06-23T18:33:54.7427428Z  *                avfilter_init_str() with the second parameter set to NULL.
+2024-06-23T18:33:54.7427597Z  * @return 0 on success, a negative AVERROR on failure
+2024-06-23T18:33:54.7427671Z  *
+2024-06-23T18:33:54.7427916Z  * @note This function and avfilter_init_str() do essentially the same thing,
+2024-06-23T18:33:54.7428187Z  * the difference is in manner in which the options are passed. It is up to the
+2024-06-23T18:33:54.7428447Z  * calling code to choose whichever is more preferable. The two functions also
+2024-06-23T18:33:54.7428707Z  * behave differently when some of the provided options are not declared as
+2024-06-23T18:33:54.7428962Z  * supported by the filter. In such a case, avfilter_init_str() will fail, but
+2024-06-23T18:33:54.7429226Z  * this function will leave those extra options in the options AVDictionary and
+2024-06-23T18:33:54.7429323Z  * continue as usual.
+2024-06-23T18:33:54.7429396Z  */
+2024-06-23T18:33:54.7429621Z int avfilter_init_dict(AVFilterContext *ctx, AVDictionary **options);
+2024-06-23T18:33:54.7429794Z 
+2024-06-23T18:33:54.7429882Z /**
+2024-06-23T18:33:54.7430095Z  * Free a filter context. This will also remove the filter from its
+2024-06-23T18:33:54.7430269Z  * filtergraph's list of filters.
+2024-06-23T18:33:54.7430350Z  *
+2024-06-23T18:33:54.7430457Z  * @param filter the filter to free
+2024-06-23T18:33:54.7430531Z  */
+2024-06-23T18:33:54.7430672Z void avfilter_free(AVFilterContext *filter);
+2024-06-23T18:33:54.7430678Z 
+2024-06-23T18:33:54.7430753Z /**
+2024-06-23T18:33:54.7430922Z  * Insert a filter in the middle of an existing link.
+2024-06-23T18:33:54.7430995Z  *
+2024-06-23T18:33:54.7431192Z  * @param link the link into which the filter should be inserted
+2024-06-23T18:33:54.7431314Z  * @param filt the filter to be inserted
+2024-06-23T18:33:54.7431507Z  * @param filt_srcpad_idx the input pad on the filter to connect
+2024-06-23T18:33:54.7431705Z  * @param filt_dstpad_idx the output pad on the filter to connect
+2024-06-23T18:33:54.7431814Z  * @return     zero on success
+2024-06-23T18:33:54.7431887Z  */
+2024-06-23T18:33:54.7432117Z int avfilter_insert_filter(AVFilterLink *link, AVFilterContext *filt,
+2024-06-23T18:33:54.7432307Z                            unsigned filt_srcpad_idx, unsigned filt_dstpad_idx);
+2024-06-23T18:33:54.7432312Z 
+2024-06-23T18:33:54.7432410Z /**
+2024-06-23T18:33:54.7432524Z  * @return AVClass for AVFilterContext.
+2024-06-23T18:33:54.7432607Z  *
+2024-06-23T18:33:54.7432696Z  * @see av_opt_find().
+2024-06-23T18:33:54.7432770Z  */
+2024-06-23T18:33:54.7433034Z const AVClass *avfilter_get_class(void);
+2024-06-23T18:33:54.7433040Z 
+2024-06-23T18:33:54.7433112Z /**
+2024-06-23T18:33:54.7433381Z  * A function pointer passed to the @ref AVFilterGraph.execute callback to be
+2024-06-23T18:33:54.7433528Z  * executed multiple times, possibly in parallel.
+2024-06-23T18:33:54.7433602Z  *
+2024-06-23T18:33:54.7433755Z  * @param ctx the filter context the job belongs to
+2024-06-23T18:33:54.7433935Z  * @param arg an opaque parameter passed through from @ref
+2024-06-23T18:33:54.7434044Z  *            AVFilterGraph.execute
+2024-06-23T18:33:54.7434200Z  * @param jobnr the index of the job being executed
+2024-06-23T18:33:54.7434322Z  * @param nb_jobs the total number of jobs
+2024-06-23T18:33:54.7434396Z  *
+2024-06-23T18:33:54.7434558Z  * @return 0 on success, a negative AVERROR on error
+2024-06-23T18:33:54.7434633Z  */
+2024-06-23T18:33:54.7434949Z typedef int (avfilter_action_func)(AVFilterContext *ctx, void *arg, int jobnr, int nb_jobs);
+2024-06-23T18:33:54.7434955Z 
+2024-06-23T18:33:54.7435038Z /**
+2024-06-23T18:33:54.7435223Z  * A function executing multiple jobs, possibly in parallel.
+2024-06-23T18:33:54.7435299Z  *
+2024-06-23T18:33:54.7435472Z  * @param ctx the filter context to which the jobs belong
+2024-06-23T18:33:54.7435632Z  * @param func the function to be called multiple times
+2024-06-23T18:33:54.7435773Z  * @param arg the argument to be passed to func
+2024-06-23T18:33:54.7436075Z  * @param ret a nb_jobs-sized array to be filled with return values from each
+2024-06-23T18:33:54.7436173Z  *            invocation of func
+2024-06-23T18:33:54.7436317Z  * @param nb_jobs the number of jobs to execute
+2024-06-23T18:33:54.7436391Z  *
+2024-06-23T18:33:54.7436542Z  * @return 0 on success, a negative AVERROR on error
+2024-06-23T18:33:54.7436621Z  */
+2024-06-23T18:33:54.7436903Z typedef int (avfilter_execute_func)(AVFilterContext *ctx, avfilter_action_func *func,
+2024-06-23T18:33:54.7437054Z                                     void *arg, int *ret, int nb_jobs);
+2024-06-23T18:33:54.7437063Z 
+2024-06-23T18:33:54.7437175Z typedef struct AVFilterGraph {
+2024-06-23T18:33:54.7437272Z     const AVClass *av_class;
+2024-06-23T18:33:54.7437373Z     AVFilterContext **filters;
+2024-06-23T18:33:54.7437472Z     unsigned nb_filters;
+2024-06-23T18:33:54.7437477Z 
+2024-06-23T18:33:54.7437797Z     char *scale_sws_opts; ///< sws options to use for the auto-inserted scale filters
+2024-06-23T18:33:54.7437802Z 
+2024-06-23T18:33:54.7437887Z     /**
+2024-06-23T18:33:54.7438132Z      * Type of multithreading allowed for filters in this graph. A combination
+2024-06-23T18:33:54.7438359Z      * of AVFILTER_THREAD_* flags.
+2024-06-23T18:33:54.7438442Z      *
+2024-06-23T18:33:54.7438675Z      * May be set by the caller at any point, the setting will apply to all
+2024-06-23T18:33:54.7438909Z      * filters initialized after that. The default is allowing everything.
+2024-06-23T18:33:54.7438992Z      *
+2024-06-23T18:33:54.7439237Z      * When a filter in this graph is initialized, this field is combined using
+2024-06-23T18:33:54.7439488Z      * bit AND with AVFilterContext.thread_type to get the final mask used for
+2024-06-23T18:33:54.7439736Z      * determining allowed threading types. I.e. a threading type needs to be
+2024-06-23T18:33:54.7439837Z      * set in both to be allowed.
+2024-06-23T18:33:54.7439921Z      */
+2024-06-23T18:33:54.7440009Z     int thread_type;
+2024-06-23T18:33:54.7440015Z 
+2024-06-23T18:33:54.7440090Z     /**
+2024-06-23T18:33:54.7440335Z      * Maximum number of threads used by filters in this graph. May be set by
+2024-06-23T18:33:54.7440572Z      * the caller before adding any filters to the filtergraph. Zero (the
+2024-06-23T18:33:54.7440806Z      * default) means that the number of threads is determined automatically.
+2024-06-23T18:33:54.7440889Z      */
+2024-06-23T18:33:54.7440975Z     int nb_threads;
+2024-06-23T18:33:54.7440980Z 
+2024-06-23T18:33:54.7441054Z     /**
+2024-06-23T18:33:54.7441311Z      * Opaque user data. May be set by the caller to an arbitrary value, e.g. to
+2024-06-23T18:33:54.7441625Z      * be used from callbacks like @ref AVFilterGraph.execute.
+2024-06-23T18:33:54.7441788Z      * Libavfilter will not touch this field in any way.
+2024-06-23T18:33:54.7441873Z      */
+2024-06-23T18:33:54.7441958Z     void *opaque;
+2024-06-23T18:33:54.7441963Z 
+2024-06-23T18:33:54.7442044Z     /**
+2024-06-23T18:33:54.7442282Z      * This callback may be set by the caller immediately after allocating the
+2024-06-23T18:33:54.7442491Z      * graph and before adding any filters to it, to provide a custom
+2024-06-23T18:33:54.7442615Z      * multithreading implementation.
+2024-06-23T18:33:54.7442689Z      *
+2024-06-23T18:33:54.7442920Z      * If set, filters with slice threading capability will call this callback
+2024-06-23T18:33:54.7443058Z      * to execute multiple jobs in parallel.
+2024-06-23T18:33:54.7443132Z      *
+2024-06-23T18:33:54.7443341Z      * If this field is left unset, libavfilter will use its internal
+2024-06-23T18:33:54.7443589Z      * implementation, which may or may not be multithreaded depending on the
+2024-06-23T18:33:54.7443699Z      * platform and build options.
+2024-06-23T18:33:54.7443775Z      */
+2024-06-23T18:33:54.7443884Z     avfilter_execute_func *execute;
+2024-06-23T18:33:54.7443889Z 
+2024-06-23T18:33:54.7444397Z     char *aresample_swr_opts; ///< swr options to use for the auto-inserted aresample filters, Access ONLY through AVOptions
+2024-06-23T18:33:54.7444492Z } AVFilterGraph;
+2024-06-23T18:33:54.7444498Z 
+2024-06-23T18:33:54.7444574Z /**
+2024-06-23T18:33:54.7444673Z  * Allocate a filter graph.
+2024-06-23T18:33:54.7444756Z  *
+2024-06-23T18:33:54.7444925Z  * @return the allocated filter graph on success or NULL.
+2024-06-23T18:33:54.7445000Z  */
+2024-06-23T18:33:54.7445132Z AVFilterGraph *avfilter_graph_alloc(void);
+2024-06-23T18:33:54.7445137Z 
+2024-06-23T18:33:54.7445211Z /**
+2024-06-23T18:33:54.7445361Z  * Create a new filter instance in a filter graph.
+2024-06-23T18:33:54.7445440Z  *
+2024-06-23T18:33:54.7445612Z  * @param graph graph in which the new filter will be used
+2024-06-23T18:33:54.7445767Z  * @param filter the filter to create an instance of
+2024-06-23T18:33:54.7445978Z  * @param name Name to give to the new instance (will be copied to
+2024-06-23T18:33:54.7446214Z  *             AVFilterContext.name). This may be used by the caller to identify
+2024-06-23T18:33:54.7446433Z  *             different filters, libavfilter itself assigns no semantics to
+2024-06-23T18:33:54.7446551Z  *             this parameter. May be NULL.
+2024-06-23T18:33:54.7446624Z  *
+2024-06-23T18:33:54.7446864Z  * @return the context of the newly created filter instance (note that it is
+2024-06-23T18:33:54.7447232Z  *         also retrievable directly through AVFilterGraph.filters or with
+2024-06-23T18:33:54.7447430Z  *         avfilter_graph_get_filter()) on success or NULL on failure.
+2024-06-23T18:33:54.7447512Z  */
+2024-06-23T18:33:54.7447730Z AVFilterContext *avfilter_graph_alloc_filter(AVFilterGraph *graph,
+2024-06-23T18:33:54.7447874Z                                              const AVFilter *filter,
+2024-06-23T18:33:54.7448023Z                                              const char *name);
+2024-06-23T18:33:54.7448029Z 
+2024-06-23T18:33:54.7448100Z /**
+2024-06-23T18:33:54.7448302Z  * Get a filter instance identified by instance name from graph.
+2024-06-23T18:33:54.7448382Z  *
+2024-06-23T18:33:54.7448519Z  * @param graph filter graph to search through.
+2024-06-23T18:33:54.7448737Z  * @param name filter instance name (should be unique in the graph).
+2024-06-23T18:33:54.7448936Z  * @return the pointer to the found filter instance or NULL if it
+2024-06-23T18:33:54.7449027Z  * cannot be found.
+2024-06-23T18:33:54.7449107Z  */
+2024-06-23T18:33:54.7449386Z AVFilterContext *avfilter_graph_get_filter(AVFilterGraph *graph, const char *name);
+2024-06-23T18:33:54.7449391Z 
+2024-06-23T18:33:54.7449463Z /**
+2024-06-23T18:33:54.7449655Z  * Create and add a filter instance into an existing graph.
+2024-06-23T18:33:54.7449853Z  * The filter instance is created from the filter filt and inited
+2024-06-23T18:33:54.7450135Z  * with the parameter args. opaque is currently ignored.
+2024-06-23T18:33:54.7450215Z  *
+2024-06-23T18:33:54.7450418Z  * In case of success put in *filt_ctx the pointer to the created
+2024-06-23T18:33:54.7450570Z  * filter instance, otherwise set *filt_ctx to NULL.
+2024-06-23T18:33:54.7450651Z  *
+2024-06-23T18:33:54.7450877Z  * @param name the instance name to give to the created filter instance
+2024-06-23T18:33:54.7450993Z  * @param graph_ctx the filter graph
+2024-06-23T18:33:54.7451198Z  * @return a negative AVERROR error code in case of failure, a non
+2024-06-23T18:33:54.7451298Z  * negative value otherwise
+2024-06-23T18:33:54.7451378Z  */
+2024-06-23T18:33:54.7451654Z int avfilter_graph_create_filter(AVFilterContext **filt_ctx, const AVFilter *filt,
+2024-06-23T18:33:54.7451833Z                                  const char *name, const char *args, void *opaque,
+2024-06-23T18:33:54.7451980Z                                  AVFilterGraph *graph_ctx);
+2024-06-23T18:33:54.7451986Z 
+2024-06-23T18:33:54.7452063Z /**
+2024-06-23T18:33:54.7452266Z  * Enable or disable automatic format conversion inside the graph.
+2024-06-23T18:33:54.7452345Z  *
+2024-06-23T18:33:54.7452584Z  * Note that format conversion can still happen inside explicitly inserted
+2024-06-23T18:33:54.7452686Z  * scale and aresample filters.
+2024-06-23T18:33:54.7452766Z  *
+2024-06-23T18:33:54.7452946Z  * @param flags  any of the AVFILTER_AUTO_CONVERT_* constants
+2024-06-23T18:33:54.7453025Z  */
+2024-06-23T18:33:54.7453268Z void avfilter_graph_set_auto_convert(AVFilterGraph *graph, unsigned flags);
+2024-06-23T18:33:54.7453280Z 
+2024-06-23T18:33:54.7453353Z enum {
+2024-06-23T18:33:54.7453598Z     AVFILTER_AUTO_CONVERT_ALL  =  0, /**< all automatic conversions enabled */
+2024-06-23T18:33:54.7453902Z     AVFILTER_AUTO_CONVERT_NONE = -1, /**< all automatic conversions disabled */
+2024-06-23T18:33:54.7453976Z };
+2024-06-23T18:33:54.7453981Z 
+2024-06-23T18:33:54.7454059Z /**
+2024-06-23T18:33:54.7454290Z  * Check validity and configure all the links and formats in the graph.
+2024-06-23T18:33:54.7454367Z  *
+2024-06-23T18:33:54.7454481Z  * @param graphctx the filter graph
+2024-06-23T18:33:54.7454602Z  * @param log_ctx context used for logging
+2024-06-23T18:33:54.7454808Z  * @return >= 0 in case of success, a negative AVERROR code otherwise
+2024-06-23T18:33:54.7454888Z  */
+2024-06-23T18:33:54.7455093Z int avfilter_graph_config(AVFilterGraph *graphctx, void *log_ctx);
+2024-06-23T18:33:54.7455099Z 
+2024-06-23T18:33:54.7455180Z /**
+2024-06-23T18:33:54.7455357Z  * Free a graph, destroy its links, and set *graph to NULL.
+2024-06-23T18:33:54.7455581Z  * If *graph is NULL, do nothing.
+2024-06-23T18:33:54.7455661Z  */
+2024-06-23T18:33:54.7455806Z void avfilter_graph_free(AVFilterGraph **graph);
+2024-06-23T18:33:54.7455812Z 
+2024-06-23T18:33:54.7455883Z /**
+2024-06-23T18:33:54.7456114Z  * A linked-list of the inputs/outputs of the filter chain.
+2024-06-23T18:33:54.7456189Z  *
+2024-06-23T18:33:54.7456441Z  * This is mainly useful for avfilter_graph_parse() / avfilter_graph_parse2(),
+2024-06-23T18:33:54.7456699Z  * where it is used to communicate open (unlinked) inputs and outputs from and
+2024-06-23T18:33:54.7456785Z  * to the caller.
+2024-06-23T18:33:54.7457054Z  * This struct specifies, per each not connected pad contained in the graph, the
+2024-06-23T18:33:54.7457284Z  * filter context and the pad index required for establishing a link.
+2024-06-23T18:33:54.7457357Z  */
+2024-06-23T18:33:54.7457463Z typedef struct AVFilterInOut {
+2024-06-23T18:33:54.7457630Z     /** unique name for this input/output in the list */
+2024-06-23T18:33:54.7457718Z     char *name;
+2024-06-23T18:33:54.7457723Z 
+2024-06-23T18:33:54.7457888Z     /** filter context associated to this input/output */
+2024-06-23T18:33:54.7457991Z     AVFilterContext *filter_ctx;
+2024-06-23T18:33:54.7457996Z 
+2024-06-23T18:33:54.7458150Z     /** index of the filt_ctx pad to use for linking */
+2024-06-23T18:33:54.7458242Z     int pad_idx;
+2024-06-23T18:33:54.7458247Z 
+2024-06-23T18:33:54.7458433Z     /** next input/input in the list, NULL if this is the last */
+2024-06-23T18:33:54.7458659Z     struct AVFilterInOut *next;
+2024-06-23T18:33:54.7458753Z } AVFilterInOut;
+2024-06-23T18:33:54.7458757Z 
+2024-06-23T18:33:54.7458830Z /**
+2024-06-23T18:33:54.7458959Z  * Allocate a single AVFilterInOut entry.
+2024-06-23T18:33:54.7459105Z  * Must be freed with avfilter_inout_free().
+2024-06-23T18:33:54.7459304Z  * @return allocated AVFilterInOut on success, NULL on failure.
+2024-06-23T18:33:54.7459385Z  */
+2024-06-23T18:33:54.7459506Z AVFilterInOut *avfilter_inout_alloc(void);
+2024-06-23T18:33:54.7459514Z 
+2024-06-23T18:33:54.7459592Z /**
+2024-06-23T18:33:54.7459801Z  * Free the supplied list of AVFilterInOut and set *inout to NULL.
+2024-06-23T18:33:54.7459904Z  * If *inout is NULL, do nothing.
+2024-06-23T18:33:54.7459981Z  */
+2024-06-23T18:33:54.7460130Z void avfilter_inout_free(AVFilterInOut **inout);
+2024-06-23T18:33:54.7460136Z 
+2024-06-23T18:33:54.7460208Z /**
+2024-06-23T18:33:54.7460346Z  * Add a graph described by a string to a graph.
+2024-06-23T18:33:54.7460430Z  *
+2024-06-23T18:33:54.7460629Z  * @note The caller must provide the lists of inputs and outputs,
+2024-06-23T18:33:54.7460817Z  * which therefore must be known before calling the function.
+2024-06-23T18:33:54.7460898Z  *
+2024-06-23T18:33:54.7461116Z  * @note The inputs parameter describes inputs of the already existing
+2024-06-23T18:33:54.7461352Z  * part of the graph; i.e. from the point of view of the newly created
+2024-06-23T18:33:54.7461566Z  * part, they are outputs. Similarly the outputs parameter describes
+2024-06-23T18:33:54.7461775Z  * outputs of the already existing filters, which are provided as
+2024-06-23T18:33:54.7461885Z  * inputs to the parsed filters.
+2024-06-23T18:33:54.7461959Z  *
+2024-06-23T18:33:54.7462202Z  * @param graph   the filter graph where to link the parsed graph context
+2024-06-23T18:33:54.7462322Z  * @param filters string to be parsed
+2024-06-23T18:33:54.7462487Z  * @param inputs  linked list to the inputs of the graph
+2024-06-23T18:33:54.7462658Z  * @param outputs linked list to the outputs of the graph
+2024-06-23T18:33:54.7462844Z  * @return zero on success, a negative AVERROR code on error
+2024-06-23T18:33:54.7462917Z  */
+2024-06-23T18:33:54.7463133Z int avfilter_graph_parse(AVFilterGraph *graph, const char *filters,
+2024-06-23T18:33:54.7463315Z                          AVFilterInOut *inputs, AVFilterInOut *outputs,
+2024-06-23T18:33:54.7463419Z                          void *log_ctx);
+2024-06-23T18:33:54.7463425Z 
+2024-06-23T18:33:54.7463503Z /**
+2024-06-23T18:33:54.7463641Z  * Add a graph described by a string to a graph.
+2024-06-23T18:33:54.7463830Z  *
+2024-06-23T18:33:54.7464055Z  * In the graph filters description, if the input label of the first
+2024-06-23T18:33:54.7464263Z  * filter is not specified, "in" is assumed; if the output label of
+2024-06-23T18:33:54.7464424Z  * the last filter is not specified, "out" is assumed.
+2024-06-23T18:33:54.7464502Z  *
+2024-06-23T18:33:54.7464731Z  * @param graph   the filter graph where to link the parsed graph context
+2024-06-23T18:33:54.7464845Z  * @param filters string to be parsed
+2024-06-23T18:33:54.7465124Z  * @param inputs  pointer to a linked list to the inputs of the graph, may be NULL.
+2024-06-23T18:33:54.7465418Z  *                If non-NULL, *inputs is updated to contain the list of open inputs
+2024-06-23T18:33:54.7465639Z  *                after the parsing, should be freed with avfilter_inout_free().
+2024-06-23T18:33:54.7465922Z  * @param outputs pointer to a linked list to the outputs of the graph, may be NULL.
+2024-06-23T18:33:54.7466225Z  *                If non-NULL, *outputs is updated to contain the list of open outputs
+2024-06-23T18:33:54.7466446Z  *                after the parsing, should be freed with avfilter_inout_free().
+2024-06-23T18:33:54.7466887Z  * @return non negative on success, a negative AVERROR code on error
+2024-06-23T18:33:54.7466970Z  */
+2024-06-23T18:33:54.7467216Z int avfilter_graph_parse_ptr(AVFilterGraph *graph, const char *filters,
+2024-06-23T18:33:54.7467590Z                              AVFilterInOut **inputs, AVFilterInOut **outputs,
+2024-06-23T18:33:54.7467709Z                              void *log_ctx);
+2024-06-23T18:33:54.7467715Z 
+2024-06-23T18:33:54.7467797Z /**
+2024-06-23T18:33:54.7467941Z  * Add a graph described by a string to a graph.
+2024-06-23T18:33:54.7468017Z  *
+2024-06-23T18:33:54.7468270Z  * @param[in]  graph   the filter graph where to link the parsed graph context
+2024-06-23T18:33:54.7468397Z  * @param[in]  filters string to be parsed
+2024-06-23T18:33:54.7468627Z  * @param[out] inputs  a linked list of all free (unlinked) inputs of the
+2024-06-23T18:33:54.7468829Z  *                     parsed graph will be returned here. It is to be freed
+2024-06-23T18:33:54.7468985Z  *                     by the caller using avfilter_inout_free().
+2024-06-23T18:33:54.7469228Z  * @param[out] outputs a linked list of all free (unlinked) outputs of the
+2024-06-23T18:33:54.7469443Z  *                     parsed graph will be returned here. It is to be freed by the
+2024-06-23T18:33:54.7469585Z  *                     caller using avfilter_inout_free().
+2024-06-23T18:33:54.7469778Z  * @return zero on success, a negative AVERROR code on error
+2024-06-23T18:33:54.7469853Z  *
+2024-06-23T18:33:54.7470065Z  * @note This function returns the inputs and outputs that are left
+2024-06-23T18:33:54.7470285Z  * unlinked after parsing the graph and the caller then deals with
+2024-06-23T18:33:54.7470365Z  * them.
+2024-06-23T18:33:54.7470554Z  * @note This function makes no reference whatsoever to already
+2024-06-23T18:33:54.7470794Z  * existing parts of the graph and the inputs parameter will on return
+2024-06-23T18:33:54.7471016Z  * contain inputs of the newly parsed part of the graph.  Analogously
+2024-06-23T18:33:54.7471233Z  * the outputs parameter will contain outputs of the newly created
+2024-06-23T18:33:54.7471318Z  * filters.
+2024-06-23T18:33:54.7471391Z  */
+2024-06-23T18:33:54.7471619Z int avfilter_graph_parse2(AVFilterGraph *graph, const char *filters,
+2024-06-23T18:33:54.7471748Z                           AVFilterInOut **inputs,
+2024-06-23T18:33:54.7471880Z                           AVFilterInOut **outputs);
+2024-06-23T18:33:54.7471886Z 
+2024-06-23T18:33:54.7471967Z /**
+2024-06-23T18:33:54.7472167Z  * Parameters of a filter's input or output pad.
+2024-06-23T18:33:54.7472243Z  *
+2024-06-23T18:33:54.7472487Z  * Created as a child of AVFilterParams by avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7472610Z  * Freed in avfilter_graph_segment_free().
+2024-06-23T18:33:54.7472684Z  */
+2024-06-23T18:33:54.7472952Z typedef struct AVFilterPadParams {
+2024-06-23T18:33:54.7473033Z     /**
+2024-06-23T18:33:54.7473240Z      * An av_malloc()'ed string containing the pad label.
+2024-06-23T18:33:54.7473323Z      *
+2024-06-23T18:33:54.7473617Z      * May be av_free()'d and set to NULL by the caller, in which case this pad
+2024-06-23T18:33:54.7473761Z      * will be treated as unlabeled for linking.
+2024-06-23T18:33:54.7473979Z      * May also be replaced by another av_malloc()'ed string.
+2024-06-23T18:33:54.7474062Z      */
+2024-06-23T18:33:54.7474153Z     char *label;
+2024-06-23T18:33:54.7474247Z } AVFilterPadParams;
+2024-06-23T18:33:54.7474252Z 
+2024-06-23T18:33:54.7474326Z /**
+2024-06-23T18:33:54.7474544Z  * Parameters describing a filter to be created in a filtergraph.
+2024-06-23T18:33:54.7474619Z  *
+2024-06-23T18:33:54.7474889Z  * Created as a child of AVFilterGraphSegment by avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7475020Z  * Freed in avfilter_graph_segment_free().
+2024-06-23T18:33:54.7475095Z  */
+2024-06-23T18:33:54.7475207Z typedef struct AVFilterParams {
+2024-06-23T18:33:54.7475293Z     /**
+2024-06-23T18:33:54.7475386Z      * The filter context.
+2024-06-23T18:33:54.7475466Z      *
+2024-06-23T18:33:54.7475667Z      * Created by avfilter_graph_segment_create_filters() based on
+2024-06-23T18:33:54.7475824Z      * AVFilterParams.filter_name and instance_name.
+2024-06-23T18:33:54.7475904Z      *
+2024-06-23T18:33:54.7476147Z      * Callers may also create the filter context manually, then they should
+2024-06-23T18:33:54.7476494Z      * av_free() filter_name and set it to NULL. Such AVFilterParams instances
+2024-06-23T18:33:54.7476698Z      * are then skipped by avfilter_graph_segment_create_filters().
+2024-06-23T18:33:54.7476776Z      */
+2024-06-23T18:33:54.7476879Z     AVFilterContext     *filter;
+2024-06-23T18:33:54.7476884Z 
+2024-06-23T18:33:54.7476967Z     /**
+2024-06-23T18:33:54.7477079Z      * Name of the AVFilter to be used.
+2024-06-23T18:33:54.7477153Z      *
+2024-06-23T18:33:54.7477448Z      * An av_malloc()'ed string, set by avfilter_graph_segment_parse(). Will be
+2024-06-23T18:33:54.7477570Z      * passed to avfilter_get_by_name() by
+2024-06-23T18:33:54.7477703Z      * avfilter_graph_segment_create_filters().
+2024-06-23T18:33:54.7477787Z      *
+2024-06-23T18:33:54.7478013Z      * Callers may av_free() this string and replace it with another one or
+2024-06-23T18:33:54.7478245Z      * NULL. If the caller creates the filter instance manually, this string
+2024-06-23T18:33:54.7478350Z      * MUST be set to NULL.
+2024-06-23T18:33:54.7478426Z      *
+2024-06-23T18:33:54.7478684Z      * When both AVFilterParams.filter an AVFilterParams.filter_name are NULL,
+2024-06-23T18:33:54.7478931Z      * this AVFilterParams instance is skipped by avfilter_graph_segment_*()
+2024-06-23T18:33:54.7479020Z      * functions.
+2024-06-23T18:33:54.7479103Z      */
+2024-06-23T18:33:54.7479203Z     char                *filter_name;
+2024-06-23T18:33:54.7479280Z     /**
+2024-06-23T18:33:54.7479421Z      * Name to be used for this filter instance.
+2024-06-23T18:33:54.7479500Z      *
+2024-06-23T18:33:54.7479797Z      * An av_malloc()'ed string, may be set by avfilter_graph_segment_parse() or
+2024-06-23T18:33:54.7480048Z      * left NULL. The caller may av_free() this string and replace with another
+2024-06-23T18:33:54.7480134Z      * one or NULL.
+2024-06-23T18:33:54.7480210Z      *
+2024-06-23T18:33:54.7480507Z      * Will be used by avfilter_graph_segment_create_filters() - passed as the
+2024-06-23T18:33:54.7480751Z      * third argument to avfilter_graph_alloc_filter(), then freed and set to
+2024-06-23T18:33:54.7480831Z      * NULL.
+2024-06-23T18:33:54.7480915Z      */
+2024-06-23T18:33:54.7481017Z     char                *instance_name;
+2024-06-23T18:33:54.7481022Z 
+2024-06-23T18:33:54.7481100Z     /**
+2024-06-23T18:33:54.7481229Z      * Options to be apllied to the filter.
+2024-06-23T18:33:54.7481306Z      *
+2024-06-23T18:33:54.7481535Z      * Filled by avfilter_graph_segment_parse(). Afterwards may be freely
+2024-06-23T18:33:54.7481634Z      * modified by the caller.
+2024-06-23T18:33:54.7481847Z      *
+2024-06-23T18:33:54.7482083Z      * Will be applied to the filter by avfilter_graph_segment_apply_opts()
+2024-06-23T18:33:54.7482346Z      * with an equivalent of av_opt_set_dict2(filter, &opts, AV_OPT_SEARCH_CHILDREN),
+2024-06-23T18:33:54.7482541Z      * i.e. any unapplied options will be left in this dictionary.
+2024-06-23T18:33:54.7482624Z      */
+2024-06-23T18:33:54.7482723Z     AVDictionary        *opts;
+2024-06-23T18:33:54.7482732Z 
+2024-06-23T18:33:54.7482837Z     AVFilterPadParams  **inputs;
+2024-06-23T18:33:54.7482939Z     unsigned          nb_inputs;
+2024-06-23T18:33:54.7482944Z 
+2024-06-23T18:33:54.7483050Z     AVFilterPadParams  **outputs;
+2024-06-23T18:33:54.7483145Z     unsigned          nb_outputs;
+2024-06-23T18:33:54.7483244Z } AVFilterParams;
+2024-06-23T18:33:54.7483249Z 
+2024-06-23T18:33:54.7483323Z /**
+2024-06-23T18:33:54.7483491Z  * A filterchain is a list of filter specifications.
+2024-06-23T18:33:54.7483567Z  *
+2024-06-23T18:33:54.7483841Z  * Created as a child of AVFilterGraphSegment by avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7483969Z  * Freed in avfilter_graph_segment_free().
+2024-06-23T18:33:54.7484045Z  */
+2024-06-23T18:33:54.7484152Z typedef struct AVFilterChain {
+2024-06-23T18:33:54.7484260Z     AVFilterParams  **filters;
+2024-06-23T18:33:54.7484354Z     size_t         nb_filters;
+2024-06-23T18:33:54.7484442Z } AVFilterChain;
+2024-06-23T18:33:54.7484448Z 
+2024-06-23T18:33:54.7484640Z /**
+2024-06-23T18:33:54.7484797Z  * A parsed representation of a filtergraph segment.
+2024-06-23T18:33:54.7484872Z  *
+2024-06-23T18:33:54.7485121Z  * A filtergraph segment is conceptually a list of filterchains, with some
+2024-06-23T18:33:54.7485310Z  * supplementary information (e.g. format conversion flags).
+2024-06-23T18:33:54.7485386Z  *
+2024-06-23T18:33:54.7485588Z  * Created by avfilter_graph_segment_parse(). Must be freed with
+2024-06-23T18:33:54.7485690Z  * avfilter_graph_segment_free().
+2024-06-23T18:33:54.7485771Z  */
+2024-06-23T18:33:54.7485895Z typedef struct AVFilterGraphSegment {
+2024-06-23T18:33:54.7485973Z     /**
+2024-06-23T18:33:54.7486138Z      * The filtergraph this segment is associated with.
+2024-06-23T18:33:54.7486265Z      * Set by avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7486342Z      */
+2024-06-23T18:33:54.7486444Z     AVFilterGraph *graph;
+2024-06-23T18:33:54.7486449Z 
+2024-06-23T18:33:54.7486527Z     /**
+2024-06-23T18:33:54.7486685Z      * A list of filter chain contained in this segment.
+2024-06-23T18:33:54.7486821Z      * Set in avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7486900Z      */
+2024-06-23T18:33:54.7486996Z     AVFilterChain **chains;
+2024-06-23T18:33:54.7487093Z     size_t       nb_chains;
+2024-06-23T18:33:54.7487098Z 
+2024-06-23T18:33:54.7487173Z     /**
+2024-06-23T18:33:54.7487480Z      * A string containing a colon-separated list of key=value options applied
+2024-06-23T18:33:54.7487611Z      * to all scale filters in this segment.
+2024-06-23T18:33:54.7487687Z      *
+2024-06-23T18:33:54.7487835Z      * May be set by avfilter_graph_segment_parse().
+2024-06-23T18:33:54.7488073Z      * The caller may free this string with av_free() and replace it with a
+2024-06-23T18:33:54.7488218Z      * different av_malloc()'ed string.
+2024-06-23T18:33:54.7488301Z      */
+2024-06-23T18:33:54.7488393Z     char *scale_sws_opts;
+2024-06-23T18:33:54.7488493Z } AVFilterGraphSegment;
+2024-06-23T18:33:54.7488498Z 
+2024-06-23T18:33:54.7488578Z /**
+2024-06-23T18:33:54.7488811Z  * Parse a textual filtergraph description into an intermediate form.
+2024-06-23T18:33:54.7488890Z  *
+2024-06-23T18:33:54.7489161Z  * This intermediate representation is intended to be modified by the caller as
+2024-06-23T18:33:54.7489423Z  * described in the documentation of AVFilterGraphSegment and its children, and
+2024-06-23T18:33:54.7489604Z  * then applied to the graph either manually or with other
+2024-06-23T18:33:54.7489823Z  * avfilter_graph_segment_*() functions. See the documentation for
+2024-06-23T18:33:54.7490023Z  * avfilter_graph_segment_apply() for the canonical way to apply
+2024-06-23T18:33:54.7490244Z  * AVFilterGraphSegment.
+2024-06-23T18:33:54.7490332Z  *
+2024-06-23T18:33:54.7490598Z  * @param graph Filter graph the parsed segment is associated with. Will only be
+2024-06-23T18:33:54.7490827Z  *              used for logging and similar auxiliary purposes. The graph will
+2024-06-23T18:33:54.7491099Z  *              not be actually modified by this function - the parsing results
+2024-06-23T18:33:54.7491271Z  *              are instead stored in seg for further processing.
+2024-06-23T18:33:54.7491474Z  * @param graph_str a string describing the filtergraph segment
+2024-06-23T18:33:54.7491692Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7491995Z  * @param seg A pointer to the newly-created AVFilterGraphSegment is written
+2024-06-23T18:33:54.7492231Z  *            here on success. The graph segment is owned by the caller and must
+2024-06-23T18:33:54.7492451Z  *            be freed with avfilter_graph_segment_free() before graph itself is
+2024-06-23T18:33:54.7492539Z  *            freed.
+2024-06-23T18:33:54.7492620Z  *
+2024-06-23T18:33:54.7492772Z  * @retval "non-negative number" success
+2024-06-23T18:33:54.7492890Z  * @retval "negative error code" failure
+2024-06-23T18:33:54.7492973Z  */
+2024-06-23T18:33:54.7493233Z int avfilter_graph_segment_parse(AVFilterGraph *graph, const char *graph_str,
+2024-06-23T18:33:54.7493403Z                                  int flags, AVFilterGraphSegment **seg);
+2024-06-23T18:33:54.7493520Z 
+2024-06-23T18:33:54.7493596Z /**
+2024-06-23T18:33:54.7493742Z  * Create filters specified in a graph segment.
+2024-06-23T18:33:54.7493825Z  *
+2024-06-23T18:33:54.7494146Z  * Walk through the creation-pending AVFilterParams in the segment and create
+2024-06-23T18:33:54.7494253Z  * new filter instances for them.
+2024-06-23T18:33:54.7494553Z  * Creation-pending params are those where AVFilterParams.filter_name is
+2024-06-23T18:33:54.7494877Z  * non-NULL (and hence AVFilterParams.filter is NULL). All other AVFilterParams
+2024-06-23T18:33:54.7494978Z  * instances are ignored.
+2024-06-23T18:33:54.7495059Z  *
+2024-06-23T18:33:54.7495246Z  * For any filter created by this function, the corresponding
+2024-06-23T18:33:54.7495520Z  * AVFilterParams.filter is set to the newly-created filter context,
+2024-06-23T18:33:54.7495796Z  * AVFilterParams.filter_name and AVFilterParams.instance_name are freed and set
+2024-06-23T18:33:54.7495879Z  * to NULL.
+2024-06-23T18:33:54.7495964Z  *
+2024-06-23T18:33:54.7496106Z  * @param seg the filtergraph segment to process
+2024-06-23T18:33:54.7496326Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7496408Z  *
+2024-06-23T18:33:54.7496702Z  * @retval "non-negative number" Success, all creation-pending filters were
+2024-06-23T18:33:54.7496832Z  *                               successfully created
+2024-06-23T18:33:54.7497138Z  * @retval AVERROR_FILTER_NOT_FOUND some filter's name did not correspond to a
+2024-06-23T18:33:54.7497257Z  *                                  known filter
+2024-06-23T18:33:54.7497417Z  * @retval "another negative error code" other failures
+2024-06-23T18:33:54.7497500Z  *
+2024-06-23T18:33:54.7497742Z  * @note Calling this function multiple times is safe, as it is idempotent.
+2024-06-23T18:33:54.7497817Z  */
+2024-06-23T18:33:54.7498091Z int avfilter_graph_segment_create_filters(AVFilterGraphSegment *seg, int flags);
+2024-06-23T18:33:54.7498096Z 
+2024-06-23T18:33:54.7498172Z /**
+2024-06-23T18:33:54.7498378Z  * Apply parsed options to filter instances in a graph segment.
+2024-06-23T18:33:54.7498453Z  *
+2024-06-23T18:33:54.7498697Z  * Walk through all filter instances in the graph segment that have option
+2024-06-23T18:33:54.7498916Z  * dictionaries associated with them and apply those options with
+2024-06-23T18:33:54.7499137Z  * av_opt_set_dict2(..., AV_OPT_SEARCH_CHILDREN). AVFilterParams.opts is
+2024-06-23T18:33:54.7499382Z  * replaced by the dictionary output by av_opt_set_dict2(), which should be
+2024-06-23T18:33:54.7499681Z  * empty (NULL) if all options were successfully applied.
+2024-06-23T18:33:54.7499758Z  *
+2024-06-23T18:33:54.7500022Z  * If any options could not be found, this function will continue processing all
+2024-06-23T18:33:54.7500277Z  * other filters and finally return AVERROR_OPTION_NOT_FOUND (unless another
+2024-06-23T18:33:54.7500528Z  * error happens). The calling program may then deal with unapplied options as
+2024-06-23T18:33:54.7500614Z  * it wishes.
+2024-06-23T18:33:54.7500698Z  *
+2024-06-23T18:33:54.7501009Z  * Any creation-pending filters (see avfilter_graph_segment_create_filters())
+2024-06-23T18:33:54.7501276Z  * present in the segment will cause this function to fail. AVFilterParams with
+2024-06-23T18:33:54.7501432Z  * no associated filter context are simply skipped.
+2024-06-23T18:33:54.7501506Z  *
+2024-06-23T18:33:54.7501651Z  * @param seg the filtergraph segment to process
+2024-06-23T18:33:54.7501910Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7501993Z  *
+2024-06-23T18:33:54.7502354Z  * @retval "non-negative number" Success, all options were successfully applied.
+2024-06-23T18:33:54.7502703Z  * @retval AVERROR_OPTION_NOT_FOUND some options were not found in a filter
+2024-06-23T18:33:54.7502894Z  * @retval "another negative error code" other failures
+2024-06-23T18:33:54.7502978Z  *
+2024-06-23T18:33:54.7503218Z  * @note Calling this function multiple times is safe, as it is idempotent.
+2024-06-23T18:33:54.7503445Z  */
+2024-06-23T18:33:54.7503706Z int avfilter_graph_segment_apply_opts(AVFilterGraphSegment *seg, int flags);
+2024-06-23T18:33:54.7503712Z 
+2024-06-23T18:33:54.7503789Z /**
+2024-06-23T18:33:54.7503954Z  * Initialize all filter instances in a graph segment.
+2024-06-23T18:33:54.7504035Z  *
+2024-06-23T18:33:54.7504247Z  * Walk through all filter instances in the graph segment and call
+2024-06-23T18:33:54.7504494Z  * avfilter_init_dict(..., NULL) on those that have not been initialized yet.
+2024-06-23T18:33:54.7504569Z  *
+2024-06-23T18:33:54.7504884Z  * Any creation-pending filters (see avfilter_graph_segment_create_filters())
+2024-06-23T18:33:54.7505158Z  * present in the segment will cause this function to fail. AVFilterParams with
+2024-06-23T18:33:54.7505408Z  * no associated filter context or whose filter context is already initialized,
+2024-06-23T18:33:54.7505501Z  * are simply skipped.
+2024-06-23T18:33:54.7505582Z  *
+2024-06-23T18:33:54.7505721Z  * @param seg the filtergraph segment to process
+2024-06-23T18:33:54.7505948Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7506033Z  *
+2024-06-23T18:33:54.7506346Z  * @retval "non-negative number" Success, all filter instances were successfully
+2024-06-23T18:33:54.7506458Z  *                               initialized
+2024-06-23T18:33:54.7506904Z  * @retval "negative error code" failure
+2024-06-23T18:33:54.7506998Z  *
+2024-06-23T18:33:54.7507267Z  * @note Calling this function multiple times is safe, as it is idempotent.
+2024-06-23T18:33:54.7507350Z  */
+2024-06-23T18:33:54.7507592Z int avfilter_graph_segment_init(AVFilterGraphSegment *seg, int flags);
+2024-06-23T18:33:54.7507598Z 
+2024-06-23T18:33:54.7507677Z /**
+2024-06-23T18:33:54.7507787Z  * Link filters in a graph segment.
+2024-06-23T18:33:54.7507861Z  *
+2024-06-23T18:33:54.7508123Z  * Walk through all filter instances in the graph segment and try to link all
+2024-06-23T18:33:54.7508415Z  * unlinked input and output pads. Any creation-pending filters (see
+2024-06-23T18:33:54.7508656Z  * avfilter_graph_segment_create_filters()) present in the segment will cause
+2024-06-23T18:33:54.7508919Z  * this function to fail. Disabled filters and already linked pads are skipped.
+2024-06-23T18:33:54.7508994Z  *
+2024-06-23T18:33:54.7509249Z  * Every filter output pad that has a corresponding AVFilterPadParams with a
+2024-06-23T18:33:54.7509372Z  * non-NULL label is
+2024-06-23T18:33:54.7509617Z  * - linked to the input with the matching label, if one exists;
+2024-06-23T18:33:54.7509929Z  * - exported in the outputs linked list otherwise, with the label preserved.
+2024-06-23T18:33:54.7510198Z  * Unlabeled outputs are
+2024-06-23T18:33:54.7510495Z  * - linked to the first unlinked unlabeled input in the next non-disabled
+2024-06-23T18:33:54.7510619Z  *   filter in the chain, if one exists
+2024-06-23T18:33:54.7510872Z  * - exported in the ouputs linked list otherwise, with NULL label
+2024-06-23T18:33:54.7510947Z  *
+2024-06-23T18:33:54.7511191Z  * Similarly, unlinked input pads are exported in the inputs linked list.
+2024-06-23T18:33:54.7511272Z  *
+2024-06-23T18:33:54.7511415Z  * @param seg the filtergraph segment to process
+2024-06-23T18:33:54.7511643Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7511866Z  * @param[out] inputs  a linked list of all free (unlinked) inputs of the
+2024-06-23T18:33:54.7512060Z  *                     filters in this graph segment will be returned here. It
+2024-06-23T18:33:54.7512265Z  *                     is to be freed by the caller using avfilter_inout_free().
+2024-06-23T18:33:54.7512502Z  * @param[out] outputs a linked list of all free (unlinked) outputs of the
+2024-06-23T18:33:54.7512703Z  *                     filters in this graph segment will be returned here. It
+2024-06-23T18:33:54.7512903Z  *                     is to be freed by the caller using avfilter_inout_free().
+2024-06-23T18:33:54.7512977Z  *
+2024-06-23T18:33:54.7513136Z  * @retval "non-negative number" success
+2024-06-23T18:33:54.7513411Z  * @retval "negative error code" failure
+2024-06-23T18:33:54.7513487Z  *
+2024-06-23T18:33:54.7513748Z  * @note Calling this function multiple times is safe, as it is idempotent.
+2024-06-23T18:33:54.7513827Z  */
+2024-06-23T18:33:54.7514053Z int avfilter_graph_segment_link(AVFilterGraphSegment *seg, int flags,
+2024-06-23T18:33:54.7514194Z                                 AVFilterInOut **inputs,
+2024-06-23T18:33:54.7514328Z                                 AVFilterInOut **outputs);
+2024-06-23T18:33:54.7514334Z 
+2024-06-23T18:33:54.7514407Z /**
+2024-06-23T18:33:54.7514726Z  * Apply all filter/link descriptions from a graph segment to the associated filtergraph.
+2024-06-23T18:33:54.7514802Z  *
+2024-06-23T18:33:54.7515070Z  * This functions is currently equivalent to calling the following in sequence:
+2024-06-23T18:33:54.7515237Z  * - avfilter_graph_segment_create_filters();
+2024-06-23T18:33:54.7515393Z  * - avfilter_graph_segment_apply_opts();
+2024-06-23T18:33:54.7515535Z  * - avfilter_graph_segment_init();
+2024-06-23T18:33:54.7515674Z  * - avfilter_graph_segment_link();
+2024-06-23T18:33:54.7515909Z  * failing if any of them fails. This list may be extended in the future.
+2024-06-23T18:33:54.7515990Z  *
+2024-06-23T18:33:54.7516243Z  * Since the above functions are idempotent, the caller may call some of them
+2024-06-23T18:33:54.7516496Z  * manually, then do some custom processing on the filtergraph, then call this
+2024-06-23T18:33:54.7516602Z  * function to do the rest.
+2024-06-23T18:33:54.7516678Z  *
+2024-06-23T18:33:54.7516818Z  * @param seg the filtergraph segment to process
+2024-06-23T18:33:54.7517042Z  * @param flags reserved for future use, caller must set to 0 for now
+2024-06-23T18:33:54.7517227Z  * @param[out] inputs passed to avfilter_graph_segment_link()
+2024-06-23T18:33:54.7517414Z  * @param[out] outputs passed to avfilter_graph_segment_link()
+2024-06-23T18:33:54.7517496Z  *
+2024-06-23T18:33:54.7517646Z  * @retval "non-negative number" success
+2024-06-23T18:33:54.7517768Z  * @retval "negative error code" failure
+2024-06-23T18:33:54.7517845Z  *
+2024-06-23T18:33:54.7518086Z  * @note Calling this function multiple times is safe, as it is idempotent.
+2024-06-23T18:33:54.7518167Z  */
+2024-06-23T18:33:54.7518399Z int avfilter_graph_segment_apply(AVFilterGraphSegment *seg, int flags,
+2024-06-23T18:33:54.7518534Z                                  AVFilterInOut **inputs,
+2024-06-23T18:33:54.7518674Z                                  AVFilterInOut **outputs);
+2024-06-23T18:33:54.7518681Z 
+2024-06-23T18:33:54.7518755Z /**
+2024-06-23T18:33:54.7519015Z  * Free the provided AVFilterGraphSegment and everything associated with it.
+2024-06-23T18:33:54.7519225Z  *
+2024-06-23T18:33:54.7519493Z  * @param seg double pointer to the AVFilterGraphSegment to be freed. NULL will
+2024-06-23T18:33:54.7519669Z  * be written to this pointer on exit from this function.
+2024-06-23T18:33:54.7519750Z  *
+2024-06-23T18:33:54.7519829Z  * @note
+2024-06-23T18:33:54.7520101Z  * The filter contexts (AVFilterParams.filter) are owned by AVFilterGraph rather
+2024-06-23T18:33:54.7520274Z  * than AVFilterGraphSegment, so they are not freed.
+2024-06-23T18:33:54.7520351Z  */
+2024-06-23T18:33:54.7520559Z void avfilter_graph_segment_free(AVFilterGraphSegment **seg);
+2024-06-23T18:33:54.7520564Z 
+2024-06-23T18:33:54.7520638Z /**
+2024-06-23T18:33:54.7520785Z  * Send a command to one or more filter instances.
+2024-06-23T18:33:54.7520867Z  *
+2024-06-23T18:33:54.7520974Z  * @param graph  the filter graph
+2024-06-23T18:33:54.7521182Z  * @param target the filter(s) to which the command should be sent
+2024-06-23T18:33:54.7521307Z  *               "all" sends to all filters
+2024-06-23T18:33:54.7521488Z  *               otherwise it can be a filter or filter instance name
+2024-06-23T18:33:54.7521665Z  *               which will send the command to all matching filters.
+2024-06-23T18:33:54.7522011Z  * @param cmd    the command to send, for handling simplicity all commands must be alphanumeric only
+2024-06-23T18:33:54.7522140Z  * @param arg    the argument for the command
+2024-06-23T18:33:54.7522539Z  * @param res    a buffer with size res_size where the filter(s) can return a response.
+2024-06-23T18:33:54.7522615Z  *
+2024-06-23T18:33:54.7522760Z  * @returns >=0 on success otherwise an error code.
+2024-06-23T18:33:54.7522910Z  *              AVERROR(ENOSYS) on unsupported commands
+2024-06-23T18:33:54.7522986Z  */
+2024-06-23T18:33:54.7523512Z int avfilter_graph_send_command(AVFilterGraph *graph, const char *target, const char *cmd, const char *arg, char *res, int res_len, int flags);
+2024-06-23T18:33:54.7523522Z 
+2024-06-23T18:33:54.7523603Z /**
+2024-06-23T18:33:54.7523758Z  * Queue a command for one or more filter instances.
+2024-06-23T18:33:54.7523834Z  *
+2024-06-23T18:33:54.7523948Z  * @param graph  the filter graph
+2024-06-23T18:33:54.7524154Z  * @param target the filter(s) to which the command should be sent
+2024-06-23T18:33:54.7524267Z  *               "all" sends to all filters
+2024-06-23T18:33:54.7524455Z  *               otherwise it can be a filter or filter instance name
+2024-06-23T18:33:54.7524631Z  *               which will send the command to all matching filters.
+2024-06-23T18:33:54.7524973Z  * @param cmd    the command to sent, for handling simplicity all commands must be alphanumeric only
+2024-06-23T18:33:54.7525100Z  * @param arg    the argument for the command
+2024-06-23T18:33:54.7525319Z  * @param ts     time at which the command should be sent to the filter
+2024-06-23T18:33:54.7525400Z  *
+2024-06-23T18:33:54.7525649Z  * @note As this executes commands after this function returns, no return code
+2024-06-23T18:33:54.7525906Z  *       from the filter is provided, also AVFILTER_CMD_FLAG_ONE is not supported.
+2024-06-23T18:33:54.7525987Z  */
+2024-06-23T18:33:54.7526458Z int avfilter_graph_queue_command(AVFilterGraph *graph, const char *target, const char *cmd, const char *arg, int flags, double ts);
+2024-06-23T18:33:54.7526464Z 
+2024-06-23T18:33:54.7526468Z 
+2024-06-23T18:33:54.7526549Z /**
+2024-06-23T18:33:54.7526789Z  * Dump a graph into a human-readable string representation.
+2024-06-23T18:33:54.7526868Z  *
+2024-06-23T18:33:54.7526985Z  * @param graph    the graph to dump
+2024-06-23T18:33:54.7527152Z  * @param options  formatting options; currently ignored
+2024-06-23T18:33:54.7527360Z  * @return  a string, or NULL in case of memory allocation failure;
+2024-06-23T18:33:54.7527501Z  *          the string must be freed using av_free
+2024-06-23T18:33:54.7527575Z  */
+2024-06-23T18:33:54.7527805Z char *avfilter_graph_dump(AVFilterGraph *graph, const char *options);
+2024-06-23T18:33:54.7527810Z 
+2024-06-23T18:33:54.7528010Z /**
+2024-06-23T18:33:54.7528138Z  * Request a frame on the oldest sink link.
+2024-06-23T18:33:54.7528212Z  *
+2024-06-23T18:33:54.7528373Z  * If the request returns AVERROR_EOF, try the next.
+2024-06-23T18:33:54.7528447Z  *
+2024-06-23T18:33:54.7528693Z  * Note that this function is not meant to be the sole scheduling mechanism
+2024-06-23T18:33:54.7528951Z  * of a filtergraph, only a convenience function to help drain a filtergraph
+2024-06-23T18:33:54.7529095Z  * in a balanced way under normal circumstances.
+2024-06-23T18:33:54.7529177Z  *
+2024-06-23T18:33:54.7529411Z  * Also note that AVERROR_EOF does not mean that frames did not arrive on
+2024-06-23T18:33:54.7529531Z  * some of the sinks during the process.
+2024-06-23T18:33:54.7529740Z  * When there are multiple sink links, in case the requested link
+2024-06-23T18:33:54.7529945Z  * returns an EOF, this may cause a filter to flush pending frames
+2024-06-23T18:33:54.7530132Z  * which are sent to another sink link, although unrequested.
+2024-06-23T18:33:54.7530218Z  *
+2024-06-23T18:33:54.7530361Z  * @return  the return value of ff_request_frame(),
+2024-06-23T18:33:54.7530521Z  *          or AVERROR_EOF if all links returned AVERROR_EOF
+2024-06-23T18:33:54.7530601Z  */
+2024-06-23T18:33:54.7530774Z int avfilter_graph_request_oldest(AVFilterGraph *graph);
+2024-06-23T18:33:54.7530779Z 
+2024-06-23T18:33:54.7530857Z /**
+2024-06-23T18:33:54.7530943Z  * @}
+2024-06-23T18:33:54.7531017Z  */
+2024-06-23T18:33:54.7531131Z 
+2024-06-23T18:33:54.7531237Z #endif /* AVFILTER_AVFILTER_H */
