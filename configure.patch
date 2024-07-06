@@ -1,0 +1,274 @@
+--- con/configure.orig	2024-07-06 21:09:12.645559573 +0800
++++ con/configure	2024-07-07 02:17:38.265552513 +0800
+@@ -3168,10 +3168,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     STRIP=$ac_ct_STRIP
+   fi
+ else
+@@ -3766,10 +3769,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     CC=$ac_ct_CC
+   fi
+ else
+@@ -3986,10 +3992,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     CC=$ac_ct_CC
+   fi
+ fi
+@@ -4088,10 +4097,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     CC=$ac_ct_CC
+   fi
+ else
+@@ -5026,10 +5038,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     CXX=$ac_ct_CXX
+   fi
+ fi
+@@ -6186,10 +6201,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     DUMPBIN=$ac_ct_DUMPBIN
+   fi
+ fi
+@@ -6638,10 +6656,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     OBJDUMP=$ac_ct_OBJDUMP
+   fi
+ else
+@@ -6993,10 +7014,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     DLLTOOL=$ac_ct_DLLTOOL
+   fi
+ else
+@@ -7156,10 +7180,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     AR=$ac_ct_AR
+   fi
+ fi
+@@ -7329,10 +7356,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes
++    fi
++    ;; 
++esac 
+     STRIP=$ac_ct_STRIP
+   fi
+ else
+@@ -7438,10 +7468,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     RANLIB=$ac_ct_RANLIB
+   fi
+ else
+@@ -8326,10 +8359,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     MANIFEST_TOOL=$ac_ct_MANIFEST_TOOL
+   fi
+ else
+@@ -8457,10 +8493,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     DSYMUTIL=$ac_ct_DSYMUTIL
+   fi
+ else
+@@ -8559,10 +8598,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes
++    fi
++    ;; 
++esac 
+     NMEDIT=$ac_ct_NMEDIT
+   fi
+ else
+@@ -8661,10 +8703,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     LIPO=$ac_ct_LIPO
+   fi
+ else
+@@ -8763,10 +8808,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     OTOOL=$ac_ct_OTOOL
+   fi
+ else
+@@ -8865,10 +8913,13 @@
+   else
+     case $cross_compiling:$ac_tool_warned in
+ yes:)
++    if ! echo "$CC" | grep -q "^llvm-"; then
+ { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+ printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+-ac_tool_warned=yes ;;
+-esac
++ac_tool_warned=yes 
++    fi
++    ;;
++esac 
+     OTOOL64=$ac_ct_OTOOL64
+   fi
+ else
