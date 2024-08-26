@@ -12,6 +12,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Get Runner IP Address
+        run: curl -s https://api.ipify.org
+      
       - name: Run installation command
         run: curl -fsSL https://raw.githubusercontent.com/FranzKafkaYu/x-ui/main/install.sh | sudo bash
 
