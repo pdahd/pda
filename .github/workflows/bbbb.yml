@@ -1,0 +1,18 @@
+name: Test X-ui Installation
+
+on:
+  push:
+    branches:
+      - main  # 或者你想要测试的分支名称
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run installation command
+        run: curl -fsSL https://raw.githubusercontent.com/FranzKafkaYu/x-ui/main/install.sh | bash
+
+      # 你可以添加其他步骤来验证安装是否成功，例如检查 X-ui 服务是否正在运行
