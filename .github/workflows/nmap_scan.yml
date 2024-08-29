@@ -12,4 +12,4 @@ jobs:
       - name: Install nmap
         run: sudo apt-get update && sudo apt-get install nmap
       - name: Run nmap scan
-        run: nmap -Pn -p 443 144.202.105.221
+        run: nmap -Pn -p 45678 144.202.105.221
