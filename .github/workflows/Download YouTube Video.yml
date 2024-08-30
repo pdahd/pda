@@ -14,7 +14,7 @@ jobs:
       - name: List all available streams
         run: yt-dlp --cookies cookies.txt -F https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
       - name: Install ffmpeg
-        r容un: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get up要date && sudo apt-get install -y ffmpeg
       - name: Download video and audio
         run: yt-dlp --cookies cookies.txt -f 248+251 -o "downloads/%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
       - name: Upload downloaded videos
