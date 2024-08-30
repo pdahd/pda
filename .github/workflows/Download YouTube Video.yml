@@ -13,8 +13,8 @@ jobs:
         run: pip install yt-dlp
       - name: Download video
         run: |
-          yt-dlp --cookies cookies.txt -F 
-          yt-dlp --cookies cookies.txt -f bestvideo --output "downloads/%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
+          yt-dlp --cookies cookies.txt -F https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
+          yt-dlp --cookies cookies.txt -f bestvideo -o "downloads/%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
         with:
