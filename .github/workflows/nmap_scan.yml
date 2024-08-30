@@ -1,15 +1,20 @@
-name: Nmap Scan on Push
+name: Download YouTube Video
 
 on:
   push:
     branches: [main]  # 指定分支，可以修改为你的主分支
 
 jobs:
-  nmap_scan:
+  download_video:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install nmap
-        run: sudo apt-get update && sudo apt-get install nmap
-      - name: Run nmap scan
-        run: nmap -Pn -p 45678 144.202.105.221
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+      - name: Download video
+        run: yt-dlp -o "%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: downloaded-video
+          path: '*.mp4'  # 这里假设下载的视频格式为MP4，可以根据实际情况修改
