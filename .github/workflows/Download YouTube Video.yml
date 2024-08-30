@@ -9,15 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install ffmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install yt-dlp
         run: pip install yt-dlp
+      - name: List all available streams
+        run: yt-dlp --cookies cookies.txt -F https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
       - name: Download video and audio
-        run: |
-          yt-dlp --cookies cookies.txt -F https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
-          echo -e "\033[32m--------------------------------------------------------------------------------"
-          yt-dlp --cookies cookies.txt -f bestvideo+bestaudio -o "downloads/%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
+        run: yt-dlp --cookies cookies.txt -f bestvideo+bestaudio -o "downloads/%(title)s.%(ext)s" https://youtu.be/R6tDoo0hSOs?si=rwSyyr1WRLBDhBNJ
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
         with:
