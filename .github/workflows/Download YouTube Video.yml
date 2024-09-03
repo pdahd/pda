@@ -1,22 +1,30 @@
 name: Download YouTube Video
 
-on:
-  push:
-    branches: [main]
+on: [push]
 
 jobs:
   download_video:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Install yt-dlp
         run: pip install yt-dlp
+
       - name: List all available streams
-        run: yt-dlp --cookies cookies.txt -F https://youtu.be/c9qOqgcsNGs?si=xUMmyT-3W4gSI-RI
+        run: |
+          yt-dlp --cookies cookies.txt -F \
+          https://youtu.be/_GOk_etWsLE?si=Ot5P59cTOBrhDHa2
+
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Download video and audio
-        run: yt-dlp --cookies cookies.txt -f 315 -o "downloads/%(title)s.%(ext)s" https://youtu.be/c9qOqgcsNGs?si=xUMmyT-3W4gSI-RI
+        run: |
+          yt-dlp --cookies cookies.txt -f 315 \
+          -o "downloads/%(title)s.%(ext)s" \
+          https://youtu.be/_GOk_etWsLE?si=Ot5P59cTOBrhDHa2
+
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
         with:
