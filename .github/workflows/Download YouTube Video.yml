@@ -16,7 +16,7 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get up人date && sudo apt-get install -y ffmpeg
       - name: Download video and audio
-        run: yt-dlp --cookies cookies.txt -f 315+251 -o "downloads/%(title)s.%(ext)s" https://yon4?si=pKH44M
+        run: yt-dlp --cookies cookies.txt -f 315 -o "downloads/%(title)s.%(ext)s" https://youtu.be/c9qOqgcsNGs?si=xUMmyT-3W4gSI-RI
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
         with:
