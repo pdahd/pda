@@ -23,10 +23,12 @@ jobs:
         run: |
           yt-dlp --cookies cookies.txt -f 313 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo '--download-sections "*46-2:36"') \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo '--concurrent-fragments 10') \
           -o "downloads/%(title)s.%(ext)s" \
-          "https://youtu.be/znWFyjkGg38?si=0rp8LvaSjIBdj_yU"
+          https://youtu.be/znWFyjkGg38?si=0rp8LvaSjIBdj_yU
         env:
-          INCLUDE_SECTIONS: "false"  # 设为 "true" 启用下载时间段
+          INCLUDE_SECTIONS: "false"  # 设置为 "true" 启用下载片段时间段
+          ENABLE_MULTITHREAD: "true"  # 设置为 "true" 启用多线程下载，设置并发片段数为 10
 
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
