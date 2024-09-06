@@ -25,7 +25,7 @@ jobs:
 
           # 根据条件添加参数
           if [[ "$INCLUDE_SECTIONS" == "true" ]]; then
-            yt_dlp_args="--download-sections '5-2:36'"
+            yt_dlp_args="--download-sections 5-2:36"
           fi
 
           if [[ "$ENABLE_MULTITHREAD" == "true" ]]; then
