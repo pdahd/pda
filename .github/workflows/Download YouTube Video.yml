@@ -28,7 +28,7 @@ jobs:
           [[ "$ENABLE_MULTITHREAD" == "true" ]] && yt_dlp_args+=(--concurrent-fragments 10)
 
           # 添加输出和 URL
-          yt_dlp_args+=(-o "downloads/%(title)s.%(ext)s" "https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS")
+          yt_dlp_args+=(-o "downloads/%(title)s.%(ext)s" https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS)
 
           # 执行最终命令
           yt-dlp "${yt_dlp_args[@]}"
