@@ -22,7 +22,6 @@ jobs:
       - name: Download video and audio
         run: |
           yt-dlp --cookies cookies.txt -f 315+251 \
-          --download-sections "*46-2:36" \
           -o "downloads/%(title)s.%(ext)s" \
           https://youtu.be/5gVhxwrngRU?si=SVD-s3dpFQGgdmhx
 
