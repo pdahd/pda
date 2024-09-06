@@ -21,17 +21,11 @@ jobs:
 
       - name: Download video and audio
         run: |
-          yt_dlp_args=(--cookies cookies.txt -f 313)
-
-          # 动态添加参数
-          [[ "$INCLUDE_SECTIONS" == "true" ]] && yt_dlp_args+=(--download-sections *5-2:36)
-          [[ "$ENABLE_MULTITHREAD" == "true" ]] && yt_dlp_args+=(--concurrent-fragments 10)
-
-          # 添加输出和 URL
-          yt_dlp_args+=(-o "downloads/%(title)s.%(ext)s" https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS)
-
-          # 执行最终命令
-          yt-dlp "${yt_dlp_args[@]}"
+          yt-dlp --cookies cookies.txt -f 313 \
+          $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          -o "downloads/%(title)s.%(ext)s" \
+          https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS
         env:
           INCLUDE_SECTIONS: "true"  # "true"表示启用裁剪的指定时间段，设置"false"则表示禁用
           ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
