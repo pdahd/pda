@@ -21,14 +21,24 @@ jobs:
 
       - name: Download video and audio
         run: |
-          yt-dlp --cookies cookies.txt -f 313 \
-          $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections "*5-2:36") \
-          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          yt_dlp_args=""
+
+          # 根据条件添加参数
+          if [[ "$INCLUDE_SECTIONS" == "true" ]]; then
+            yt_dlp_args="--download-sections '*5-2:36'"
+          fi
+
+          if [[ "$ENABLE_MULTITHREAD" == "true" ]]; then
+            yt_dlp_args="$yt_dlp_args --concurrent-fragments 10"
+          fi
+
+          # 执行最终命令
+          yt-dlp --cookies cookies.txt -f 313 $yt_dlp_args \
           -o "downloads/%(title)s.%(ext)s" \
           https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS
         env:
-          INCLUDE_SECTIONS: "true"  # 启用时间段下载 "false"表示禁用
-          ENABLE_MULTITHREAD: "true"  # 启用多线程下载 "false"表示禁用
+          INCLUDE_SECTIONS: "true"  
+          ENABLE_MULTITHREAD: "true"
 
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
