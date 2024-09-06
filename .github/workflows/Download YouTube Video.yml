@@ -23,21 +23,16 @@ jobs:
         run: |
           yt_dlp_args=""
 
-          # 根据条件添加参数
-          if [[ "$INCLUDE_SECTIONS" == "true" ]]; then
-            yt_dlp_args="--download-sections *5-2:36"
-          fi
-
-          if [[ "$ENABLE_MULTITHREAD" == "true" ]]; then
-            yt_dlp_args="$yt_dlp_args --concurrent-fragments 10"
-          fi
+          # 动态添加参数
+          [[ "$INCLUDE_SECTIONS" == "true" ]] && yt_dlp_args+=" --download-sections *5-2:36"
+          [[ "$ENABLE_MULTITHREAD" == "true" ]] && yt_dlp_args+=" --concurrent-fragments 10"
 
           # 执行最终命令
           yt-dlp --cookies cookies.txt -f 313 $yt_dlp_args \
           -o "downloads/%(title)s.%(ext)s" \
           https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS
         env:
-          INCLUDE_SECTIONS: "true"  
+          INCLUDE_SECTIONS: "true"
           ENABLE_MULTITHREAD: "true"
 
       - name: Upload downloaded videos
