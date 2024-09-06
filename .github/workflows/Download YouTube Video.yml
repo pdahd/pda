@@ -24,7 +24,7 @@ jobs:
           yt-dlp --cookies cookies.txt -f 313 \
           # --download-sections "*46-2:36" \ 
           -o "downloads/%(title)s.%(ext)s" \
-          https://youtu.be/znWFyjkGg38?si=0rp8LvaSjIBdj_yU
+          "https://youtu.be/znWFyjkGg38?si=0rp8LvaSjIBdj_yU"
 
       - name: Upload downloaded videos
         uses: actions/upload-artifact@v4
