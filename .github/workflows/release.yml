@@ -9,21 +9,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+    - name: Download source code
+      run: |
+        wget https://github.com/peanut996/CloudflareWarpSpeedTest/archive/refs/tags/v1.5.3.tar.gz
+        tar -xzf v1.5.3.tar.gz
 
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
         go-version: '>=1.20'
 
+    - name: Change directory to source
+      run: cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
+
+    - name: Install dependencies
+      run: |
+        cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
+        go mod download
+
     - name: Build for armv7l
       run: |
+        cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
         GOARCH=arm GOARM=7 go build -o CloudflareWarpSpeedTest-armv7l
 
-    - name: Create release artifact
+    - name: Release artifact
       uses: softprops/action-gh-release@v1
       with:
-        files: CloudflareWarpSpeedTest-armv7l
+        files: CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-armv7l
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
