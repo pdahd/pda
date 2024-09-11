@@ -25,17 +25,17 @@ jobs:
 
     - name: Install dependencies
       run: |
-        cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
+        cd CloudflareWarpSpeedTest-1.5.3
         go mod download
 
     - name: Build for armv7l
       run: |
-        cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
+        cd CloudflareWarpSpeedTest-1.5.3
         GOARCH=arm GOARM=7 go build -o CloudflareWarpSpeedTest-armv7l
 
     - name: Release artifact
       uses: softprops/action-gh-release@v1
       with:
-        files: CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-armv7l
+        files: CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-armv7l
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
