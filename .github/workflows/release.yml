@@ -1,0 +1,45 @@
+name: Go Release
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download source code
+        uses: actions/download-artifact@v3
+        with:
+          name: CloudflareWarpSpeedTest-v1.5.3
+          path: ${{ github.workspace }}/source
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Build
+        run: |
+          cd ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3
+          GOOS=linux GOARCH=arm GOARM=7 go build -v -o CloudflareWarpSpeedTest ./...
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: CloudflareWarpSpeedTest-linux-armv7
+          path: ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
