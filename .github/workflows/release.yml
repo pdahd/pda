@@ -13,14 +13,15 @@ jobs:
       run: |
         wget https://github.com/peanut996/CloudflareWarpSpeedTest/archive/refs/tags/v1.5.3.tar.gz
         tar -xzf v1.5.3.tar.gz
+        ls -R  # 列出解压后的文件结构
 
     - name: Set up Go environment
       uses: actions/setup-go@v5
       with:
         go-version: '>=1.20'
 
-    - name: Change directory to source
-      run: cd CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest-1.5.3
+    - name: List files in current directory
+      run: ls -R CloudflareWarpSpeedTest-1.5.3
 
     - name: Install dependencies
       run: |
