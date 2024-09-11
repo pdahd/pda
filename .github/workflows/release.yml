@@ -15,10 +15,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download source code
-        uses: actions/download-artifact@v3
-        with:
-          name: CloudflareWarpSpeedTest-v1.5.3
-          path: ${{ github.workspace }}/source
+        run: |
+          mkdir -p source
+          curl -L https://github.com/peanut996/CloudflareWarpSpeedTest/archive/refs/tags/v1.5.3.tar.gz | tar -xz -C source --strip-components=1
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -27,19 +26,19 @@ jobs:
 
       - name: Build
         run: |
-          cd ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3
+          cd ${{ github.workspace }}/source
           GOOS=linux GOARCH=arm GOARM=7 go build -v -o CloudflareWarpSpeedTest ./...
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: CloudflareWarpSpeedTest-linux-armv7
-          path: ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest
+          path: ${{ github.workspace }}/source/CloudflareWarpSpeedTest
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ${{ github.workspace }}/source/CloudflareWarpSpeedTest-1.5.3/CloudflareWarpSpeedTest
+            ${{ github.workspace }}/source/CloudflareWarpSpeedTest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
