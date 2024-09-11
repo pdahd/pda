@@ -33,7 +33,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: CloudflareWarpSpeedTest-linux-armv7
-          path: ${{ github.workspace }}/source/CloudflareWarpSpeedTest
+          path: ${{ github.workspace }}/source 
 
       - name: Release
         uses: softprops/action-gh-release@v1
