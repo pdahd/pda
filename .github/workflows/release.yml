@@ -1,8 +1,8 @@
-name: Build for armv7l
+name: Release for armv7l
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build:
@@ -28,9 +28,13 @@ jobs:
     - name: Build for armv7l
       run: |
         GOARCH=arm GOARM=7 go build -o CloudflareWarpSpeedTest-armv7l
-    - name: Create release artifact
-      uses: softprops/action-gh-release@v1
-      with:
-        files: CloudflareWarpSpeedTest-armv7l
+    - name: Upload Release Asset
+      id: upload-release-asset 
+      uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./CloudflareWarpSpeedTest-armv7l
+        asset_name: CloudflareWarpSpeedTest-armv7l
+        asset_content_type: application/octet-stream
