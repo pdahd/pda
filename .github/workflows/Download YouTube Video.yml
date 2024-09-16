@@ -14,7 +14,7 @@ jobs:
       - name: List all available streams
         run: |
           yt-dlp --cookies cookies.txt -F \
-          https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS
+          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
@@ -25,9 +25,9 @@ jobs:
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
-          https://youtu.be/BLKE1KxZSv0?si=XeIWMnch2GlecBhS
+          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
         env:
-          INCLUDE_SECTIONS: "true"  # "true"表示启用裁剪的指定时间段，设置"false"则表示禁用
+          INCLUDE_SECTIONS: "false"  # "true"表示启用裁剪的指定时间段，设置"false"则表示禁用
           ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
 
       - name: Upload downloaded videos
