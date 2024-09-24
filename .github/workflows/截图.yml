@@ -1,0 +1,37 @@
+name: Get Video Screenshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Enter YouTube video URL'
+        required: true
+        default: 'https://youtu.be/sample_video'
+
+jobs:
+  get_screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp and ffmpeg
+        run: |
+          pip install yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Download first 30 seconds
+        run: |
+          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
+          --download-sections "*00:00-00:30" \
+          -o "screenshot.mp4" \
+          ${{ github.event.inputs.video_url }}
+      
+      - name: Capture screenshot at 30 seconds
+        run: ffmpeg -i screenshot.mp4 -ss 00:00:30 -vframes 1 screenshot.png
+
+      - name: Upload screenshot as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-screenshot
+          path: screenshot.png
