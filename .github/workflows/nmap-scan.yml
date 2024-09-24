@@ -2,6 +2,11 @@ name: Nmap Port Scan
 
 on:
   workflow_dispatch:  # 允许手动触发
+    inputs:
+      domain:
+        description: "Domain to scan"
+        required: true
+        default: "example.com"
 
 jobs:
   port-scan:
