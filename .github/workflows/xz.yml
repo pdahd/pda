@@ -52,7 +52,7 @@ jobs:
       - name: Download video and audio
         run: |
           # 初始化命令
-          CMD="yt-dlp --cookies cookies.txt -f 313"
+          CMD="yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]"
           
           # 根据输入添加截取时间段参数
           if [ "${{ github.event.inputs.enable_sections }}" == "true" ]; then
