@@ -23,6 +23,4 @@ jobs:
       - name: Scan for open ports
         run: |
           echo "Scanning open ports for domain: ${{ github.event.inputs.domain }}"
-          sudo apt-get update
-          sudo apt-get install -y nmap
           nmap -Pn ${{ github.event.inputs.domain }}
