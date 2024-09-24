@@ -1,0 +1,64 @@
+name: Download YouTube Video
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Enter YouTube video URL'
+        required: true
+        default: 'https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM'
+      enable_sections:
+        description: 'Enable video section trimming?'
+        required: true
+        type: choice
+        options: 
+          - 'false'
+          - 'true'
+        default: 'false'
+      enable_multithread:
+        description: 'Enable multi-threaded download?'
+        required: true
+        type: choice
+        options: 
+          - 'false'
+          - 'true'
+        default: 'false'
+      start_time:
+        description: 'Start time (if section trimming is enabled)'
+        required: false
+        default: '00:00:00'
+      end_time:
+        description: 'End time (if section trimming is enabled)'
+        required: false
+        default: '00:02:00'
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+
+      - name: List all available streams
+        run: |
+          yt-dlp -F ${{ github.event.inputs.video_url }}
+
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Download video and audio
+        run: |
+          yt-dlp \
+          $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+          $([[ "${{ github.event.inputs.enable_multithread }}" == "true" ]] && echo "--concurrent-fragments 10") \
+          -o "downloads/%(title)s.%(ext)s" \
+          ${{ github.event.inputs.video_url }}
+
+      - name: Upload downloaded videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-videos
+          path: downloads/**
