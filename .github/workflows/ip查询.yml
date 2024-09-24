@@ -1,0 +1,28 @@
+name: Nmap Port Scan
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: "Domain to scan"
+        required: true
+        default: "example.com"
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Resolve domain IP
+        run: |
+          echo "Querying IP for domain ${{ github.event.inputs.domain }}"
+          dig +short ${{ github.event.inputs.domain }}
+
+      - name: Scan for open ports
+        run: |
+          echo "Scanning open ports for domain: ${{ github.event.inputs.domain }}"
+          sudo apt-get update
+          sudo apt-get install -y nmap
+          nmap -Pn ${{ github.event.inputs.domain }}
