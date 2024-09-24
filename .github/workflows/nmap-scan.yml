@@ -1,0 +1,28 @@
+name: Nmap Port Scan
+
+on:
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  port-scan:
+    runs-on: ubuntu-latest  # 使用 Ubuntu 最新版本
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Install nmap
+      run: sudo apt-get update && sudo apt-get install -y nmap  # 安装 nmap
+
+    - name: Resolve domain IP
+      run: |
+        echo "Querying IP for domain ${{ github.event.inputs.domain }}"
+        dig +short ${{ github.event.inputs.domain }}
+      shell: bash
+
+    - name: Scan for open ports
+      run: |
+        DOMAIN=${{ github.event.inputs.domain }}
+        echo "Scanning open ports for domain: $DOMAIN"
+        nmap -p 1-65535 $DOMAIN
+      shell: bash
