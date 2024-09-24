@@ -25,7 +25,7 @@ jobs:
           # 动态获取文件名并下载视频（仅使用视频ID作为文件名）
           video_file="$(yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
           --download-sections "*00:00-00:30" \
-          -o '%(id)s.%(ext)s' \
+          -o 'downloads/%(id)s.%(ext)s' \
           ${{ github.event.inputs.video_url }})"
     
           # 使用 ffmpeg 截取 25 秒处的截图
