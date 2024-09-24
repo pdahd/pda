@@ -19,21 +19,19 @@ jobs:
         run: |
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
-
+      
       - name: Download first 30 seconds
         run: |
-          OUTPUT_FILE="downloads/video_with_audio.webm"
           yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
           --download-sections "*00:00-00:30" \
-          -o "$OUTPUT_FILE" \
+          -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
-          ls -lh downloads
       
       - name: Capture screenshot at 30 seconds
-        run: ffmpeg -i downloads/video_with_audio.webm -ss 00:00:30 -vframes 1 screenshot.png
+        run: ffmpeg -i video_with_audio.webm -ss 00:00:30 -vframes 1 screenshot.png
 
       - name: Upload screenshot as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: downloaded-videos
-          path: downloads/**
+          name: screenshot
+          path: screenshot.png
