@@ -24,13 +24,13 @@ on:
           - 'true'
         default: 'false'
       start_time:
-        description: 'Start time (if section trimming is enabled, format: 00:00:00)'
+        description: 'Start time (if section trimming is enabled)'
         required: false
-        default: '00:00:00'
+        default: '0:00'
       end_time:
-        description: 'End time (if section trimming is enabled, format: 00:02:00)'
+        description: 'End time (if section trimming is enabled)'
         required: false
-        default: '00:02:00'
+        default: '2:00'
 
 jobs:
   download_video:
@@ -51,25 +51,11 @@ jobs:
 
       - name: Download video and audio
         run: |
-          # 初始化命令
-          CMD="yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]"
-          
-          # 根据输入添加截取时间段参数
-          if [ "${{ github.event.inputs.enable_sections }}" == "true" ]; then
-            CMD="$CMD --download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}"
-          fi
-          
-          # 根据输入添加多线程下载参数
-          if [ "${{ github.event.inputs.enable_multithread }}" == "true" ]; then
-            CMD="$CMD --concurrent-fragments 10"
-          fi
-          
-          # 添加输出路径和视频链接
-          CMD="$CMD -o \"downloads/%(title)s.%(ext)s\" ${{ github.event.inputs.video_url }}"
-          
-          # 输出并执行命令
-          echo "Running command: $CMD"
-          eval $CMD
+          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm] \
+          $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+          $([[ "${{ github.event.inputs.enable_multithread }}" == "true" ]] && echo "--concurrent-fragments 10") \
+          -o "downloads/%(title)s.%(ext)s" \
+          ${{ github.event.inputs.video_url }}
         shell: bash
 
       - name: Upload downloaded videos
