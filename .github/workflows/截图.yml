@@ -22,16 +22,17 @@ jobs:
 
       - name: Download first 30 seconds
         run: |
+          OUTPUT_FILE="downloads/video_with_audio.mp4"
           yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
           --download-sections "*00:00-00:30" \
-          -o "screenshot.mp4" \
+          -o "$OUTPUT_FILE" \
           ${{ github.event.inputs.video_url }}
       
       - name: Capture screenshot at 30 seconds
-        run: ffmpeg -i screenshot.mp4 -ss 00:00:30 -vframes 1 screenshot.png
+        run: ffmpeg -i downloads/video_with_audio.mp4 -ss 00:00:30 -vframes 1 screenshot.png
 
       - name: Upload screenshot as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: video-screenshot
-          path: screenshot.png
+          name: downloaded-videos
+          path: downloads/**
