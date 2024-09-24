@@ -1,0 +1,24 @@
+name: Nmap Scan Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Target domain to scan'
+        required: true
+        default: 'kuaishou.com'
+
+jobs:
+  nmap_scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Nmap
+        run: sudo apt-get update && sudo apt-get install -y nmap
+
+      - name: Run Nmap on all detected IPs
+        run: |
+          # Fetch the IP addresses of the domain
+          ips=$(dig +short ${{ github.event.inputs.target }} | tr '\n' ' ')
+          echo "Detected IP addresses: $ips"
+          # Scan all detected IP addresses for all open ports
+          sudo nmap -Pn $ips
