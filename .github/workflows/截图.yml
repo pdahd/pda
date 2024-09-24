@@ -30,6 +30,9 @@ jobs:
       - name: Capture screenshot at 30 seconds
         run: ffmpeg -i video_with_audio.webm -ss 00:00:30 -vframes 1 screenshot.png
 
+      - name: Show current directory
+        run: pwd
+      
       - name: List files after screenshot
         run: ls -lh
       
