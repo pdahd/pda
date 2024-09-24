@@ -27,6 +27,7 @@ jobs:
           --download-sections "*00:00-00:30" \
           -o "$OUTPUT_FILE" \
           ${{ github.event.inputs.video_url }}
+          ls -lh downloads
       
       - name: Capture screenshot at 30 seconds
         run: ffmpeg -i downloads/video_with_audio.mp4 -ss 00:00:30 -vframes 1 screenshot.png
