@@ -26,11 +26,11 @@ on:
       start_time:
         description: 'Start time (if section trimming is enabled)'
         required: false
-        default: '00:00:00'
+        default: '00:00'
       end_time:
         description: 'End time (if section trimming is enabled)'
         required: false
-        default: '00:02:00'
+        default: '02:00'
 
 jobs:
   download_video:
