@@ -22,19 +22,13 @@ jobs:
       
       - name: Download first 30 seconds and capture screenshot
         run: |
-          # 下载视频，并只使用ID作为文件名
+          video_file="$(yt-dlp --get-filename --cookies cookies.txt -o '%(id)s.%(ext)s' ${{ github.event.inputs.video_url }})"
           yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
           --download-sections "*00:00-00:30" \
           -o '%(id)s.%(ext)s' \
           ${{ github.event.inputs.video_url }}
-
-          # 获取下载的视频文件名
-          video_file="$(yt-dlp --get-filename --cookies cookies.txt -o '%(id)s.%(ext)s' ${{ github.event.inputs.video_url }})"
-
-          # 使用 ffmpeg 从下载的视频文件中截取 25 秒处的截图
           ffmpeg -i "$video_file" -ss 00:00:25 -vframes 1 screenshot.png
 
-      
       - name: Upload screenshot as artifact
         uses: actions/upload-artifact@v4
         with:
