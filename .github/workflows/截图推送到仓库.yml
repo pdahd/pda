@@ -7,6 +7,22 @@ on:
         description: 'Enter YouTube video URL'
         required: true
         default: 'https://youtu.be/sample_video'
+      enable_sections:
+        description: 'Enable video section trimming?'
+        required: true
+        type: choice
+        options: 
+          - 'false'
+          - 'true'
+        default: 'false'
+      start_time:
+        description: 'Start time (if section trimming is enabled)'
+        required: false
+        default: '0:00'
+      end_time:
+        description: 'End time (if section trimming is enabled)'
+        required: false
+        default: '2:00'
 
 jobs:
   get_screenshot:
@@ -23,7 +39,7 @@ jobs:
       - name: Download first 30 seconds
         run: |
           yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
-          --download-sections *01:09-02:10 \
+          $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
       
