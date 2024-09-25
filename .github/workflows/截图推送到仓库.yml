@@ -1,0 +1,50 @@
+name: Get Video Screenshot
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Enter YouTube video URL'
+        required: true
+        default: 'https://youtu.be/sample_video'
+
+jobs:
+  get_screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp and ffmpeg
+        run: |
+          pip install yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+      
+      - name: Download first 30 seconds
+        run: |
+          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
+          --download-sections "*00:00-00:30" \
+          -o "video_with_audio.webm" \
+          ${{ github.event.inputs.video_url }}
+      
+      - name: Capture screenshot at 30 seconds
+        run: ffmpeg -i video_with_audio.webm -ss 00:00:25 -vframes 1 screenshot.png
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push screenshot to repository
+        run: |
+          git add screenshot.png
+          git commit -m "Add screenshot from YouTube video"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show current directory
+        run: pwd
+      
+      - name: List files after screenshot
+        run: ls -lh
