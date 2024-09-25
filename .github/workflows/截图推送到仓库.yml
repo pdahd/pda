@@ -23,12 +23,12 @@ jobs:
       - name: Download first 30 seconds
         run: |
           yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
-          --download-sections "*00:00-00:30" \
+          --download-sections "*01:09-end" \
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
       
       - name: Capture screenshot at 30 seconds
-        run: ffmpeg -i video_with_audio.webm -ss 00:00:25 -vframes 1 screenshot.png
+        run: ffmpeg -i video_with_audio.webm -ss 00:00:03 -vframes 1 screenshot.png
 
       - name: Configure Git
         run: |
