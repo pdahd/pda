@@ -44,7 +44,7 @@ jobs:
           ${{ github.event.inputs.video_url }}
       
       - name: Capture screenshot at 30 seconds
-        run: ffmpeg -i video_with_audio.webm -ss 00:00:03 -vframes 1 -y screenshot.png
+        run: ffmpeg -i video_with_audio.webm -ss 7 -vframes 1 -y screenshot.png
 
       - name: Configure Git
         run: |
