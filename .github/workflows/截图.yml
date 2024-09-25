@@ -20,22 +20,12 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
       
-      - name: Download first 30 seconds and capture screenshot
+      - name: Download and capture screenshot
         run: |
-          # 使用临时文件存储下载的视频
-          temp_video=$(mktemp).webm
-    
-          # 下载视频到临时文件并限制为前30秒
-          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
-          --download-sections "*00:00-00:30" \
-          -o "$temp_video" \
-          ${{ github.event.inputs.video_url }}
-    
-          # 截取视频中的截图（25秒处）
-          ffmpeg -i "$temp_video" -ss 00:00:25 -vframes 1 screenshot.png
-    
-          # 下载完成后删除临时文件
-          rm "$temp_video"
+          video_file="$(yt-dlp --cookies cookies.txt --get-filename -o '%(id)s.%(ext)s' ${{ github.event.inputs.video_url }})"
+          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio --download-sections "*00:00-00:30" \
+          -o '%(id)s.%(ext)s' ${{ github.event.inputs.video_url }}
+          ffmpeg -i "$video_file" -ss 00:00:25 -vframes 1 screenshot.png
 
       - name: Upload screenshot as artifact
         uses: actions/upload-artifact@v4
