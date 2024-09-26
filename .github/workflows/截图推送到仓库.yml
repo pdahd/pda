@@ -24,21 +24,21 @@ on:
         required: false
         default: '2:00'
       upload_artifact:
-        description: 'Upload the downloaded video as an artifact?'
+        description: 'Do you want to upload the downloaded video as an artifact?'
         required: true
         type: choice
-        options: 
-          - 'yes'
-          - 'no'
-        default: 'yes'
+        options:
+          - 'Yes'
+          - 'No'
+        default: 'Yes'
       view_screenshot:
-        description: 'View video screenshot?'
+        description: 'Do you want to see the video screenshot?'
         required: true
         type: choice
-        options: 
-          - 'yes'
-          - 'no'
-        default: 'no'
+        options:
+          - 'Yes'
+          - 'No'
+        default: 'No'
 
 jobs:
   get_screenshot:
@@ -59,8 +59,8 @@ jobs:
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
 
-      - name: Upload video as artifact (if chosen)
-        if: ${{ github.event.inputs.upload_artifact == 'yes' }}
+      - name: Upload screenshot as artifact
+        if: ${{ github.event.inputs.upload_artifact == 'Yes' }}
         uses: actions/upload-artifact@v4
         with:
           name: video
@@ -68,9 +68,15 @@ jobs:
       
       - name: Capture screenshot at 30 seconds
         run: ffmpeg -i video_with_audio.webm -ss 11 -vframes 1 -y screenshot.png
-
-      - name: Commit and push screenshot to repository (if chosen)
-        if: ${{ github.event.inputs.view_screenshot == 'yes' }}
+      
+      - name: Configure Git
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Commit and push screenshot to repository
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
         run: |
           git add screenshot.png 
           git commit -a -m "Add screenshot from YouTube video"
@@ -78,6 +84,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Notify user about screenshot location (if chosen)
-        if: ${{ github.event.inputs.view_screenshot == 'yes' }}
-        run: echo "Screenshot available in the root directory of the repository."
+      - name: Screenshot Info
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
+        run: echo "Screenshot saved to repository root as 'screenshot.png'."
