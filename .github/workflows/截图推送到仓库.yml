@@ -59,7 +59,9 @@ on:
           - 'No'
         default: 'No'
       media_quality:
-        description: 'Select media quality to download'
+        description: |
+          'Choose your desired media type and quality: 
+          Select from the dropdown to download the best available video, audio, or both, at your preferred resolution.'
         required: true
         type: choice
         options:
