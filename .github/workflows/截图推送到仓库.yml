@@ -41,6 +41,15 @@ on:
           - 'Yes'
           - 'No'
         default: 'No'
+      media_type:
+        description: 'Select media type to download'
+        required: true
+        type: choice
+        options:
+          - 'Video Only'
+          - 'Audio Only'
+          - 'Video + Audio'
+        default: 'Video + Audio'
 
 jobs:
   get_screenshot:
@@ -54,33 +63,35 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
       
-      - name: Download first 30 seconds
+      - name: Download selected media type
         run: |
-          yt-dlp --cookies cookies.txt -f bestvideo[ext=webm]+bestaudio \
+          yt-dlp --cookies cookies.txt \
+          $([[ "${{ github.event.inputs.media_type }}" == "Video + Audio" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
+          $([[ "${{ github.event.inputs.media_type }}" == "Video Only" ]] && echo "-f bestvideo[ext=webm]") \
+          $([[ "${{ github.event.inputs.media_type }}" == "Audio Only" ]] && echo "-f bestaudio") \
           $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
-          -o "video_with_audio.webm" \
+          -o "media_output.webm" \
           ${{ github.event.inputs.video_url }}
 
       - name: Upload video as artifact
         if: ${{ github.event.inputs.upload_artifact == 'Yes' }}
         uses: actions/upload-artifact@v4
         with:
-          name: video
-          path: video_with_audio.webm
+          name: media
+          path: media_output.webm
       
-      # 只有在用户选择 "Yes" 的情况下执行下面的步骤
       - name: Capture screenshot at 30 seconds
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
-        run: ffmpeg -i video_with_audio.webm -ss 11 -vframes 1 -y screenshot.png
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
+        run: ffmpeg -i media_output.webm -ss 11 -vframes 1 -y screenshot.png
 
       - name: Configure Git
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Commit and push screenshot to repository
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
         run: |
           git add screenshot.png 
           git commit -a -m "Add screenshot from YouTube video"
