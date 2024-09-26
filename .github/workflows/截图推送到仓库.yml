@@ -41,15 +41,19 @@ on:
           - 'Yes'
           - 'No'
         default: 'No'
-      media_type:
-        description: 'Select media type to download'
+      media_quality:
+        description: 'Select media quality to download'
         required: true
         type: choice
         options:
-          - 'Video Only'
-          - 'Audio Only'
-          - 'Video + Audio'
-        default: 'Video + Audio'
+          - 'Highest Video + Audio (Best Overall Quality)'
+          - 'Highest Video Resolution Only'
+          - 'Suitable for 4K Video + Best Audio'
+          - 'Suitable for 4K Video Only'
+          - '1080p Video Only (Best Quality)'
+          - '1080p Video + Best Audio'
+          - 'Highest Quality Audio Only'
+        default: 'Suitable for 4K Video + Best Audio'
 
 jobs:
   get_screenshot:
@@ -66,9 +70,13 @@ jobs:
       - name: Download selected media type
         run: |
           yt-dlp --cookies cookies.txt \
-          $([[ "${{ github.event.inputs.media_type }}" == "Video + Audio" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
-          $([[ "${{ github.event.inputs.media_type }}" == "Video Only" ]] && echo "-f bestvideo[ext=webm]") \
-          $([[ "${{ github.event.inputs.media_type }}" == "Audio Only" ]] && echo "-f bestaudio") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "Highest Video + Audio (Best Overall Quality)" ]] && echo "-f bestvideo+bestaudio") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "Highest Video Resolution Only" ]] && echo "-f bestvideo") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "Suitable for 4K Video + Best Audio" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "Suitable for 4K Video Only" ]] && echo "-f bestvideo[ext=webm]") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "1080p Video Only (Best Quality)" ]] && echo "-f bestvideo[height<=1080]") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "1080p Video + Best Audio" ]] && echo "-f bestvideo[height<=1080]+bestaudio") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "Highest Quality Audio Only" ]] && echo "-f bestaudio") \
           $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           -o "media_output.webm" \
           ${{ github.event.inputs.video_url }}
@@ -81,17 +89,17 @@ jobs:
           path: media_output.webm
       
       - name: Capture screenshot at 30 seconds
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
         run: ffmpeg -i media_output.webm -ss 11 -vframes 1 -y screenshot.png
 
       - name: Configure Git
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Commit and push screenshot to repository
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_type != 'Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
         run: |
           git add screenshot.png 
           git commit -a -m "Add screenshot from YouTube video"
