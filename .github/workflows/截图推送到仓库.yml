@@ -43,6 +43,12 @@ jobs:
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
       
+      - name: Upload screenshot as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: video
+          path: video_with_audio.webm
+      
       - name: Capture screenshot at 30 seconds
         run: ffmpeg -i video_with_audio.webm -ss 10.2 -vframes 1 -y screenshot.png
 
@@ -58,9 +64,3 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload screenshot as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: video
-          path: video_with_audio.webm
