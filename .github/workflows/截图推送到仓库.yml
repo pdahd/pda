@@ -32,7 +32,9 @@ on:
           - 'No'
         default: 'Yes'
       view_screenshot:
-        description: 'Do you want to see the video screenshot?'
+        description: |
+          'Do you want to see the video screenshot? 
+          If "Yes", screenshot saved to repository root as "screenshot.png".'
         required: true
         type: choice
         options:
@@ -59,16 +61,18 @@ jobs:
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
 
-      - name: Upload screenshot as artifact
+      - name: Upload video as artifact
         if: ${{ github.event.inputs.upload_artifact == 'Yes' }}
         uses: actions/upload-artifact@v4
         with:
           name: video
           path: video_with_audio.webm
       
+      # 只有在用户选择 "Yes" 的情况下执行下面的步骤
       - name: Capture screenshot at 30 seconds
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
         run: ffmpeg -i video_with_audio.webm -ss 11 -vframes 1 -y screenshot.png
-      
+
       - name: Configure Git
         if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
         run: |
@@ -83,7 +87,3 @@ jobs:
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Screenshot Info
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' }}
-        run: echo "Screenshot saved to repository root as 'screenshot.png'."
