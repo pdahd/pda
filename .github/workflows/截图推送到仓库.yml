@@ -23,6 +23,22 @@ on:
         description: 'End time (if section trimming is enabled)'
         required: false
         default: '2:00'
+      upload_artifact:
+        description: 'Upload the downloaded video as an artifact?'
+        required: true
+        type: choice
+        options: 
+          - 'yes'
+          - 'no'
+        default: 'yes'
+      view_screenshot:
+        description: 'View video screenshot?'
+        required: true
+        type: choice
+        options: 
+          - 'yes'
+          - 'no'
+        default: 'no'
 
 jobs:
   get_screenshot:
@@ -42,8 +58,9 @@ jobs:
           $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           -o "video_with_audio.webm" \
           ${{ github.event.inputs.video_url }}
-      
-      - name: Upload screenshot as artifact
+
+      - name: Upload video as artifact (if chosen)
+        if: ${{ github.event.inputs.upload_artifact == 'yes' }}
         uses: actions/upload-artifact@v4
         with:
           name: video
@@ -52,15 +69,15 @@ jobs:
       - name: Capture screenshot at 30 seconds
         run: ffmpeg -i video_with_audio.webm -ss 11 -vframes 1 -y screenshot.png
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Commit and push screenshot to repository
+      - name: Commit and push screenshot to repository (if chosen)
+        if: ${{ github.event.inputs.view_screenshot == 'yes' }}
         run: |
           git add screenshot.png 
-          git commit -m "Add screenshot from YouTube video"
+          git commit -a -m "Add screenshot from YouTube video"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify user about screenshot location (if chosen)
+        if: ${{ github.event.inputs.view_screenshot == 'yes' }}
+        run: echo "Screenshot available in the root directory of the repository."
