@@ -59,8 +59,8 @@ jobs:
 
       - name: Commit and push screenshot to repository
         run: |
-          git add screenshot.png video_with_audio.webm
-          git commit -m "Add screenshot from YouTube video"
+          git add screenshot.png 
+          git commit -a -m "Add screenshot from YouTube video"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
