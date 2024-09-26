@@ -50,7 +50,7 @@ jobs:
           path: video_with_audio.webm
       
       - name: Capture screenshot at 30 seconds
-        run: ffmpeg -i video_with_audio.webm -ss 10.2 -vframes 1 -y screenshot.png
+        run: ffmpeg -i video_with_audio.webm -ss 11 -vframes 1 -y screenshot.png
 
       - name: Configure Git
         run: |
@@ -59,7 +59,7 @@ jobs:
 
       - name: Commit and push screenshot to repository
         run: |
-          git add --intent-to-add screenshot.png 
+          git add screenshot.png video_with_audio.webm
           git commit -m "Add screenshot from YouTube video"
           git push
         env:
