@@ -146,7 +146,7 @@ jobs:
       - name: Commit and push screenshot to repository
         if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
         run: |
-          git add screenshot.png 
+          git add --intent-to-add screenshot.png
           git commit -m "Add screenshot from YouTube video"
           git push
         env:
