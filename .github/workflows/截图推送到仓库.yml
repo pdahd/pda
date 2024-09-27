@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: '🔗 Enter YouTube video URL 🖋'
+        description: '🖋 Enter YouTube video URL 🔗'
         required: true
         default: 'https://youtu.be/sample_video'
       enable_sections:
