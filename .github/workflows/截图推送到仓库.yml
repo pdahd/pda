@@ -114,6 +114,7 @@ jobs:
 
           echo "$COOKIES" > cookies.txt
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }}
+          echo -e "\e[32m-------------------------------------------------------------------------------------------\e[0m"
           yt-dlp --cookies cookies.txt --concurrent-fragments 10 \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video + Audio" ]] && echo "-f bestvideo+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video Only" ]] && echo "-f bestvideo") \
