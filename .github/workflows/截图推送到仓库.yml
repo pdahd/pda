@@ -9,12 +9,12 @@ on:
         default: 'https://youtu.be/sample_video'
       enable_sections:
         description: |
-          ✂️ Enable video section trimming? Use Yes to enable, No to disable. (Time format examples: 
-          📖 For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
+          ⏰ Enable video section trimming? ⚙️ Use Yes to enable, No to disable. (Time format examples: 
+          For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
           For videos less than 1 hour: 0:00 or 00:00, and with milliseconds: 
           0:00.0 or 00:00.0. You can also use seconds, e.g., 25 or 125.5. 
           Start and end times can use different formats, e.g., start time: 2:03, 
-          end time: 140.)🖋
+          end time: 140.)📖
         required: false
         type: choice
         options: 
@@ -24,7 +24,7 @@ on:
       start_time:
         description: |
           ⏰ Start time (if section trimming is enabled).
-          ⚙️ Note: ffmpeg's ability to accurately trim depends on the position of keyframes.
+          ✂️ Note: ffmpeg's ability to accurately trim depends on the position of keyframes.
           The actual start of the clip might differ from the time you enter if it's not near 
           a keyframe. The closer the start time is to a keyframe, the more accurate the trim.
           If you enter "0", the trimming will start from the first frame and be fully accurate.
@@ -33,7 +33,7 @@ on:
       end_time:
         description: |
           ⏰ End time (if section trimming is enabled).
-          ⚙️ Note: End time cannot exceed or equal the original video length.
+          ✂️ Note: End time cannot exceed or equal the original video length.
           If you need to use the original video length, set the end time to 
           0.5 seconds shorter than the actual video length. For example, if the original video 
           length is 3 minutes, set the end time to 2:59.5. This accounts for slight differences 
@@ -51,7 +51,7 @@ on:
       view_screenshot:
         description: |
           🖼️ Do you want to see the video screenshot? 
-          If "Yes", screenshot saved to repository root as "screenshot.png".🔎
+          If "Yes", 🔎screenshot saved to repository root as "screenshot.png".
         required: false
         type: choice
         options:
@@ -59,7 +59,7 @@ on:
           - 'No'
         default: 'No'
       media_quality:
-        description: '▶️ Select media quality option 📽️ (Note: Options with both video and audio will merge the streams into a complete video with sound. "Video Only" means no audio will be included, and "Audio Only" means no video will be included. All media will be downloaded in the best available quality).🎵'
+        description: '▶️ Select media quality option 🎞 (Note: Options with both video and audio will merge the streams into a complete video with sound. "Video Only" means no audio will be included, and "Audio Only" means no video will be included. All media will be downloaded in the best available quality).🎵'
         required: false
         type: choice
         options:
