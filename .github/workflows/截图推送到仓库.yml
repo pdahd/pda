@@ -9,8 +9,8 @@ on:
         default: 'https://youtu.be/sample_video'
       enable_sections:
         description: |
-          ⏰ Enable video section trimming? 🔧 Use Yes to enable, No to disable. (Time format examples: 
-          📖For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
+          ✂️ Enable video section trimming? 🔧 Use Yes to enable, No to disable. (Time format examples: 
+          ⏰ For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
           For videos less than 1 hour: 0:00 or 00:00, and with milliseconds: 
           0:00.0 or 00:00.0. You can also use seconds, e.g., 25 or 125.5. 
           Start and end times can use different formats, e.g., start time: 2:03, 
@@ -23,8 +23,8 @@ on:
         default: 'No'
       start_time:
         description: |
-          ⏰ Start time (if section trimming is enabled).
-          ✂️ Note: ffmpeg's ability to accurately trim depends on the position of keyframes.
+          ✂️ Start time (if section trimming is enabled).
+          ⏰ Note: ffmpeg's ability to accurately trim depends on the position of keyframes.
           The actual start of the clip might differ from the time you enter if it's not near 
           a keyframe. The closer the start time is to a keyframe, the more accurate the trim.
           If you enter "0", the trimming will start from the first frame and be fully accurate.
@@ -32,8 +32,8 @@ on:
         default: '0:00'
       end_time:
         description: |
-          ⏰ End time (if section trimming is enabled).
-          ✂️ Note: End time cannot exceed or equal the original video length.
+          ✂️ End time (if section trimming is enabled).
+          ⏰ Note: End time cannot exceed or equal the original video length.
           If you need to use the original video length, set the end time to 
           0.5 seconds shorter than the actual video length. For example, if the original video 
           length is 3 minutes, set the end time to 2:59.5. This accounts for slight differences 
