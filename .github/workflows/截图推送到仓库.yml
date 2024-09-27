@@ -9,8 +9,8 @@ on:
         default: 'https://youtu.be/sample_video'
       enable_sections:
         description: |
-          '✂️ Enable video section trimming? Use Yes to enable, No to disable. 🖋 (Time format examples: 
-          For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
+          '✂️ Enable video section trimming? Use Yes to enable, No to disable. (Time format examples: 
+          🖋 For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
           For videos less than 1 hour: 0:00 or 00:00, and with milliseconds: 
           0:00.0 or 00:00.0. You can also use seconds, e.g., 25 or 125.5. 
           Start and end times can use different formats, e.g., start time: 2:03, 
