@@ -67,8 +67,12 @@ on:
           - '8K Video Only'
           - '4K Video + Audio (default)'
           - '4K Video Only'
+          - '1440p Video + Audio'
+          - '1440p Video Only'
           - '1080p Video + Audio'
           - '1080p Video Only'
+          - '720p Video + Audio'
+          - '720p Video Only'
           - 'Audio Only'
         default: '4K Video + Audio (default)'
 
@@ -120,8 +124,12 @@ jobs:
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video Only" ]] && echo "-f bestvideo") \
           $([[ "${{ github.event.inputs.media_quality }}" == "4K Video + Audio (default)" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "4K Video Only" ]] && echo "-f bestvideo[ext=webm]") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "1440p Video Only" ]] && echo "-f bestvideo[height<=1440]") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "1440p Video + Audio" ]] && echo "-f bestvideo[height<=1440]+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "1080p Video Only" ]] && echo "-f bestvideo[height<=1080]") \
           $([[ "${{ github.event.inputs.media_quality }}" == "1080p Video + Audio" ]] && echo "-f bestvideo[height<=1080]+bestaudio") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "720p Video Only" ]] && echo "-f bestvideo[height<=720]") \
+          $([[ "${{ github.event.inputs.media_quality }}" == "720p Video + Audio" ]] && echo "-f bestvideo[height<=720]+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "Audio Only" ]] && echo "-f bestaudio") \
           $([[ "${{ github.event.inputs.enable_sections }}" == "Yes" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           -o "media_output.webm" \
@@ -134,9 +142,9 @@ jobs:
           name: media
           path: media_output.webm
       
-      - name: Capture screenshot at 30 seconds
+      - name: Capture screenshot at 5 seconds
         if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
-        run: ffmpeg -i media_output.webm -ss 11 -vframes 1 -y screenshot.png
+        run: ffmpeg -i media_output.webm -ss 5 -vframes 1 -y screenshot.png
 
       - name: Configure Git
         if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
