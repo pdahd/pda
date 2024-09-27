@@ -114,7 +114,7 @@ jobs:
 
           echo "$COOKIES" > cookies.txt
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }}
-          yt-dlp --cookies cookies.txt \
+          yt-dlp --cookies cookies.txt --concurrent-fragments 10 \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video + Audio" ]] && echo "-f bestvideo+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video Only" ]] && echo "-f bestvideo") \
           $([[ "${{ github.event.inputs.media_quality }}" == "4K Video + Audio (default)" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
@@ -134,20 +134,20 @@ jobs:
           path: media_output.webm
       
       - name: Capture screenshot at 30 seconds
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
         run: ffmpeg -i media_output.webm -ss 11 -vframes 1 -y screenshot.png
 
       - name: Configure Git
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Commit and push screenshot to repository
-        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Highest Quality Audio Only' }}
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
         run: |
           git add screenshot.png 
-          git commit -a -m "Add screenshot from YouTube video"
+          git commit -m "Add screenshot from YouTube video"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
