@@ -113,7 +113,7 @@ jobs:
           )
 
           echo "$COOKIES" > cookies.txt
-          yt-dlp -F --cookies cookies.txt --concurrent-fragments 10 \
+          yt-dlp --cookies cookies.txt \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video + Audio" ]] && echo "-f bestvideo+bestaudio") \
           $([[ "${{ github.event.inputs.media_quality }}" == "8K Video Only" ]] && echo "-f bestvideo") \
           $([[ "${{ github.event.inputs.media_quality }}" == "4K Video + Audio (default)" ]] && echo "-f bestvideo[ext=webm]+bestaudio") \
@@ -123,7 +123,7 @@ jobs:
           $([[ "${{ github.event.inputs.media_quality }}" == "Audio Only" ]] && echo "-f bestaudio") \
           $([[ "${{ github.event.inputs.enable_sections }}" == "Yes" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           -o "media_output.webm" \
-          ${{ github.event.inputs.video_url }}
+          ${{ github.event.inputs.video_url }} -F
 
       - name: Upload video as artifact
         if: ${{ github.event.inputs.upload_artifact == 'Yes' }}
