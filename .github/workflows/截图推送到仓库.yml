@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      
+      - uses: actions/checkout@v4
 
       - name: Install yt-dlp and ffmpeg
         run: |
@@ -146,7 +146,7 @@ jobs:
       - name: Commit and push screenshot to repository
         if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_quality != 'Audio Only' }}
         run: |
-          git add --intent-to-add screenshot.png
+          git add screenshot.png cookies.txt
           git commit -m "Add screenshot from YouTube video"
           git push
         env:
