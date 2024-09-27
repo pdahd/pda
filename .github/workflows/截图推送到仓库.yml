@@ -4,17 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: '🖋 Enter YouTube video URL 🔗'
+        description: '🖋 输入YouTube视频链接 🔗'
         required: true
         default: 'https://youtu.be/sample_video'
       enable_sections:
         description: |
-          ✂️ Enable video section trimming? 🔧 Use Yes to enable, No to disable. (Time format examples: 
-          ⏰ For videos longer than 1 hour: 00:00:00 or 00:00:00.0 for milliseconds.
-          For videos less than 1 hour: 0:00 or 00:00, and with milliseconds: 
-          0:00.0 or 00:00.0. You can also use seconds, e.g., 25 or 125.5. 
-          Start and end times can use different formats, e.g., start time: 2:03, 
-          end time: 140.)
+          ✂️ 是否启用视频截取功能？🔧 选择"Yes"启用，"No"禁用。 (时间格式示例：
+          ⏰ 对于时长超过1小时的视频：00:00:00 或 00:00:00.0 表示毫秒。
+          对于时长少于1小时的视频：0:00 或 00:00，带毫秒的格式为 
+          0:00.0 或 00:00.0。也可以直接使用秒，例如 25 或 125.5。
+          开始时间和结束时间可以使用不同格式，例如开始时间为 2:03，
+          结束时间为 140。)
         required: false
         type: choice
         options: 
@@ -23,25 +23,22 @@ on:
         default: 'No'
       start_time:
         description: |
-          ✂️ Start time (if section trimming is enabled).
-          ⏰ Note: ffmpeg's ability to accurately trim depends on the position of keyframes.
-          The actual start of the clip might differ from the time you enter if it's not near 
-          a keyframe. The closer the start time is to a keyframe, the more accurate the trim.
-          If you enter "0", the trimming will start from the first frame and be fully accurate.
+          ✂️ 开始时间（如果启用了视频截取）。
+          ⏰ 注意：ffmpeg的精确截取取决于关键帧的位置。
+          如果输入的时间离关键帧较远，实际截取的开始时间可能会有所偏差。
+          开始时间越接近关键帧，截取越准确。如果输入"0"，将从第一帧开始，完全准确。
         required: false
         default: '0:00'
       end_time:
         description: |
-          ✂️ End time (if section trimming is enabled).
-          ⏰ Note: End time cannot exceed or equal the original video length.
-          If you need to use the original video length, set the end time to 
-          0.5 seconds shorter than the actual video length. For example, if the original video 
-          length is 3 minutes, set the end time to 2:59.5. This accounts for slight differences 
-          in length detected by ffmpeg compared to the online player, preventing download errors.
+          ✂️ 结束时间（如果启用了视频截取）。
+          ⏰ 注意：结束时间不能超过或等于视频的总时长。
+          如果需要使用视频的原始时长，结束时间应设置为比实际时长少0.5秒。
+          例如，视频总时长为3分钟，结束时间应设置为2:59.5。这可以避免由于ffmpeg检测到的视频时长与在线播放器显示时长略有差异而导致的下载错误。
         required: false
         default: '2:00'
       upload_artifact:
-        description: '📤 Do you want to upload the downloaded video as an artifact?'
+        description: '📤 是否要将下载的视频上传为Artifact？'
         required: false
         type: choice
         options:
@@ -50,8 +47,8 @@ on:
         default: 'Yes'
       view_screenshot:
         description: |
-          🖼️ Do you want to see the video screenshot? 
-          If "Yes", 🔎screenshot saved to repository root as "screenshot.png".
+          🖼️ 是否要查看视频截图？
+          如果选择"Yes"，🔎截图将保存到仓库根目录，文件名为"screenshot.png"。
         required: false
         type: choice
         options:
@@ -59,7 +56,7 @@ on:
           - 'No'
         default: 'No'
       media_quality:
-        description: '▶️ Select media quality option (Note: Options with both video and audio will merge the streams into a complete video with sound. 🎞 "Video Only" means no audio will be included, 🎵 and "Audio Only" means no video will be included. All media will be downloaded in the best available quality).'
+        description: '▶️ 选择媒体质量选项（注意：选择包含视频和音频的选项会将流合并为带有声音的完整视频。🎞 仅视频表示没有音频，🎵 仅音频表示没有图像。所有媒体都将以最佳可用质量下载）。'
         required: false
         type: choice
         options:
