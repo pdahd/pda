@@ -110,9 +110,15 @@ jobs:
             echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
           fi
       
-      - name: 下载视频和音频
+      - name: 检查变量值
         run: |
           echo "Video Stream ID: $VIDEO_STREAM_ID"
+          echo "Audio Stream ID: $AUDIO_STREAM_ID"
+          yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" -o "downloads/audio_only.%(ext)s" https://youtu.be/YFrc4d2kNOM?si=44Ytxj8kB6xW3h5h
+      
+      - name: 下载视频和音频
+        run: |
+          eeeecho "Video Stream ID: $VIDEO_STREAM_ID"
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
             # 下载视频 + 音频并进行合并
