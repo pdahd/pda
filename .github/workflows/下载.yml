@@ -112,6 +112,7 @@ jobs:
       
       - name: 下载视频和音频
         run: |
+          echo "Media choice: $MEDIA_CHOICE"
           echo "Video Stream ID: $VIDEO_STREAM_ID"
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
