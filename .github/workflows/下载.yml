@@ -114,7 +114,7 @@ jobs:
         run: |
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
             # 下载视频 + 音频并进行合并
-            yt-dlp --cookies cookies.txt -f $VIDEO_STREAM_ID+$AUDIO_STREAM_ID --concurrent-fragments 10 \
+            yt-dlp --cookies cookies.txt -f "${VIDEO_STREAM_ID}+${AUDIO_STREAM_ID}" --concurrent-fragments 10 \
             $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
           elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
