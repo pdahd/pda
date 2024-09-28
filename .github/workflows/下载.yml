@@ -1,4 +1,4 @@
-name: 下载测试
+name: youtube
 
 on:
   workflow_dispatch:
@@ -103,6 +103,12 @@ jobs:
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
           fi
       
+      - name: 获取下载文件的路径
+        run: |
+          FILE_PATH=$(ls downloads/*)
+          echo "下载的文件路径: $FILE_PATH"
+          echo "FILE_PATH=$FILE_PATH" >> $GITHUB_ENV
+      
       - name: Upload screenshot as artifact
         uses: actions/upload-artifact@v4
         with:
@@ -110,7 +116,7 @@ jobs:
           path: downloads/**
       
       - name: Capture screenshot at 5 seconds
-        run: ffmpeg -i downloads/** -ss 5 -vframes 1 -y screenshot.png
+        run: ffmpeg -i ${{ env.FILE_PATH }} -ss 5 -vframes 1 -y screenshot.png
 
       - name: Configure Git
         run: |
