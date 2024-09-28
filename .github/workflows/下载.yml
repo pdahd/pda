@@ -112,6 +112,8 @@ jobs:
       
       - name: 下载视频和音频
         run: |
+          echo "Video Stream ID: $VIDEO_STREAM_ID"
+          echo "Audio Stream ID: $AUDIO_STREAM_ID"
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
             # 下载视频 + 音频并进行合并
             yt-dlp --cookies cookies.txt -f "${VIDEO_STREAM_ID}+${AUDIO_STREAM_ID}" --concurrent-fragments 10 \
@@ -128,8 +130,8 @@ jobs:
             $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
           fi
-            echo "Video Stream ID: $VIDEO_STREAM_ID"
-            echo "Audio Stream ID: $AUDIO_STREAM_ID"
+          echo "Video Stream ID: $VIDEO_STREAM_ID"
+          echo "Audio Stream ID: $AUDIO_STREAM_ID"
       
       - name: 获取下载文件的路径
         run: |
