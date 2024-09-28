@@ -128,6 +128,8 @@ jobs:
             $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
           fi
+            echo "Video Stream ID: $VIDEO_STREAM_ID"
+            echo "Audio Stream ID: $AUDIO_STREAM_ID"
       
       - name: 获取下载文件的路径
         run: |
