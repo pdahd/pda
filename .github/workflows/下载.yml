@@ -1,0 +1,125 @@
+name: 下载测试
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Enter YouTube video URL'
+        required: true
+        default: 'https://youtu.be/sample_video'
+      media_choice:
+        description: '📺 选择媒体类型 (视频、音频或视频+音频)'
+        required: true
+        type: choice
+        options:
+          - '720p'
+          - '1080p'
+          - '1440p'
+          - '4K'
+          - '8K'
+          - '720p + 音频'
+          - '1080p + 音频'
+          - '4K + 音频'
+          - '8K + 音频'
+          - '只有音频'
+        default: '1080p + 音频'
+      enable_sections:
+        description: 'Enable video section trimming?'
+        required: false
+        type: choice
+        options: 
+          - 'false'
+          - 'true'
+        default: 'false'
+      start_time:
+        description: 'Start time (if section trimming is enabled)'
+        required: false
+        default: '0:00'
+      end_time:
+        description: 'End time (if section trimming is enabled)'
+        required: false
+        default: '2:00'
+
+jobs:
+  get_screenshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp and ffmpeg
+        run: |
+          pip install yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+      
+      - name: 获取视频和音频流编号
+        run: |
+          yt-dlp -F ${{ github.event.inputs.video_url }} > formats.txt
+
+          # 解析用户选择的媒体类型
+          MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
+
+          if [[ "$MEDIA_CHOICE" == *"+ 音频"* ]]; then
+            # 选择视频分辨率部分
+            RES=$(echo "$MEDIA_CHOICE" | sed 's/ + 音频//')
+            VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            # 选择最大文件的音频流
+            AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "选定视频流编号: $VIDEO_STREAM_ID"
+            echo "选定音频流编号: $AUDIO_STREAM_ID"
+            echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
+            echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+
+          elif [[ "$MEDIA_CHOICE" == "只有音频" ]]; then
+            # 只选择音频流
+            AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "选定音频流编号: $AUDIO_STREAM_ID"
+            echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+
+          else
+            # 只选择视频流
+            RES=$MEDIA_CHOICE
+            VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "选定视频流编号: $VIDEO_STREAM_ID"
+            echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
+          fi
+      
+      - name: 下载视频和音频
+        run: |
+          if [[ "$MEDIA_CHOICE" == *"+ 音频"* ]]; then
+            # 下载视频 + 音频并进行合并
+            yt-dlp --cookies cookies.txt -f $VIDEO_STREAM_ID+$AUDIO_STREAM_ID \
+            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          elif [[ "$MEDIA_CHOICE" == "只有音频" ]]; then
+            # 下载音频
+            yt-dlp --cookies cookies.txt -f $AUDIO_STREAM_ID \
+            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          else
+            # 只下载视频
+            yt-dlp --cookies cookies.txt -f $VIDEO_STREAM_ID \
+            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          fi
+      
+      - name: Upload screenshot as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-videos
+          path: downloads/**
+      
+      - name: Capture screenshot at 5 seconds
+        run: ffmpeg -i downloads/** -ss 5 -vframes 1 -y screenshot.png
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push screenshot to repository
+        run: |
+          git add screenshot.png 
+          git commit -a -m "Add screenshot from YouTube video"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
