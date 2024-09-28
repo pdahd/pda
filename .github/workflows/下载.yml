@@ -110,34 +110,20 @@ jobs:
             echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
           fi
       
-      - name: 检查变量值
-        run: |
-          echo "Video Stream ID: $VIDEO_STREAM_ID"
-          echo "Audio Stream ID: $AUDIO_STREAM_ID"
-          yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" -o "downloads/audio_only.%(ext)s" https://youtu.be/YFrc4d2kNOM?si=44Ytxj8kB6xW3h5h
-      
       - name: 下载视频和音频
         run: |
-          eeeecho "Video Stream ID: $VIDEO_STREAM_ID"
-          echo "Audio Stream ID: $AUDIO_STREAM_ID"
-          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
-            # 下载视频 + 音频并进行合并
-            yt-dlp --cookies cookies.txt -f "${VIDEO_STREAM_ID}+${AUDIO_STREAM_ID}" --concurrent-fragments 10 \
-            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
-            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
-            # 下载音频
-            yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
-            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
-            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          else
-            # 只下载视频
-            yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID" --concurrent-fragments 10 \
-            $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
-            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          fi
           echo "Video Stream ID: $VIDEO_STREAM_ID"
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+            yt-dlp --cookies cookies.txt -f "${VIDEO_STREAM_ID}+${AUDIO_STREAM_ID}" --concurrent-fragments 10 \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+            yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          else
+            yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID" --concurrent-fragments 10 \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          fi
       
       - name: 获取下载文件的路径
         run: |
