@@ -17,12 +17,12 @@ on:
           - '1440p'
           - '4K'
           - '8K'
-          - '720p + 音频'
-          - '1080p + 音频'
-          - '4K + 音频'
-          - '8K + 音频'
-          - '只有音频'
-        default: '1080p + 音频'
+          - '720p + Audio'
+          - '1080p + Audio'
+          - '4K + Audio'
+          - '8K + Audio'
+          - 'Audio Only'
+        default: '1080p + Audio'
       enable_sections:
         description: 'Enable video section trimming?'
         required: false
@@ -93,14 +93,14 @@ jobs:
           # 解析用户选择的媒体类型
           MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
 
-          if [[ "$MEDIA_CHOICE" == *"+ 音频"* ]]; then
-            RES=$(echo "$MEDIA_CHOICE" | sed 's/ + 音频//')
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+            RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
             VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
 
-          elif [[ "$MEDIA_CHOICE" == "只有音频" ]]; then
+          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
 
@@ -112,12 +112,12 @@ jobs:
       
       - name: 下载视频和音频
         run: |
-          if [[ "$MEDIA_CHOICE" == *"+ 音频"* ]]; then
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
             # 下载视频 + 音频并进行合并
             yt-dlp --cookies cookies.txt -f $VIDEO_STREAM_ID+$AUDIO_STREAM_ID \
             $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          elif [[ "$MEDIA_CHOICE" == "只有音频" ]]; then
+          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
             # 下载音频
             yt-dlp --cookies cookies.txt -f $AUDIO_STREAM_ID \
             $([[ "${{ github.event.inputs.enable_sections }}" == "true" ]] && echo "--download-sections *${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
