@@ -8,7 +8,7 @@ on:
         required: true
         default: 'https://youtu.be/sample_video'
       media_choice:
-        description: '📺 选择媒体类型 (视频、音频或视频+音频)'
+        description: '选择媒体类型 (视频、音频或视频+音频)'
         required: true
         type: choice
         options:
@@ -39,6 +39,16 @@ on:
         description: 'End time (if section trimming is enabled)'
         required: false
         default: '2:00'
+      view_screenshot:
+        description: |
+          是否要查看视频截图？
+          如果选择"Yes"，截图将保存到仓库根目录，文件名为"screenshot.png"。
+        required: false
+        type: choice
+        options:
+          - 'Yes'
+          - 'No'
+        default: 'No'
 
 jobs:
   get_screenshot:
@@ -54,7 +64,7 @@ jobs:
       
       - name: 获取视频和音频流编号
         run: |
-          yt-dlp -F ${{ github.event.inputs.video_url }} > formats.txt
+          yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
 
           # 解析用户选择的媒体类型
           MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
@@ -116,6 +126,7 @@ jobs:
           path: downloads/**
       
       - name: Capture screenshot at 5 seconds
+        if: ${{ github.event.inputs.view_screenshot == 'Yes' && github.event.inputs.media_choice != '只有音频' }}
         run: ffmpeg -i ${{ env.FILE_PATH }} -ss 5 -vframes 1 -y screenshot.png
 
       - name: Configure Git
