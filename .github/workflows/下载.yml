@@ -106,7 +106,6 @@ jobs:
 
           elif [[ "$MEDIA_CHOICE" == "只有音频" ]]; then
             # 只选择音频流
-            RES=$MEDIA_CHOICE
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             echo "选定音频流编号: $AUDIO_STREAM_ID"
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
