@@ -4,13 +4,17 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: 'Enter YouTube video URL'
+        description: '输入YouTube视频链接'
         required: true
         default: 'https://youtu.be/sample_video'
       enable_matrix:
         description: '是否启用矩阵作业'
         required: true
-        default: false
+        type: choice
+        options:
+          - 'Yes'
+          - 'No'
+        default: 'No'
       media_choices:
         description: '启用矩阵作业时选择多个媒体类型 (用逗号分隔，例如: 720p, 1080p + Audio, 1440p)'
         required: false
@@ -51,7 +55,7 @@ jobs:
       - name: 获取视频和音频流编号
         run: |
           # 根据用户选择启用矩阵或传统模式
-          if [[ "${{ github.event.inputs.enable_matrix }}" == "true" ]]; then
+          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
             MEDIA_CHOICE="${{ matrix.media_choice }}"
           else
             MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
