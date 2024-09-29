@@ -117,6 +117,12 @@ jobs:
           
           # 处理文件路径，确保写入环境变量时格式正确
           IFS=$'\n' read -rd '' -a FILE_ARRAY <<< "$FILE_PATH"
+          FILE_PATH_STRING=""
           for file in "${FILE_ARRAY[@]}"; do
-            echo "FILE_PATH=$file" >> $GITHUB_ENV
+            FILE_PATH_STRING+="$file,"
           done
+
+          # 移除最后一个逗号
+          FILE_PATH_STRING=${FILE_PATH_STRING%,}
+          
+          echo "FILE_PATH=$FILE_PATH_STRING" >> $GITHUB_ENV
