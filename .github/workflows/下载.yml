@@ -120,24 +120,7 @@ jobs:
           
           # 打印调试信息，确认文件路径数组内容
           echo "调试：文件路径数组"
-          for file in "${FILE_ARRAY[@]}"; do
-            echo "$file"
+          for index in "${!FILE_ARRAY[@]}"; do
+            echo "$index: ${FILE_ARRAY[$index]}"
+            echo "FILE_PATH_$index=${FILE_ARRAY[$index]}" >> $GITHUB_ENV
           done
-          
-          FILE_PATH_STRING=""
-          for file in "${FILE_ARRAY[@]}"; do
-            FILE_PATH_STRING+="$file,"
-          done
-          
-          # 移除最后一个逗号
-          FILE_PATH_STRING=${FILE_PATH_STRING%,}
-          
-          # 修正输出，移除所有多余的空格和换行符
-          FILE_PATH_STRING=$(echo $FILE_PATH_STRING | tr -d '\n' | tr -d ' ')
-          
-          # 导出环境变量
-          export FILE_PATH=$FILE_PATH_STRING
-          
-          # 检查写入的环境变量
-          echo "调试：检查导出的 FILE_PATH 环境变量"
-          echo "最终导出的 FILE_PATH=$FILE_PATH"
