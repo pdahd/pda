@@ -92,35 +92,25 @@ jobs:
             AUDIO_ONLY_STREAM_ID_VAR="AUDIO_ONLY_STREAM_ID_${index}"
             VIDEO_ONLY_STREAM_ID_VAR="VIDEO_ONLY_STREAM_ID_${index}"
 
-            TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+            TIMESTAMP=$(date +"%H%M%S")
             
             if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
               yt-dlp --cookies cookies.txt \
               -f "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" \
-              --concurrent-fragments 10 -o "downloads/%(id)s_${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
             elif [[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]]; then
               yt-dlp --cookies cookies.txt \
               -f "${!AUDIO_ONLY_STREAM_ID_VAR}" \
-              --concurrent-fragments 10 -o "downloads/%(id)s_${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
             elif [[ -n "${!VIDEO_ONLY_STREAM_ID_VAR}" ]]; then
               yt-dlp --cookies cookies.txt \
               -f "${!VIDEO_ONLY_STREAM_ID_VAR}" \
-              --concurrent-fragments 10 -o "downloads/%(id)s_${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
             fi
           done
       
       - name: 获取下载文件的路径
         run: |
-          # 获取下载的文件路径
           FILE_PATH=$(ls downloads/*)
           echo "下载的文件路径: $FILE_PATH"
-          
-          # 处理文件路径，确保格式正确
-          IFS=$'\n' read -rd '' -a FILE_ARRAY <<< "$FILE_PATH"
-          
-          # 打印调试信息，确认文件路径数组内容
-          echo "调试：文件路径数组"
-          for index in "${!FILE_ARRAY[@]}"; do
-            echo "$index: ${FILE_ARRAY[$index]}"
-            echo "FILE_PATH_$index=${FILE_ARRAY[$index]}" >> $GITHUB_ENV
-          done
+          echo "FILE_PATH=$FILE_PATH" >> $GITHUB_ENV
