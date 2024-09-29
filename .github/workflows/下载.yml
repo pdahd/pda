@@ -41,12 +41,21 @@ jobs:
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
           MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
 
+          # 如果用户选择了视频+音频
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
             RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
             VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+          # 如果用户选择了仅音频
+          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+            AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+          # 如果用户选择了仅视频
+          else
+            VIDEO_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
           fi
 
       - name: 下载视频和音频
@@ -54,8 +63,16 @@ jobs:
           echo "Video Stream ID: $VIDEO_STREAM_ID"
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
           
-          yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID+$AUDIO_STREAM_ID" --concurrent-fragments 10 \
-            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+            yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID+$AUDIO_STREAM_ID" --concurrent-fragments 10 \
+              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+            yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
+              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          else
+            yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID" --concurrent-fragments 10 \
+              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          fi
         env:
           VIDEO_STREAM_ID: ${{ env.VIDEO_STREAM_ID }}
           AUDIO_STREAM_ID: ${{ env.AUDIO_STREAM_ID }}
