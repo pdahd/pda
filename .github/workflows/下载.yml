@@ -111,6 +111,12 @@ jobs:
       
       - name: 获取下载文件的路径
         run: |
+          # 获取下载的文件路径
           FILE_PATH=$(ls downloads/*)
           echo "下载的文件路径: $FILE_PATH"
-          echo "FILE_PATH=$FILE_PATH" >> $GITHUB_ENV
+          
+          # 处理文件路径，确保写入环境变量时格式正确
+          IFS=$'\n' read -rd '' -a FILE_ARRAY <<< "$FILE_PATH"
+          for file in "${FILE_ARRAY[@]}"; do
+            echo "FILE_PATH=$file" >> $GITHUB_ENV
+          done
