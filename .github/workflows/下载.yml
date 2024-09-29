@@ -85,15 +85,28 @@ jobs:
       
       - name: 下载视频和音频
         run: |
-          for index in $(seq 0 $((${#media_array[@]} - 1))); do
+          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          for index in "${!media_array[@]}"; do
             VIDEO_STREAM_ID_VAR="VIDEO_STREAM_ID_${index}"
             AUDIO_STREAM_ID_VAR="AUDIO_STREAM_ID_${index}"
             AUDIO_ONLY_STREAM_ID_VAR="AUDIO_ONLY_STREAM_ID_${index}"
             VIDEO_ONLY_STREAM_ID_VAR="VIDEO_ONLY_STREAM_ID_${index}"
-            yt-dlp --cookies cookies.txt \
-            -f "$([[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]] && echo "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" || ([[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]] && echo "${!AUDIO_ONLY_STREAM_ID_VAR}" || echo "${!VIDEO_ONLY_STREAM_ID_VAR"}))" \
-            --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+
+            if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
+              yt-dlp --cookies cookies.txt \
+              -f "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]]; then
+              yt-dlp --cookies cookies.txt \
+              -f "${!AUDIO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!VIDEO_ONLY_STREAM_ID_VAR}" ]]; then
+              yt-dlp --cookies cookies.txt \
+              -f "${!VIDEO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+            fi
           done
+      
       - name: 获取下载文件的路径
         run: |
           FILE_PATH=$(ls downloads/*)
