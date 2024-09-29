@@ -60,7 +60,7 @@ jobs:
 
       - name: 下载视频和音频
         run: |
-          yt-dlp --cookies cookies.txt -f "$C" --concurrent-fragments 10 \
+          yt-dlp --cookies cookies.txt -f "$A+$B" --concurrent-fragments 10 \
           -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
           
       - name: 获取下载文件的路径
