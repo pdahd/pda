@@ -23,7 +23,6 @@ on:
           - '8K + Audio'
           - 'Audio Only'
         default: '1080p + Audio'
-     
 
 jobs:
   get_screenshot:
@@ -37,31 +36,26 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
       
-      - name: 获取视频和音频流编号
+      - name: 获取音频流编号
         run: |
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
-
           # 解析用户选择的媒体类型
           MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
-
           if [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
           fi
-      
-      - name: 下载视频和音频
+
+      - name: 下载音频
         run: |
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
-         
-          if [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
-             yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
-             -o "downloads/%(id)s.%(ext)s" https://youtu.be/YFrc4d2kNOM?si=44Ytxj8kB6xW3h5h
-          fi
-      
+          yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+        env:
+          AUDIO_STREAM_ID: ${{ env.AUDIO_STREAM_ID }}
+
       - name: 获取下载文件的路径
         run: |
           FILE_PATH=$(ls downloads/*)
           echo "下载的文件路径: $FILE_PATH"
           echo "FILE_PATH=$FILE_PATH" >> $GITHUB_ENV
-      
-     
