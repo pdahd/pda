@@ -19,6 +19,7 @@ on:
           - '8K'
           - '720p + Audio'
           - '1080p + Audio'
+          - '1440p + Audio'
           - '4K + Audio'
           - '8K + Audio'
           - 'Audio Only'
