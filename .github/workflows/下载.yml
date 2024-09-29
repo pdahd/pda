@@ -132,6 +132,9 @@ jobs:
           # 移除最后一个逗号
           FILE_PATH_STRING=${FILE_PATH_STRING%,}
           
+          # 修正输出，移除所有多余的空格和换行符
+          FILE_PATH_STRING=$(echo $FILE_PATH_STRING | tr -d '\n' | tr -d ' ')
+          
           echo "FILE_PATH=$FILE_PATH_STRING" >> $GITHUB_ENV
 
           # 检查写入的环境变量
