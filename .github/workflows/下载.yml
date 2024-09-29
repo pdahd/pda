@@ -25,7 +25,7 @@ on:
         default: '1080p + Audio'
 
 jobs:
-  get_screenshot:
+  get_media:
     runs-on: ubuntu-latest
 
     steps:
@@ -36,22 +36,28 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
       
-      - name: 获取音频流编号
+      - name: 获取视频和音频流编号
         run: |
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
-          # 解析用户选择的媒体类型
           MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
-          if [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+            RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
+            VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
             AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+            echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
             echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
           fi
 
-      - name: 下载音频
+      - name: 下载视频和音频
         run: |
+          echo "Video Stream ID: $VIDEO_STREAM_ID"
           echo "Audio Stream ID: $AUDIO_STREAM_ID"
-          yt-dlp --cookies cookies.txt -f "$AUDIO_STREAM_ID" --concurrent-fragments 10 \
+          
+          yt-dlp --cookies cookies.txt -f "$VIDEO_STREAM_ID+$AUDIO_STREAM_ID" --concurrent-fragments 10 \
             -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
         env:
+          VIDEO_STREAM_ID: ${{ env.VIDEO_STREAM_ID }}
           AUDIO_STREAM_ID: ${{ env.AUDIO_STREAM_ID }}
 
       - name: 获取下载文件的路径
