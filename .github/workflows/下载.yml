@@ -60,16 +60,16 @@ jobs:
 
       - name: 下载视频和音频
         run: |
-          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
-            yt-dlp --cookies cookies.txt -f "$A+$B" --concurrent-fragments 10 \
-              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+          
+            yt-dlp --cookies cookies.txt -f "$A + $B" --concurrent-fragments 10 \
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          
             yt-dlp --cookies cookies.txt -f "$C" --concurrent-fragments 10 \
-              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          else
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          
             yt-dlp --cookies cookies.txt -f "$D" --concurrent-fragments 10 \
-              -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-          fi
+            -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          
 
       - name: 获取下载文件的路径
         run: |
