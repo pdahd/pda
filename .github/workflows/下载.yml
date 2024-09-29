@@ -40,10 +40,7 @@ on:
 jobs:
   get_media:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        media_choice: ${{ fromJson(inputs.media_choices) }}  # 仅当启用矩阵时使用矩阵
-
+    
     steps:
       - uses: actions/checkout@v4
 
@@ -52,29 +49,37 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
+      - name: 处理媒体选择
+        id: process_media_choices
+        run: |
+          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
+            # 将输入的媒体选择转换为 JSON 数组
+            IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
+            echo "MEDIA_CHOICES=$(echo ${media_array[@]} | jq -R -s -c 'split(" ")')" >> $GITHUB_ENV
+          else
+            echo "MEDIA_CHOICES=[\"${{ github.event.inputs.media_choice }}\"]" >> $GITHUB_ENV
+          fi
+      
       - name: 获取视频和音频流编号
         run: |
-          # 根据用户选择启用矩阵或传统模式
-          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-            MEDIA_CHOICE="${{ matrix.media_choice }}"
-          else
-            MEDIA_CHOICE="${{ github.event.inputs.media_choice }}"
-          fi
-
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
-          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
-            RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
-            VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-            AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-            echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
-            echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
-          elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
-            AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-            echo "AUDIO_ONLY_STREAM_ID=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
-          else
-            VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-            echo "VIDEO_ONLY_STREAM_ID=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
-          fi
+          for MEDIA_CHOICE in ${{ env.MEDIA_CHOICES }}; do
+            # 移除引号
+            MEDIA_CHOICE=$(echo $MEDIA_CHOICE | tr -d '"')
+            if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+              RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
+              VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
+              echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+            elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+              AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "AUDIO_ONLY_STREAM_ID=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
+            else
+              VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "VIDEO_ONLY_STREAM_ID=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
+            fi
+          done
       
       - name: 下载视频和音频
         run: |
