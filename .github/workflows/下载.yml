@@ -53,40 +53,47 @@ jobs:
         id: process_media_choices
         run: |
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-            # 将输入的媒体选择转换为 JSON 数组
+            # 将输入的媒体选择转换为数组
             IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
-            echo "MEDIA_CHOICES=$(echo ${media_array[@]} | jq -R -s -c 'split(" ")')" >> $GITHUB_ENV
+            echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
           else
-            echo "MEDIA_CHOICES=[\"${{ github.event.inputs.media_choice }}\"]" >> $GITHUB_ENV
+            echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
           fi
-      
+
       - name: 获取视频和音频流编号
         run: |
           yt-dlp --cookies cookies.txt -F ${{ github.event.inputs.video_url }} > formats.txt
-          for MEDIA_CHOICE in ${{ env.MEDIA_CHOICES }}; do
-            # 移除引号
-            MEDIA_CHOICE=$(echo $MEDIA_CHOICE | tr -d '"')
+          
+          # 解析每个媒体选择
+          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          for index in "${!media_array[@]}"; do
+            MEDIA_CHOICE="${media_array[index]}"
             if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
               RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
               VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-              echo "VIDEO_STREAM_ID=$VIDEO_STREAM_ID" >> $GITHUB_ENV
-              echo "AUDIO_STREAM_ID=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+              echo "VIDEO_STREAM_ID_${index}=$VIDEO_STREAM_ID" >> $GITHUB_ENV
+              echo "AUDIO_STREAM_ID_${index}=$AUDIO_STREAM_ID" >> $GITHUB_ENV
             elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
               AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-              echo "AUDIO_ONLY_STREAM_ID=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
+              echo "AUDIO_ONLY_STREAM_ID_${index}=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
             else
               VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
-              echo "VIDEO_ONLY_STREAM_ID=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
+              echo "VIDEO_ONLY_STREAM_ID_${index}=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
             fi
           done
       
       - name: 下载视频和音频
         run: |
-          yt-dlp --cookies cookies.txt \
-          -f "$([[ -n "$VIDEO_STREAM_ID" && -n "$AUDIO_STREAM_ID" ]] && echo "$VIDEO_STREAM_ID+$AUDIO_STREAM_ID" || ([[ -n "$AUDIO_ONLY_STREAM_ID" ]] && echo "$AUDIO_ONLY_STREAM_ID" || echo "$VIDEO_ONLY_STREAM_ID"))" \
-          --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
-
+          for index in $(seq 0 $((${#media_array[@]} - 1))); do
+            VIDEO_STREAM_ID_VAR="VIDEO_STREAM_ID_${index}"
+            AUDIO_STREAM_ID_VAR="AUDIO_STREAM_ID_${index}"
+            AUDIO_ONLY_STREAM_ID_VAR="AUDIO_ONLY_STREAM_ID_${index}"
+            VIDEO_ONLY_STREAM_ID_VAR="VIDEO_ONLY_STREAM_ID_${index}"
+            yt-dlp --cookies cookies.txt \
+            -f "$([[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]] && echo "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" || ([[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]] && echo "${!AUDIO_ONLY_STREAM_ID_VAR}" || echo "${!VIDEO_ONLY_STREAM_ID_VAR"}))" \
+            --concurrent-fragments 10 -o "downloads/%(id)s.%(ext)s" ${{ github.event.inputs.video_url }}
+          done
       - name: 获取下载文件的路径
         run: |
           FILE_PATH=$(ls downloads/*)
