@@ -86,7 +86,7 @@ jobs:
 
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
-          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)  # 去掉前后空格
+          MEDIA_CHOICE="${media_array[index]}"
   
           echo "处理选择: $MEDIA_CHOICE"
   
