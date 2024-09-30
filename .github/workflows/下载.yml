@@ -65,9 +65,13 @@ jobs:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
-          
-          # 仅使用逗号作为分隔符，而不包括空格
+
+          # 使用 sed 确保逗号分隔符唯一，并避免被空格干扰
+          MEDIA_CHOICES=$(echo "$MEDIA_CHOICES" | sed 's/ ,/,/g')
+
+          # 解析 MEDIA_CHOICES, 使用逗号作为唯一的分隔符
           IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
+          
           for index in "${!media_array[@]}"; do
             MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)  # 去掉前后空格
             
@@ -75,7 +79,7 @@ jobs:
             
             if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
               # 解析带音频的媒体选择
-              RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
+              RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')  # 只保留视频分辨率部分
               VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               echo "解析到的视频流编号: $VIDEO_STREAM_ID, 音频流编号: $AUDIO_STREAM_ID"
