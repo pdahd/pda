@@ -75,28 +75,24 @@ jobs:
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
 
-          # 确保MEDIA_CHOICES中逗号和空格的格式正确，将任意逗号与空格组合替换为标准逗号
-          MEDIA_CHOICES=$(echo "$MEDIA_CHOICES" | sed 's/ , */,/g' | sed 's/ *, */,/g')
-
-          # 判断是否是矩阵模式（是否含有多个媒体选择）
-          if [[ "$MEDIA_CHOICES" == *","* ]]; then
-          echo "检测到矩阵模式，处理多个媒体选择..."
-          IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
+          # 判断是否为矩阵模式或传统模式
+          if [[ "$MEDIA_CHOICES" == *", "* ]]; then
+          echo "检测到矩阵模式，使用带空格的逗号分隔符"
+          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
           else
-          echo "传统模式，处理单一媒体选择..."
-          media_array=("$MEDIA_CHOICES")
+          echo "检测到传统模式，使用不带空格的逗号分隔符"
+          IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
           fi
 
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
-          # 去掉前后空格，确保选择被正确处理
-          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)
-    
+          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)  # 去掉前后空格
+  
           echo "处理选择: $MEDIA_CHOICE"
-    
+  
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
           # 解析带音频的媒体选择
-          RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')  # 只保留视频分辨率部分
+          RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
           VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
           AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
           echo "解析到的视频流编号: $VIDEO_STREAM_ID, 音频流编号: $AUDIO_STREAM_ID"
