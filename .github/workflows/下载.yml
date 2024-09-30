@@ -15,8 +15,8 @@ on:
           - 'Yes'
           - 'No'
         default: 'No'
-      media_choices:
-        description: '启用矩阵作业时选择多个媒体类型 (用逗号分隔，例如: 720p, 1080p + Audio, 1440p)'
+      media_inputs:
+        description: '启用矩阵作业时输入多个媒体类型 (用空格分隔，例如: 720p 1080p+Audio 1440p)'
         required: false
         default: ''
       media_choice:
@@ -72,12 +72,18 @@ jobs:
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
 
-          # 使用空格作为分隔符来解析媒体选择
-          IFS=' ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          # 判断是否启用矩阵模式
+          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
+          # 将输入的媒体选择转换为数组
+          IFS=' ' read -r -a media_array <<< "${{ github.event.inputs.media_inputs }}"
+          else
+          # 传统模式：直接使用单一媒体选择
+          media_array=("${{ github.event.inputs.media_choice }}")
+          fi
 
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
-          MEDIA_CHOICE="${media_array[index]}"  # 不需要使用 xargs 去掉空格
+          MEDIA_CHOICE="${media_array[index]}"  # 直接使用媒体选择
 
           echo "处理选择: $MEDIA_CHOICE"
 
