@@ -13,7 +13,7 @@ jobs:
 
       - name: List all available streams
         run: |
-          yt-dlp --cookies cookies.txt -F \
+          yt-dlp --cookies <(cat cookies.txt) -F \
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Install ffmpeg
