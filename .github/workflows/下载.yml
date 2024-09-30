@@ -53,20 +53,11 @@ jobs:
         id: process_media_choices
         run: |
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-          # 将输入的媒体选择转换为数组，仅根据逗号分隔，保留 '720p + Audio' 等复杂选择
-          IFS=',' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
-
-          # 输出数组的内容以检查转换是否正确
-          echo "转换后的媒体选择数组为:"
-          for element in "${media_array[@]}"; do
-          trimmed_element=$(echo "$element" | xargs)  # 去掉前后空格
-          echo "[$trimmed_element]"
-          done
-
-          # 保存数组到环境变量
-          echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
+            # 将输入的媒体选择转换为数组
+            IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
+            echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
           else
-          echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
+            echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
           fi
 
       - name: 获取视频和音频流编号
@@ -77,16 +68,21 @@ jobs:
 
           # 判断是否为矩阵模式或传统模式
           if [[ "$MEDIA_CHOICES" == *", "* ]]; then
-          echo "检测到矩阵模式，使用带空格的逗号分隔符"
+          echo "检测到矩阵模式，使用带空格的逗号分隔符，不使用 xargs"
           IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
           else
-          echo "检测到传统模式，使用不带空格的逗号分隔符"
+          echo "检测到传统模式，使用不带空格的逗号分隔符，使用 xargs 去除前后空格"
           IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
           fi
 
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
-          MEDIA_CHOICE="${media_array[index]}"
+          # 在传统模式下使用 xargs 去除前后空格，在矩阵模式下不使用
+          if [[ "$MEDIA_CHOICES" == *", "* ]]; then
+          MEDIA_CHOICE="${media_array[index]}"  # 矩阵模式下，不使用 xargs
+          else
+          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)  # 传统模式下，使用 xargs 去掉前后空格
+          fi
   
           echo "处理选择: $MEDIA_CHOICE"
   
