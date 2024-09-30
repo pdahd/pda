@@ -75,7 +75,7 @@ jobs:
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
 
-          # 先确保MEDIA_CHOICES中逗号和空格的格式正确，将任意逗号与空格组合替换为标准逗号
+          # 确保MEDIA_CHOICES中逗号和空格的格式正确，将任意逗号与空格组合替换为标准逗号
           MEDIA_CHOICES=$(echo "$MEDIA_CHOICES" | sed 's/ , */,/g' | sed 's/ *, */,/g')
 
           # 判断是否是矩阵模式（是否含有多个媒体选择）
@@ -89,10 +89,11 @@ jobs:
 
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
-          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)  # 去掉前后空格
-
+          # 去掉前后空格，确保选择被正确处理
+          MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)
+    
           echo "处理选择: $MEDIA_CHOICE"
-
+    
           if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
           # 解析带音频的媒体选择
           RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')  # 只保留视频分辨率部分
