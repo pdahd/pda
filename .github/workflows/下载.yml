@@ -49,23 +49,6 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: 处理媒体选择
-        id: process_media_choices
-        run: |
-          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-            # 将输入的媒体选择转换为数组
-            IFS=' ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
-            
-            echo "转换后的媒体选择数组为:"
-            for element in "${media_array[@]}"; do
-            echo "[$element]"
-            done
-            
-            echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
-          else
-            echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
-          fi
-
       - name: 获取视频和音频流编号
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
@@ -112,7 +95,7 @@ jobs:
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
-          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          IFS=' ' read -r -a media_array <<< "$MEDIA_CHOICES"
           for index in "${!media_array[@]}"; do
             VIDEO_STREAM_ID_VAR="VIDEO_STREAM_ID_${index}"
             AUDIO_STREAM_ID_VAR="AUDIO_STREAM_ID_${index}"
