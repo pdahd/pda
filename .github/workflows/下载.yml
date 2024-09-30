@@ -70,17 +70,26 @@ jobs:
           IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
           for index in "${!media_array[@]}"; do
             MEDIA_CHOICE="${media_array[index]}"
+            
+            echo "处理选择: $MEDIA_CHOICE"
+            
             if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+              # 解析带音频的媒体选择
               RES=$(echo "$MEDIA_CHOICE" | sed 's/ + Audio//')
               VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的视频流编号: $VIDEO_STREAM_ID, 音频流编号: $AUDIO_STREAM_ID"
               echo "VIDEO_STREAM_ID_${index}=$VIDEO_STREAM_ID" >> $GITHUB_ENV
               echo "AUDIO_STREAM_ID_${index}=$AUDIO_STREAM_ID" >> $GITHUB_ENV
             elif [[ "$MEDIA_CHOICE" == "Audio Only" ]]; then
+              # 仅音频
               AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的仅音频流编号: $AUDIO_ONLY_STREAM_ID"
               echo "AUDIO_ONLY_STREAM_ID_${index}=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
             else
+              # 仅视频
               VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的仅视频流编号: $VIDEO_ONLY_STREAM_ID"
               echo "VIDEO_ONLY_STREAM_ID_${index}=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
             fi
           done
@@ -98,15 +107,20 @@ jobs:
 
             TIMESTAMP=$(date +"%H%M%S")
             
+            echo "正在下载: $MEDIA_CHOICE (视频流: ${!VIDEO_STREAM_ID_VAR}, 音频流: ${!AUDIO_STREAM_ID_VAR}, 仅音频流: ${!AUDIO_ONLY_STREAM_ID_VAR}, 仅视频流: ${!VIDEO_ONLY_STREAM_ID_VAR})"
+            
             if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
+              # 下载带音频的视频流
               yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
               -f "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" \
               --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
             elif [[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅音频
               yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
               -f "${!AUDIO_ONLY_STREAM_ID_VAR}" \
               --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
             elif [[ -n "${!VIDEO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅视频
               yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
               -f "${!VIDEO_ONLY_STREAM_ID_VAR}" \
               --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
