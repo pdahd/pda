@@ -52,12 +52,20 @@ jobs:
       - name: 处理媒体选择
         id: process_media_choices
         run: |
-          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-            # 将输入的媒体选择转换为数组
-            IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
-            echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
+          if [[ "Yes" == "Yes" ]]; then
+          # 将输入的媒体选择转换为数组
+          IFS=', ' read -r -a media_array <<< "720p , 1080p , 720p + Audio"
+
+          # 输出数组的内容
+          echo "转换后的媒体选择数组为:"
+          for element in "${media_array[@]}"; do
+          echo "[$element]"
+          done
+
+          # 保存数组到环境变量
+          echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
           else
-            echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
+          echo "MEDIA_CHOICES=\"1080p + Audio\"" >> $GITHUB_ENV
           fi
 
       - name: 获取视频和音频流编号
@@ -66,8 +74,8 @@ jobs:
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
 
-          # 先确保MEDIA_CHOICES中逗号和空格的格式正确
-          MEDIA_CHOICES=$(echo "$MEDIA_CHOICES" | sed 's/ ,/,/g' | sed 's/, */,/g')
+          # 先确保MEDIA_CHOICES中逗号和空格的格式正确，将任意逗号与空格组合替换为标准逗号
+          MEDIA_CHOICES=$(echo "$MEDIA_CHOICES" | sed 's/ , */,/g' | sed 's/ *, */,/g')
 
           # 判断是否是矩阵模式（是否含有多个媒体选择）
           if [[ "$MEDIA_CHOICES" == *","* ]]; then
