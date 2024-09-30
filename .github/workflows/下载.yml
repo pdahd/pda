@@ -75,7 +75,7 @@ jobs:
           # 判断是否为矩阵模式或传统模式
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
           echo "检测到矩阵模式，使用带空格的逗号分隔符，不使用 xargs"
-          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
           else
           echo "检测到传统模式，使用不带空格的逗号分隔符，使用 xargs 去除前后空格"
           IFS=',' read -r -a media_array <<< "$MEDIA_CHOICES"
