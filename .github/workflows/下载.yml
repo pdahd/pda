@@ -53,13 +53,14 @@ jobs:
         id: process_media_choices
         run: |
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-          # 将输入的媒体选择转换为数组
-          IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
+          # 将输入的媒体选择转换为数组，仅根据逗号分隔，保留 '720p + Audio' 等复杂选择
+          IFS=',' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
 
           # 输出数组的内容以检查转换是否正确
           echo "转换后的媒体选择数组为:"
           for element in "${media_array[@]}"; do
-          echo "[$element]"
+          trimmed_element=$(echo "$element" | xargs)  # 去掉前后空格
+          echo "[$trimmed_element]"
           done
 
           # 保存数组到环境变量
