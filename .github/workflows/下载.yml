@@ -94,6 +94,39 @@ jobs:
             fi
           done
       
+      - name: 下载视频和音频
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          IFS=', ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          for index in "${!media_array[@]}"; do
+            VIDEO_STREAM_ID_VAR="VIDEO_STREAM_ID_${index}"
+            AUDIO_STREAM_ID_VAR="AUDIO_STREAM_ID_${index}"
+            AUDIO_ONLY_STREAM_ID_VAR="AUDIO_ONLY_STREAM_ID_${index}"
+            VIDEO_ONLY_STREAM_ID_VAR="VIDEO_ONLY_STREAM_ID_${index}"
+
+            TIMESTAMP=$(date +"%H%M%S")
+            
+            echo "正在下载: $MEDIA_CHOICE (视频流: ${!VIDEO_STREAM_ID_VAR}, 音频流: ${!AUDIO_STREAM_ID_VAR}, 仅音频流: ${!AUDIO_ONLY_STREAM_ID_VAR}, 仅视频流: ${!VIDEO_ONLY_STREAM_ID_VAR})"
+            
+            if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
+              # 下载带音频的视频流
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅音频
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!AUDIO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!VIDEO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅视频
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!VIDEO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            fi
+          done
+      
       - name: 获取下载文件的路径
         run: |
           FILE_PATH=$(ls downloads/* | head -n 1)
