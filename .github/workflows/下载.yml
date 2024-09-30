@@ -54,7 +54,13 @@ jobs:
         run: |
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
             # 将输入的媒体选择转换为数组
-            IFS=', ' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
+            IFS=',' read -r -a media_array <<< "${{ github.event.inputs.media_choices }}"
+            
+            echo "转换后的媒体选择数组为:"
+            for element in "${media_array[@]}"; do
+            echo "[$element]"
+            done
+            
             echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV
           else
             echo "MEDIA_CHOICES=\"${{ github.event.inputs.media_choice }}\"" >> $GITHUB_ENV
