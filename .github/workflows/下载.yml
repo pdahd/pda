@@ -84,8 +84,11 @@ jobs:
           # 遍历并处理每个媒体选择
           for index in "${!media_array[@]}"; do
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-          # 矩阵模式：保留加号两侧的空格，手动修剪前后空格
-          MEDIA_CHOICE=$(echo "${media_array[index]}" | sed 's/^ *//; s/ *$//')  # 去除前后空格，但保留中间的加号两边空格
+          # 矩阵模式：保留加号两侧的空格，手动修剪前后空格，并处理 "+ Audio" 的特殊情况
+          MEDIA_CHOICE="${media_array[index]}"
+          if [[ "$MEDIA_CHOICE" == *"+ Audio"* ]]; then
+          MEDIA_CHOICE=$(echo "$MEDIA_CHOICE" | sed 's/^ *//; s/ *$//')  # 修剪前后空格，保留中间的 '+ Audio'
+          fi
           else
           # 传统模式：使用 xargs 去掉前后空格
           MEDIA_CHOICE=$(echo "${media_array[index]}" | xargs)
