@@ -1,26 +1,26 @@
-name: 下载YouTube视频
+name: 下载 YouTube 视频
 
 on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: '输入YouTube视频链接'
+        description: '请输入 YouTube 视频链接'
         required: true
         default: 'https://youtu.be/sample_video'
-      enable_matrix:
-        description: '是否启用多个分辨率或格式下载（选择“是”以下载多个）'
+      enable_parallel_download:
+        description: '是否启用并行下载多个分辨率或格式（选择“是”以下载多个）'
         required: true
         type: choice
         options:
-          - 'Yes'
-          - 'No'
-        default: 'No'
+          - '是'
+          - '否'
+        default: '否'
       media_inputs:
-        description: '如果选择“是”，请输入多个视频质量或格式（用空格分隔，例如: 720p 1080p 720p+音频）'
+        description: '如果选择‘是’，请输入多个视频分辨率或格式（用空格分隔，例如：720p 1080p+音频）。如果不确定，可以参考下方单一下载模式中的下拉菜单可选预设名称，以确保输入与预设名称一致，请勿输入未在预设名称中列出的其他格式。'
         required: false
         default: ''
       media_choice:
-        description: '选择一个视频质量或格式进行下载'
+        description: '单一下载模式下选择一个视频分辨率或格式'
         required: false
         type: choice
         options:
@@ -49,31 +49,31 @@ jobs:
           pip install yt-dlp
           sudo apt-get update && sudo apt-get install -y ffmpeg
 
-      - name: 获取视频和音频流编号
+      - name: 获取视频和音频流的编号以便后续下载
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
 
-          # 判断是否启用多个分辨率或格式下载
-          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-            # 多个选择模式：将输入的媒体选择转换为数组
+          # 判断是否启用并行下载多个分辨率或格式
+          if [[ "${{ github.event.inputs.enable_parallel_download }}" == "是" ]]; then
+            # 在并行下载模式下，将输入的多个视频分辨率或格式转换为数组
             IFS=' ' read -r -a media_array <<< "${{ github.event.inputs.media_inputs }}"
             echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV  # 将数组写入 MEDIA_CHOICES 变量
           else
-            # 单一选择模式下，直接使用用户指定的视频质量或格式
+            # 在单一下载模式下，直接使用用户选择的视频分辨率或格式
             media_array=("${{ github.event.inputs.media_choice }}")
             echo "MEDIA_CHOICES=${{ github.event.inputs.media_choice }}" >> $GITHUB_ENV  # 将单一选择写入 MEDIA_CHOICES 变量
           fi
 
-          # 遍历并处理每个媒体选择
+          # 遍历并处理每个用户选择的视频分辨率或格式
           for index in "${!media_array[@]}"; do
             MEDIA_CHOICE="${media_array[index]}"  # 直接使用媒体选择
 
             echo "处理选择: $MEDIA_CHOICE"
 
             if [[ "$MEDIA_CHOICE" == *"+音频"* ]]; then
-              # 解析带音频的媒体选择 (不带空格)
+              # 解析选择的包含音频的视频格式
               RES=$(echo "$MEDIA_CHOICE" | sed 's/+音频//')
               VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
@@ -81,12 +81,12 @@ jobs:
               echo "VIDEO_STREAM_ID_${index}=$VIDEO_STREAM_ID" >> $GITHUB_ENV
               echo "AUDIO_STREAM_ID_${index}=$AUDIO_STREAM_ID" >> $GITHUB_ENV
             elif [[ "$MEDIA_CHOICE" == "仅音频" ]]; then
-              # 仅音频
+              # 处理仅音频的选择
               AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               echo "解析到的仅音频流编号: $AUDIO_ONLY_STREAM_ID"
               echo "AUDIO_ONLY_STREAM_ID_${index}=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
             else
-              # 仅视频
+              # 处理仅视频的选择
               VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
               echo "解析到的仅视频流编号: $VIDEO_ONLY_STREAM_ID"
               echo "VIDEO_ONLY_STREAM_ID_${index}=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
@@ -106,7 +106,7 @@ jobs:
 
             TIMESTAMP=$(date +"%H%M%S")
             
-            echo "正在下载: ${media_array[index]} (视频流: ${!VIDEO_STREAM_ID_VAR}, 音频流: ${!AUDIO_STREAM_ID_VAR}, 仅音频流: ${!AUDIO_ONLY_STREAM_ID_VAR}, 仅视频流: ${!VIDEO_ONLY_STREAM_ID_VAR})"
+            echo "正在下载: $MEDIA_CHOICE (视频流: ${!VIDEO_STREAM_ID_VAR}, 音频流: ${!AUDIO_STREAM_ID_VAR}, 仅音频流: ${!AUDIO_ONLY_STREAM_ID_VAR}, 仅视频流: ${!VIDEO_ONLY_STREAM_ID_VAR})"
             
             if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
               # 下载带音频的视频流
