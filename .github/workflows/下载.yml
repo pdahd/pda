@@ -57,11 +57,13 @@ jobs:
 
           # 判断是否启用矩阵模式
           if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
-          # 将输入的媒体选择转换为数组
+          # 矩阵模式：将输入的媒体选择转换为数组
           IFS=' ' read -r -a media_array <<< "${{ github.event.inputs.media_inputs }}"
+          echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV  # 将数组写入 MEDIA_CHOICES 变量
           else
           # 传统模式：直接使用单一媒体选择
           media_array=("${{ github.event.inputs.media_choice }}")
+          echo "MEDIA_CHOICES=${{ github.event.inputs.media_choice }}" >> $GITHUB_ENV  # 将单一选择写入 MEDIA_CHOICES 变量
           fi
 
           # 遍历并处理每个媒体选择
