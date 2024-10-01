@@ -1,0 +1,133 @@
+name: 下载YouTube视频
+
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: '输入YouTube视频链接'
+        required: true
+        default: 'https://youtu.be/sample_video'
+      enable_matrix:
+        description: '是否启用多个分辨率或格式下载（选择“是”以下载多个）'
+        required: true
+        type: choice
+        options:
+          - 'Yes'
+          - 'No'
+        default: 'No'
+      media_inputs:
+        description: '如果选择“是”，请输入多个视频质量或格式（用空格分隔，例如: 720p 1080p 720p+音频）'
+        required: false
+        default: ''
+      media_choice:
+        description: '选择一个视频质量或格式进行下载'
+        required: false
+        type: choice
+        options:
+          - '720p'
+          - '1080p'
+          - '1440p'
+          - '4K'
+          - '8K'
+          - '720p+音频'
+          - '1080p+音频'
+          - '1440p+音频'
+          - '4K+音频'
+          - '8K+音频'
+          - '仅音频'
+        default: '1080p+音频'
+
+jobs:
+  get_media:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 yt-dlp 和 ffmpeg
+        run: |
+          pip install yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: 获取视频和音频流编号
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F ${{ github.event.inputs.video_url }} > formats.txt
+
+          # 判断是否启用多个分辨率或格式下载
+          if [[ "${{ github.event.inputs.enable_matrix }}" == "Yes" ]]; then
+            # 多个选择模式：将输入的媒体选择转换为数组
+            IFS=' ' read -r -a media_array <<< "${{ github.event.inputs.media_inputs }}"
+            echo "MEDIA_CHOICES=${media_array[@]}" >> $GITHUB_ENV  # 将数组写入 MEDIA_CHOICES 变量
+          else
+            # 单一选择模式下，直接使用用户指定的视频质量或格式
+            media_array=("${{ github.event.inputs.media_choice }}")
+            echo "MEDIA_CHOICES=${{ github.event.inputs.media_choice }}" >> $GITHUB_ENV  # 将单一选择写入 MEDIA_CHOICES 变量
+          fi
+
+          # 遍历并处理每个媒体选择
+          for index in "${!media_array[@]}"; do
+            MEDIA_CHOICE="${media_array[index]}"  # 直接使用媒体选择
+
+            echo "处理选择: $MEDIA_CHOICE"
+
+            if [[ "$MEDIA_CHOICE" == *"+音频"* ]]; then
+              # 解析带音频的媒体选择 (不带空格)
+              RES=$(echo "$MEDIA_CHOICE" | sed 's/+音频//')
+              VIDEO_STREAM_ID=$(grep -E "${RES}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              AUDIO_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的视频流编号: $VIDEO_STREAM_ID, 音频流编号: $AUDIO_STREAM_ID"
+              echo "VIDEO_STREAM_ID_${index}=$VIDEO_STREAM_ID" >> $GITHUB_ENV
+              echo "AUDIO_STREAM_ID_${index}=$AUDIO_STREAM_ID" >> $GITHUB_ENV
+            elif [[ "$MEDIA_CHOICE" == "仅音频" ]]; then
+              # 仅音频
+              AUDIO_ONLY_STREAM_ID=$(grep 'audio only' formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的仅音频流编号: $AUDIO_ONLY_STREAM_ID"
+              echo "AUDIO_ONLY_STREAM_ID_${index}=$AUDIO_ONLY_STREAM_ID" >> $GITHUB_ENV
+            else
+              # 仅视频
+              VIDEO_ONLY_STREAM_ID=$(grep -E "${MEDIA_CHOICE}" formats.txt | grep https | sort -k6 -nr | head -n 1 | awk '{print $1}')
+              echo "解析到的仅视频流编号: $VIDEO_ONLY_STREAM_ID"
+              echo "VIDEO_ONLY_STREAM_ID_${index}=$VIDEO_ONLY_STREAM_ID" >> $GITHUB_ENV
+            fi
+          done
+      
+      - name: 下载视频和音频
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          IFS=' ' read -r -a media_array <<< "$MEDIA_CHOICES"
+          for index in "${!media_array[@]}"; do
+            VIDEO_STREAM_ID_VAR="VIDEO_STREAM_ID_${index}"
+            AUDIO_STREAM_ID_VAR="AUDIO_STREAM_ID_${index}"
+            AUDIO_ONLY_STREAM_ID_VAR="AUDIO_ONLY_STREAM_ID_${index}"
+            VIDEO_ONLY_STREAM_ID_VAR="VIDEO_ONLY_STREAM_ID_${index}"
+
+            TIMESTAMP=$(date +"%H%M%S")
+            
+            echo "正在下载: ${media_array[index]} (视频流: ${!VIDEO_STREAM_ID_VAR}, 音频流: ${!AUDIO_STREAM_ID_VAR}, 仅音频流: ${!AUDIO_ONLY_STREAM_ID_VAR}, 仅视频流: ${!VIDEO_ONLY_STREAM_ID_VAR})"
+            
+            if [[ -n "${!VIDEO_STREAM_ID_VAR}" && -n "${!AUDIO_STREAM_ID_VAR}" ]]; then
+              # 下载带音频的视频流
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!VIDEO_STREAM_ID_VAR}+${!AUDIO_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!AUDIO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅音频
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!AUDIO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            elif [[ -n "${!VIDEO_ONLY_STREAM_ID_VAR}" ]]; then
+              # 下载仅视频
+              yt-dlp --cookies <(echo "$COOKIES_CONTENT") \
+              -f "${!VIDEO_ONLY_STREAM_ID_VAR}" \
+              --concurrent-fragments 10 -o "downloads/${TIMESTAMP}.%(ext)s" ${{ github.event.inputs.video_url }}
+            fi
+          done
+      
+      - name: 获取下载文件的路径
+        run: |
+          FILE_PATH=$(ls downloads/* | head -n 1)
+          echo "下载的文件路径: $FILE_PATH"
+          echo "FILE_PATH=$FILE_PATH" >> $GITHUB_ENV
