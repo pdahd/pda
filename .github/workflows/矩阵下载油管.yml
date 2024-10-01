@@ -4,12 +4,12 @@ on:
   workflow_dispatch:
     inputs:
       video_url:
-        description: '请输入 YouTube 视频链接'
+        description: '请输入 YouTube 视频链接（必填）'
         required: true
         default: 'https://youtu.be/sample_video'
       enable_parallel_download:
         description: '是否启用并行下载多个分辨率或格式（选择“是”以下载多个）'
-        required: true
+        required: false
         type: choice
         options:
           - '是'
@@ -19,7 +19,7 @@ on:
         description: |
           如果选择‘是’，请输入多个视频分辨率或格式（用空格分隔，例如：720p 1080p+音频）。如果不确定，可以参考下方单一下载模式中的下拉菜单可选预设名称，以确保输入与预设名称一致，请勿输入未在预设名称中列出的其他格式。
           提示： 您下载的视频最高分辨率取决于上传者发布的原始视频分辨率。并非所有视频都提供 4K 或 8K 分辨率，有些视频的实际分辨率只有 480p 甚至更低。这通常与视频的拍摄和后期制作，或者视频平台的分享限制有关。即使您选择了 4K 或 8K 分辨率，如果视频本身不提供该分辨率，下载器会自动选择可用的最高质量格式。
-          如果选择“否”，请在下方单一下载模式中选择一个下载。'
+          如果选择“否”，请使用下方的单一下载模式。
         required: false
         default: ''
       media_choice:
