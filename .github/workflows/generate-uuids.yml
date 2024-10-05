@@ -1,0 +1,28 @@
+name: Generate UUIDs
+
+# 允许手动触发工作流
+on:
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "Number of UUIDs to generate"
+        required: true
+        default: "5"  # 默认值应该用引号包裹为字符串
+
+jobs:
+  generate-uuids:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: 检查出代码仓库
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Step 2: 生成 UUIDs
+    - name: Generate UUIDs
+      run: |
+        echo "Generating ${{ github.event.inputs.count }} UUIDs"
+        for i in $(seq 1 ${{ github.event.inputs.count }}); do
+          uuid=$(uuidgen)
+          echo "UUID $i: $uuid"
+        done
