@@ -3,7 +3,7 @@ name: Convert PNG to SVG
 on:
   push:
     branches:
-      - main  # 根据需要调整触发条件
+      - main
 
 jobs:
   convert:
@@ -13,12 +13,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Inkscape
-        run: sudo apt-get update && sudo apt-get install -y inkscape
+      - name: Install xvfb and Inkscape
+        run: sudo apt-get update && sudo apt-get install -y inkscape xvfb
 
-      - name: Convert PNG to SVG
+      - name: Check Inkscape version
+        run: inkscape --version
+
+      - name: Check if PNG exists
+        run: ls -l 999.png
+
+      - name: Convert PNG to SVG using xvfb
         run: |
-          inkscape 999.png --export-type=svg --export-filename=999.svg
+          xvfb-run inkscape 999.png --export-type=svg --export-filename=999.svg
 
       - name: Upload SVG as artifact
         uses: actions/upload-artifact@v4
