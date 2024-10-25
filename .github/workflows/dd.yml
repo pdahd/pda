@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Install qBittorrent
         run: |
@@ -22,6 +22,11 @@ jobs:
         run: |
           qbittorrent-nox &  # 在后台启动 qBittorrent
           sleep 10  # 等待 qBittorrent 启动
+
+      - name: Set Download Directory
+        run: |
+          mkdir -p ~/qbittorrent_downloads  # 创建下载目录
+          echo "download_dir=~/qbittorrent_downloads" >> ~/.config/qBittorrent/qBittorrent.conf  # 设置下载目录
 
       - name: Download Magnet Link
         run: |
@@ -37,11 +42,11 @@ jobs:
 
       - name: List Downloaded Files
         run: |
-          echo "Listing downloaded files in ~/Downloads"
-          ls ~/Downloads  # 列出下载目录中的文件，确保文件存在
+          echo "Listing downloaded files in ~/qbittorrent_downloads"
+          ls ~/qbittorrent_downloads  # 列出下载目录中的文件，确保文件存在
 
       - name: Upload Downloaded Files
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v2
         with:
           name: downloaded-video-files
-          path: ~/Downloads/*  # 使用绝对路径
+          path: ~/qbittorrent_downloads/*  # 使用新的下载路径
