@@ -1,4 +1,4 @@
-name: Download Magnet Link Video
+name: Parse Magnet Link Information
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  download:
+  parse:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,19 +18,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install transmission-cli -y
 
-      - name: Start Download
+      - name: Parse Magnet Link
         run: |
           # 磁力链接
           magnet_link="magnet:?xt=urn:btih:95178400ef101e90cb0d5404406d21e7da1c4ab6&dn=[www.domp4.cc]黑雀特工.2024.HD1080p.国英双语.中英双字.mp4&tr=https://tracker.iriseden.fr:443/announce&tr=https://tr.highstar.shop:443/announce&tr=https://tr.fuckbitcoin.xyz:443/announce&tr=https://tr.doogh.club:443/announce&tr=https://tr.burnabyhighstar.com:443/announce&tr=https://t.btcland.xyz:443/announce&tr=http://vps02.net.orel.ru:80/announce&tr=https://tracker.kuroy.me:443/announce&tr=http://tr.cili001.com:8070/announce&tr=http://t.overflow.biz:6969/announce&tr=http://t.nyaatracker.com:80/announce&tr=http://open.acgnxtracker.com:80/announce&tr=http://nyaa.tracker.wf:7777/announce&tr=http://home.yxgz.vip:6969/announce&tr=http://buny.uk:6969/announce&tr=https://tracker.tamersunion.org:443/announce&tr=https://tracker.nanoha.org:443/announce&tr=https://tracker.loligirl.cn:443/announce&tr=udp://bubu.mapfactor.com:6969/announce&tr=http://share.camoe.cn:8080/announce&tr=udp://movies.zsw.ca:6969/announce&tr=udp://ipv4.tracker.harry.lu:80/announce&tr=udp://tracker.sylphix.com:6969/announce&tr=http://95.216.22.207:9001/announce"
 
-          # 创建下载目录
-          mkdir -p ./downloads
-          
-          # 使用 Transmission 下载磁力链接
-          transmission-cli "$magnet_link" -w ./downloads/ --max-peers 50
-
-      - name: Upload Downloaded Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: downloaded-video-files
-          path: ./downloads/*
+          # 使用 Transmission 显示磁力链接的信息
+          echo "Parsing magnet link..."
+          transmission-show "$magnet_link"
