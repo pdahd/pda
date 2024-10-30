@@ -16,8 +16,7 @@ jobs:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
-          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
-
+          https://youtu.be/5Pjj_Z0PwKI?si=Tx9WNVyY2WYh8PDr
       - name: Make FFmpeg executable
         run: chmod +x ffmpeg
 
@@ -26,25 +25,29 @@ jobs:
 
       - name: Download video and audio
         run: |
-          yt-dlp --cookies cookies.txt -f 313 \
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 315 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/AAA.webm" \
-          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
+          https://youtu.be/5Pjj_Z0PwKI?si=Tx9WNVyY2WYh8PDr
         env:
           INCLUDE_SECTIONS: "false"
           ENABLE_MULTITHREAD: "true"
 
       - name: Test x264 encoding
         run: |
-          input_file="downloads/AAA.webm"
-          output_file="encoded_output/test_video.mp4"
-          mkdir -p encoded_output
-          ffmpeg -i "$input_file" -ss 00:00:00 -t 5 -vf "scale=1920:1080,fps=29.97" -c:v libx264 "$output_file"
-          echo "Encoding completed: $output_file"
+          ffmpeg -i downloads/AAA.webm \
+          -filter_complex "[0:v]transpose=1,scale=-2:1920,eq=brightness=-0.04,split=2[original][copy]; \
+          [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,17,200)*between(Y,38,125) + between(X,788,1014)*between(Y,1490,1577),255,0)',boxblur=10:2[mask]; \
+          [original][mask]overlay,split=3[seg1][seg2][seg3]; \
+          [seg1]trim=3:7,setpts=PTS-STARTPTS[seg1out]; \
+          [seg2]trim=8:11,setpts=PTS-STARTPTS[seg2out]; \
+          [seg3]trim=11:15,setpts=PTS-STARTPTS[seg3out]; \
+          [seg1out][seg2out][seg3out]concat=n=3:v=1:a=0[outv]" \
+          -map "[outv]" -c:v libx264 -r 30 encoded_output/test_video.mp4
 
       - name: Upload encoded video
         uses: actions/upload-artifact@v4
         with:
           name: encoded-video
-          path: encoded_output/test_video.mp4
+          path: encoded_output/
