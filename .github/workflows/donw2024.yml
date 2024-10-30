@@ -26,7 +26,7 @@ jobs:
 
       - name: Download video and audio
         run: |
-          yt-dlp --cookies cookies.txt -f 313 \
+          yt-dlp --cookies cookies.txt -f 313+251 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
