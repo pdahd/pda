@@ -35,7 +35,7 @@ jobs:
         run: |
           git clone --depth 1 https://code.videolan.org/videolan/x264.git
           cd x264
-          ./configure --enable-static --enable-shared
+          ./configure --enable-static
           make -j$(nproc)
           sudo make install
           cd ..
