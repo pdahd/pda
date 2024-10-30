@@ -22,7 +22,7 @@ jobs:
         run: chmod +x ffmpeg
 
       - name: Set FFmpeg path
-        run: echo "$GITHUB_WORKSPACE/ffmpeg" >> $GITHUB_PATH
+        run: echo "$GITHUB_WORKSPACE/ffmpeg" >> $GITHUB_ENV
 
       - name: Download video and audio
         run: |
