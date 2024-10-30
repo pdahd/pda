@@ -18,10 +18,8 @@ jobs:
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
-      - name: Move FFmpeg to the working directory
-        run: |
-          mv ./ffmpeg $GITHUB_WORKSPACE/ffmpeg
-          chmod +x $GITHUB_WORKSPACE/ffmpeg
+      - name: Make FFmpeg executable
+        run: chmod +x ./ffmpeg  # 直接赋予执行权限
 
       - name: Add FFmpeg to PATH
         run: echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH  # 将工作空间路径添加到 PATH
