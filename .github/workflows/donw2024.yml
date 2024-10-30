@@ -24,13 +24,15 @@ jobs:
         run: echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
       - name: Download video and audio
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 315 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/AAA.webm" \
           https://youtu.be/5Pjj_Z0PwKI?si=Tx9WNVyY2WYh8PDr
-        env:
+          env:
           INCLUDE_SECTIONS: "false"
           ENABLE_MULTITHREAD: "true"
 
