@@ -1,0 +1,42 @@
+name: Download YouTube Video
+
+on: [push]
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+
+      - name: List all available streams
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
+          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
+
+      - name: Make FFmpeg executable
+        run: chmod +x ./ffmpeg
+
+      - name: Verify FFmpeg installation
+        run: ./ffmpeg -version
+
+      - name: Download video and audio
+        run: |
+          yt-dlp --cookies cookies.txt -f 313 \
+          $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          -o "downloads/%(title)s.%(ext)s" \
+          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
+        env:
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+
+      - name: Upload downloaded videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-videos
+          path: downloads/**
