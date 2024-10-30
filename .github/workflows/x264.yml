@@ -46,7 +46,6 @@ jobs:
           ./configure --enable-gpl --enable-libx264 --enable-nonfree --enable-static --disable-shared
           make -j$(nproc)
           sudo make install
-          sudo ldconfig  # 更新共享库缓存
           cd ..
       - name: Verify FFmpeg installation
         run: ffmpeg -version
