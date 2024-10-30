@@ -19,7 +19,7 @@ jobs:
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Add FFmpeg to PATH
-        run: echo "::add-path::$(pwd)"  # 将当前目录添加到 PATH
+        run: echo "$GITHUB_WORKSPACE" >> $GITHUB_ENV  # 将工作空间路径添加到环境变量
 
       - name: Make FFmpeg executable
         run: chmod +x ./ffmpeg
