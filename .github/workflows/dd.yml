@@ -1,52 +1,54 @@
-name: Download Magnet Link Video
+name: Build FFmpeg with x264
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  download:
+  build_ffmpeg:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install qBittorrent
+      - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install qbittorrent-nox -y
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            git \
+            libass-dev \
+            libfdk-aac-dev \
+            libmp3lame-dev \
+            libopus-dev \
+            libtheora-dev \
+            libtool \
+            libvorbis-dev \
+            pkg-config \
+            texinfo \
+            wget \
+            yasm \
+            zlib1g-dev \
+            nasm
 
-      - name: Start qBittorrent
+      - name: Clone x264
         run: |
-          qbittorrent-nox &  # 在后台启动 qBittorrent
-          sleep 10  # 等待 qBittorrent 启动
+          git clone --depth 1 https://code.videolan.org/videolan/x264.git
+          cd x264
+          ./configure --enable-shared
+          make -j$(nproc)
+          sudo make install
+          cd ..
 
-      - name: Set Download Directory
+      - name: Clone FFmpeg
         run: |
-          mkdir -p ~/qbittorrent_downloads  # 创建下载目录
-          echo "download_dir=~/qbittorrent_downloads" >> ~/.config/qBittorrent/qBittorrent.conf  # 设置下载目录
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
+          cd ffmpeg
+          ./configure --enable-gpl --enable-libx264 --enable-nonfree --enable-shared
+          make -j$(nproc)
+          sudo make install
+          cd ..
 
-      - name: Download Magnet Link
-        run: |
-          # 磁力链接
-          magnet_link="magnet:?xt=urn:btih:95178400ef101e90cb0d5404406d21e7da1c4ab6&dn=[www.domp4.cc]黑雀特工.2024.HD1080p.国英双语.中英双字.mp4&tr=https://tracker.iriseden.fr:443/announce&tr=https://tr.highstar.shop:443/announce&tr=https://tr.fuckbitcoin.xyz:443/announce&tr=https://tr.doogh.club:443/announce&tr=https://tr.burnabyhighstar.com:443/announce&tr=https://t.btcland.xyz:443/announce&tr=http://vps02.net.orel.ru:80/announce&tr=https://tracker.kuroy.me:443/announce&tr=http://tr.cili001.com:8070/announce&tr=http://t.overflow.biz:6969/announce&tr=http://t.nyaatracker.com:80/announce&tr=http://open.acgnxtracker.com:80/announce&tr=http://nyaa.tracker.wf:7777/announce&tr=http://home.yxgz.vip:6969/announce&tr=http://buny.uk:6969/announce&tr=https://tracker.tamersunion.org:443/announce&tr=https://tracker.nanoha.org:443/announce&tr=https://tracker.loligirl.cn:443/announce&tr=udp://bubu.mapfactor.com:6969/announce&tr=http://share.camoe.cn:8080/announce&tr=udp://movies.zsw.ca:6969/announce&tr=udp://ipv4.tracker.harry.lu:80/announce&tr=udp://tracker.sylphix.com:6969/announce&tr=http://95.216.22.207:9001/announce"
-
-          # 添加磁力链接到 qBittorrent
-          curl -X POST -d "torrents=$magnet_link" http://localhost:8080/api/v2/torrents/add
-
-      - name: Wait for Download Completion
-        run: |
-          sleep 120  # 根据文件大小调整等待时间
-
-      - name: List Downloaded Files
-        run: |
-          echo "Listing downloaded files in ~/qbittorrent_downloads"
-          ls ~/qbittorrent_downloads  # 列出下载目录中的文件，确保文件存在
-
-      - name: Upload Downloaded Files
-        uses: actions/upload-artifact@v4
-        with:
-          name: downloaded-video-files
-          path: ~/qbittorrent_downloads/*  # 使用新的下载路径
+      - name: Verify FFmpeg installation
+        run: ffmpeg -version
