@@ -53,3 +53,9 @@ jobs:
 
       - name: Verify FFmpeg installation
         run: ffmpeg -version
+
+      - name: Upload FFmpeg as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg
+          path: /usr/local/bin/ffmpeg
