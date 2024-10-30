@@ -37,6 +37,7 @@ jobs:
 
       - name: Test x264 encoding
         run: |
+          mkdir -p encoded_output
           ffmpeg -i downloads/AAA.webm \
           -filter_complex "[0:v]transpose=1,scale=-2:1920,eq=brightness=-0.04,split=2[original][copy]; \
           [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,17,200)*between(Y,38,125) + between(X,788,1014)*between(Y,1490,1577),255,0)',boxblur=10:2[mask]; \
