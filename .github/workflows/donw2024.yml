@@ -19,10 +19,10 @@ jobs:
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Make FFmpeg executable
-        run: chmod +x ./ffmpeg
+        run: chmod +x ffmpeg
 
       - name: Verify FFmpeg installation
-        run: ./ffmpeg -version
+        run: ffmpeg -version
 
       - name: Download video and audio
         run: |
