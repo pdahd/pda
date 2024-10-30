@@ -31,31 +31,18 @@ jobs:
             yasm \
             zlib1g-dev \
             nasm
-      - name: Check for existing FFmpeg installation
-        run: |
-          if command -v ffmpeg &> /dev/null; then
-              echo "FFmpeg is already installed. Version:"
-              ffmpeg -version
-              exit 0
-          else
-              echo "FFmpeg not found. Proceeding with installation."
-          fi
       - name: Clone x264
         run: |
           git clone --depth 1 https://code.videolan.org/videolan/x264.git
           cd x264
-          ./configure --enable-shared
+          ./configure --enable-static --disable-shared
           make -j$(nproc)
           sudo make install
           cd ..
-      - name: Download and extract FFmpeg
+      - name: Clone FFmpeg
         run: |
-          wget https://ffmpeg.org/releases/ffmpeg-snapshot.tar.bz2
-          tar -xjf ffmpeg-snapshot.tar.bz2
-          mv ffmpeg ffmpeg-source
-      - name: Build FFmpeg
-        run: |
-          cd ffmpeg-source
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
+          cd ffmpeg
           ./configure --enable-gpl --enable-libx264 --enable-nonfree --enable-static --disable-shared --prefix=/usr/local/ff2024
           make -j$(nproc)
           sudo make install
@@ -63,7 +50,7 @@ jobs:
       - name: Verify FFmpeg installation
         run: |
           /usr/local/ff2024/bin/ffmpeg -version
-          ls /usr/local/ff2024/bin
+          ls /usr/local/ff2024
 
       - name: Upload FFmpeg as artifact
         uses: actions/upload-artifact@v4
