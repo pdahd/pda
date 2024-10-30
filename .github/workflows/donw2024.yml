@@ -19,13 +19,10 @@ jobs:
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Make FFmpeg executable
-        run: chmod +x ffmpeg  
+        run: chmod +x ffmpeg
 
-      - name: Add FFmpeg to PATH
-        run: echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH  # 将工作空间路径添加到 PATH
-
-      - name: Verify FFmpeg installation
-        run: ffmpeg -version  
+      - name: Set FFmpeg path
+        run: echo "FFMPEG_PATH=$(pwd)/ffmpeg" >> $GITHUB_ENV
 
       - name: Download video and audio
         run: |
