@@ -45,7 +45,7 @@ jobs:
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git ffmpeg
           cd ffmpeg
-          ./configure --enable-gpl --enable-libx264 --enable-nonfree --enable-shared
+          ./configure --enable-gpl --enable-libx264 --enable-nonfree --enable-static --disable-shared
           make -j$(nproc)
           sudo make install
           sudo ldconfig  # 更新共享库缓存
