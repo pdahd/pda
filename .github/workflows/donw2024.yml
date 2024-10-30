@@ -21,22 +21,30 @@ jobs:
       - name: Make FFmpeg executable
         run: chmod +x ffmpeg
 
-      - name: Set FFmpeg path
+      - name: Set FFMPEG_PATH
         run: echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
       - name: Download video and audio
         run: |
-          yt-dlp --cookies cookies.txt -f 313+251 \
+          yt-dlp --cookies cookies.txt -f 313 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
-          -o "downloads/%(title)s.%(ext)s" \
+          -o "downloads/AAA.webm" \
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
         env:
           INCLUDE_SECTIONS: "false"
           ENABLE_MULTITHREAD: "true"
 
-      - name: Upload downloaded videos
+      - name: Test x264 encoding
+        run: |
+          input_file="downloads/AAA.webm"
+          output_file="encoded_output/test_video.mp4"
+          mkdir -p encoded_output
+          ffmpeg -i "$input_file" -ss 00:00:00 -t 5 -vf "scale=1920:1080,fps=29.97" -c:v libx264 "$output_file"
+          echo "Encoding completed: $output_file"
+
+      - name: Upload encoded video
         uses: actions/upload-artifact@v4
         with:
-          name: downloaded-videos
-          path: downloads/**
+          name: encoded-video
+          path: encoded_output/test_video.mp4
