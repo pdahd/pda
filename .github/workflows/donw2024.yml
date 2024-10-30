@@ -26,15 +26,14 @@ jobs:
       - name: Download video and audio
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 315 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/AAA.webm" \
           https://youtu.be/5Pjj_Z0PwKI?si=Tx9WNVyY2WYh8PDr
-          env:
-          INCLUDE_SECTIONS: "false"
-          ENABLE_MULTITHREAD: "true"
 
       - name: Test x264 encoding
         run: |
