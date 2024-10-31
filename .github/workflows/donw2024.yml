@@ -41,11 +41,11 @@ jobs:
           -filter_complex "[0:v]transpose=1,scale=-2:1920,eq=brightness=-0.04,split=2[original][copy]; \
           [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,17,200)*between(Y,38,125) + between(X,788,1014)*between(Y,1490,1577),255,0)',boxblur=10:2[mask]; \
           [original][mask]overlay,split=3[seg1][seg2][seg3]; \
-          [seg1]trim=3:7,setpts=PTS-STARTPTS[seg1out]; \
-          [seg2]trim=8:11,setpts=PTS-STARTPTS[seg2out]; \
-          [seg3]trim=11:15,setpts=PTS-STARTPTS[seg3out]; \
+          [seg1]trim=115:190,setpts=PTS-STARTPTS[seg1out]; \
+          [seg2]trim=41:113,setpts=PTS-STARTPTS[seg2out]; \
+          [seg3]trim=197:215,setpts=PTS-STARTPTS[seg3out]; \
           [seg1out][seg2out][seg3out]concat=n=3:v=1:a=0[outv]" \
-          -map "[outv]" -c:v libx264 -r 30 test_video.mp4
+          -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
 
       - name: Upload encoded video
         uses: actions/upload-artifact@v4
