@@ -34,7 +34,7 @@ jobs:
           videos=(
             "136+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t AAA"
             "299+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t BBB"
-            "400 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t CCC.mp4"
+            "400 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t CCC"
           )
 
           for video in "${videos[@]}"; do
