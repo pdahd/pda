@@ -32,14 +32,27 @@ jobs:
         run: |
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
-            "136+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t AAA.mkv"
-            "299+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t BBB.mkv"
+            "136+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t AAA"
+            "299+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t BBB.webm"
             "400 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t CCC.mp4"
           )
 
           for video in "${videos[@]}"; do
             # 提取流编号、URL 和输出文件名
             IFS=' ' read -r stream url output_file <<< "$video"
+
+            # 判断流编号是否包含加号
+            if [[ "$streams" == *"+"* ]]; then
+              # 如果输出文件名没有扩展名，则添加 .mkv
+              if [[ "$output_file" != *.* ]]; then
+                output_file="${output_file}.mkv"
+              else
+              # 检查扩展名是否不是 .mkv
+              if [[ "$output_file" != *.mkv ]]; then
+                output_file="${output_file%.*}.mkv"  # 替换为 .mkv
+              fi
+            fi
+          fi 
       
             yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
             $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
