@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        run: pip install yt-dlp好
+        run: pip install yt-dlp
 
       - name: List all available streams
         env:
@@ -50,18 +50,18 @@ jobs:
       - name: Test x264 encoding
         run: |
           ffmpeg -i AAA.webm -i BBB.webm \
-          -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.04,split=2[original][copy]; \
+          -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.03,split=2[original][copy]; \
           [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,780,1080)*between(Y,1800,1920),255,0)',boxblur=10:2[mask]; \
           [original][mask]overlay[segA]; \
           [1:v]transpose=1,scale=-2:1920,eq=brightness=-0.05[segB]; \
           [segA][segB]concat=n=2:v=1:a=0,split=6[seg1][seg2][seg3][seg4][seg5][seg6]; \
-          [seg1]trim=16.2:31.6,setpts=PTS-STARTPTS[A]; \
-          [seg2]trim=41:113,setpts=PTS-STARTPTS[B]; \
-          [seg3]trim=197:215,setpts=PTS-STARTPTS[C]; \
-          [seg4]trim=115:190,setpts=PTS-STARTPTS[D]; \
-          [seg5]trim=41:113,setpts=PTS-STARTPTS[E]; \
-          [seg6]trim=197:215,setpts=PTS-STARTPTS[F]; \
-          [A][B][C][D][E][F]concat=n=6:v=1:a=0[outv]" \
+          [seg1]trim=16.2:31.4,setpts=PTS-STARTPTS[A]; \
+          [seg2]trim=33:69,setpts=PTS-STARTPTS[B]; \
+          [seg3]trim=99:124,setpts=PTS-STARTPTS[C]; \
+          [seg4]trim=177:215,setpts=PTS-STARTPTS[D]; \
+          [seg5]trim=71.3:86,setpts=PTS-STARTPTS[E]; \
+          [seg6]trim=158:169,setpts=PTS-STARTPTS[F]; \
+          [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
       - name: Upload encoded video
