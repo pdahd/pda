@@ -32,8 +32,8 @@ jobs:
         run: |
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
-            "136+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t AAA.mp4"
-            "299+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t BBB.mp4"
+            "136+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t AAA"
+            "299+251 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t BBB"
             "400 https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t CCC.mp4"
           )
 
@@ -125,6 +125,6 @@ jobs:
         with:
           name: encoded-videos
           path: |
-            AAA.mp4
-            BBB.mp4
+            AAA.mkv
+            BBB.mkv
             CCC.mp4
