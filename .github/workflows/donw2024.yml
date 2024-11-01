@@ -16,7 +16,7 @@ jobs:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
-          https://youtu.be/vHFtta8t_jA?si=M4UhieTJFRptLU0X
+          https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg
 
       - name: Setup FFmpeg
         run: |
@@ -29,13 +29,14 @@ jobs:
           INCLUDE_SECTIONS: "false"
           ENABLE_MULTITHREAD: "true"
         run: |
-          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 313 \
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 137 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
-          -o "AAA.webm" \
-          https://youtu.be/vHFtta8t_jA?si=M4UhieTJFRptLU0X
+          -o "AAA.mp4" \
+          https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg
 
       - name: Download video and audio-B
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -48,6 +49,7 @@ jobs:
           https://youtu.be/dHfrWznQWgw?si=dG_cP4tLR44OCYBK
       
       - name: Test x264 encoding
+        if: false
         run: |
           ffmpeg -i AAA.webm -i BBB.webm \
           -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.03,split=2[original][copy]; \
@@ -64,8 +66,26 @@ jobs:
           [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
-      - name: Upload encoded video
+      - name: Test x264 encoding for AAA
+        run: |
+          ffmpeg -ss 33:30 -to 37:30 -i AAA.mp4 \
+          -vf "eq=brightness=-0.01" \
+          -c:v libx264 test_video1.mp4
+      
+      - name: Upload encoded video for AAA
         uses: actions/upload-artifact@v4
         with:
           name: encoded-video
-          path: test_video.mp4
+          path: test_video1.mp4
+
+      - name: Test x264 encoding for BBB
+        run: |
+          ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
+          -vf "eq=brightness=-0.01" \
+          -c:v libx264 test_video2.mp4
+      
+      - name: Upload encoded video for BBB
+        uses: actions/upload-artifact@v4
+        with:
+          name: encoded-video
+          path: test_video2.mp4
