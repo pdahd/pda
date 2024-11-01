@@ -48,7 +48,7 @@ jobs:
                 output_file="${output_file}.mkv"
               else
               # 检查扩展名是否不是 .mkv
-              if [[ "${output_file##*.}" != "mkv" ]]; then
+              if [[ "$output_file" != *.mkv ]]; then
                 output_file="${output_file%.*}.mkv"  # 替换为 .mkv
               fi
             fi
