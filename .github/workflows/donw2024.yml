@@ -66,26 +66,26 @@ jobs:
           [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
-      - name: Test x264 encoding for AAA
+      - name: Test x264 encoding for A
         run: |
           ffmpeg -ss 33:30 -to 37:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video1.mp4
       
-      - name: Upload encoded video for AAA
+      - name: Upload encoded video for A
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-video
+          name: encoded-video1
           path: test_video1.mp4
 
-      - name: Test x264 encoding for BBB
+      - name: Test x264 encoding for B
         run: |
           ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video2.mp4
       
-      - name: Upload encoded video for BBB
+      - name: Upload encoded video for B
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-video
+          name: encoded-video2
           path: test_video2.mp4
