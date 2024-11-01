@@ -48,12 +48,14 @@ jobs:
                 output_file="${output_file}.mkv"
               else
               # 检查扩展名是否不是 .mkv
-              if [[ "$output_file" != *.mkv ]]; then
+              if [[ "${output_file##*.}" != "mkv" ]]; then
                 output_file="${output_file%.*}.mkv"  # 替换为 .mkv
               fi
             fi
           fi 
-      
+            # 打印修改后的文件名
+            echo "Modified output file name: $output_file"
+            
             yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
             $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
             $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
