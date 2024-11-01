@@ -12,6 +12,7 @@ jobs:
         run: pip install yt-dlp
 
       - name: List all available streams
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
@@ -23,7 +24,31 @@ jobs:
           chmod +x ffmpeg
           echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
+      - name: Download videos and audio
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          # 定义视频链接、流编号和输出文件名的关联数组
+          declare -A videos
+          videos["https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t"]="136 AAA.mp4"
+          videos["https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t"]="299 BBB.mp4"
+          videos["https://youtube.com/shorts/O4laRs2rqUI?si=E0ZShtb4K0qTb-4t"]="400 CCC.mp4"
+
+          for url in "${!videos[@]}"; do
+            # 提取流编号和输出文件名
+            IFS=' ' read -r stream output_file <<< "${videos[$url]}"
+      
+            yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
+            $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+            $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+            -o "$output_file" \
+            "$url"
+          done
+      
       - name: Download video and audio-A
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -67,25 +92,38 @@ jobs:
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
       - name: Test x264 encoding for A
+        if: false
         run: |
           ffmpeg -ss 33:30 -to 37:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video1.mp4
       
       - name: Upload encoded video for A
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: encoded-video1
           path: test_video1.mp4
 
       - name: Test x264 encoding for B
+        if: false
         run: |
           ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video2.mp4
       
       - name: Upload encoded video for B
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: encoded-video2
           path: test_video2.mp4
+
+      - name: Upload encoded videos
+        uses: actions/upload-artifact@v4
+        with:
+          name: encoded-videos
+          path: |
+            AAA.mp4
+            BBB.mp4
+            CCC.mp4
