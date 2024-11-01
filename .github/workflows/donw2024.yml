@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        run: pip install yt-dlp
+        run: pip install yt-dlp好
 
       - name: List all available streams
         env:
@@ -29,7 +29,7 @@ jobs:
           INCLUDE_SECTIONS: "false"
           ENABLE_MULTITHREAD: "true"
         run: |
-          好yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 313 \
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 313 \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "AAA.webm" \
@@ -52,18 +52,17 @@ jobs:
           ffmpeg -i AAA.webm -i BBB.webm \
           -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.04,split=2[original][copy]; \
           [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,780,1080)*between(Y,1800,1920),255,0)',boxblur=10:2[mask]; \
-          [original][mask]overlay,split=3[seg1][seg2][seg3]; \
-          [seg1]trim=115:190,setpts=PTS-STARTPTS[seg1out]; \
-          [seg2]trim=41:113,setpts=PTS-STARTPTS[seg2out]; \
-          [seg3]trim=197:215,setpts=PTS-STARTPTS[seg3out]; \
-          [seg1out][seg2out][seg3out]concat=n=3:v=1:a=0[outv]; \
-          [1:v]transpose=1,scale=-2:1920,eq=brightness=-0.05,split=3[seg1][seg2][seg3]; \
-          [seg1]trim=115:190,setpts=PTS-STARTPTS[seg1out]; \
-          [seg2]trim=41:113,setpts=PTS-STARTPTS[seg2out]; \
-          [seg3]trim=197:215,setpts=PTS-STARTPTS[seg3out]; \
-          [seg1out][seg2out][seg3out]concat=n=3:v=1:a=0[outv1]; \
-          [outv][outv1]concat=n=2:v=1:a=0[outv3]" \
-          -map "[outv3]" -c:v libx264 -preset slower -crf 15 test_video.mp4
+          [original][mask]overlay[segA]; \
+          [1:v]transpose=1,scale=-2:1920,eq=brightness=-0.05[segB]; \
+          [segA][segB]concat=n=2:v=1:a=0,split=6[seg1][seg2][seg3][seg4][seg5][seg6]; \
+          [seg1]trim=16.2:31.6,setpts=PTS-STARTPTS[A]; \
+          [seg2]trim=41:113,setpts=PTS-STARTPTS[B]; \
+          [seg3]trim=197:215,setpts=PTS-STARTPTS[C]; \
+          [seg4]trim=115:190,setpts=PTS-STARTPTS[D]; \
+          [seg5]trim=41:113,setpts=PTS-STARTPTS[E]; \
+          [seg6]trim=197:215,setpts=PTS-STARTPTS[F]; \
+          [A][B][C][D][E][F]concat=n=6:v=1:a=0[outv]" \
+          -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
       - name: Upload encoded video
         uses: actions/upload-artifact@v4
