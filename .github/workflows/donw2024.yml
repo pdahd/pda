@@ -42,7 +42,7 @@ jobs:
             IFS=' ' read -r stream url output_file <<< "$video"
 
             # 判断流编号是否包含加号
-            if [[ "$streams" == *"+"* ]]; then
+            if [[ "$stream" == *"+"* ]]; then
               # 如果输出文件名没有扩展名，则添加 .mkv
               if [[ "$output_file" != *.* ]]; then
                 output_file="${output_file}.mkv"
