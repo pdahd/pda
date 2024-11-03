@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        婚检run: pip install yt-dlp
+        run: pip install yt-dlp
 
       - name: List all available streams
         if: false
@@ -68,7 +68,7 @@ jobs:
           ffmpeg -i bw2046.webm \
                  -i VAL.webm \
                  -loop 1 -i uio.png \
-                 -ss 42:30 -to 46:30 -i ODS.mp4
+                 -ss 42:30 -to 47:30 -i ODS.mp4 \
                  -filter_complex "[0:v]eq=brightness=-0.03[k]; \
                                   [1:v]transpose=2,split=2[v1][v2]; \
                                   [2:v]scale=-2:180[kk]; \
@@ -76,13 +76,13 @@ jobs:
                                   [v1][mask]overlay[kj]; \
                                   [k][kk]overlay=W-w+20:H-h+20[z]; \
                                   [z][kj]concat=n=2:v=1:a=0,split=5[seg1][seg2][seg3][seg4][seg5]; \
-                                         [seg1]trim=16.2:31.4,setpts=PTS-STARTPTS[A]; \
-                                         [seg2]trim=33:69,setpts=PTS-STARTPTS[B]; \
-                                         [seg3]trim=99:124,setpts=PTS-STARTPTS[C]; \
-                                         [seg4]trim=177:215,setpts=PTS-STARTPTS[D]; \
-                                         [seg5]trim=71.3:86,setpts=PTS-STARTPTS[E]; \
-                                         [A][C][B][D][E]concat=n=5:v=1:a=0[outv1]; \
-                                         [outv1][3:v]concat=n=2:v=1:a=0[outv2]
+                                         [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A]; \
+                                         [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B]; \
+                                         [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C]; \
+                                         [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D]; \
+                                         [seg5]trim=33:110,setpts=PTS-STARTPTS[E]; \
+                                         [A][B][C][D][E]concat=n=5:v=1:a=0[outv1]; \
+                                         [outv1][3:v]concat=n=2:v=1:a=0[outv2]"
           -map "[outv2]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
       - name: Download video and audio-A
