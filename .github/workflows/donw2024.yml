@@ -70,7 +70,7 @@ jobs:
                  -loop 1 -i uio.png \
                  -ss 42:30 -to 47:30 -i ODS.mp4 \
                  -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.03[k]; \
-                                  [1:v]transpose=2,scale=-2:1920,split=2[v1][v2]; \
+                                  [1:v]transpose=2,scale=-2:1920,fps=29.97003,split=2[v1][v2]; \
                                   [2:v]scale=-2:180[kk]; \
                                   [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[mask]; \
                                   [v1][mask]overlay[kj]; \
