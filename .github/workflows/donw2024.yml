@@ -63,7 +63,31 @@ jobs:
             "$url"
           done
       
+      - name: 编码
+        run: |
+          ffmpeg -i bw2046.webm \
+                 -i VAL.webm \
+                 -t 148.3 -loop 1 -i uio.png \
+                 -ss 42:30 -to 47:30 -i ODS.mp4 \
+                 -filter_complex "
+                  [0:v]scale=-2:1920,eq=brightness=-0.03[k];
+                  [1:v]transpose=2,scale=-2:1920,split=2[v1][v2];
+                  [2:v]scale=-2:180[kk];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[mask];
+                  [v1][mask]overlay[kj];
+                  [k][kk]overlay=W-w+20:H-h+20[z];
+                  [z][kj]concat=n=2:v=1:a=0[concat1];
+                  [concat1]split=5[seg1][seg2][seg3][seg4][seg5];
+                  [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C];
+                  [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D];
+                  [seg5]trim=33:110,setpts=PTS-STARTPTS[E];
+                  [A][B][C][D][E][3:v]concat=n=6:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
+      
       - name: x264编码
+        if: false
         run: |
           ffmpeg -ss 2.2 -to 41 -i VAL.webm \
                  -ss 10.3 -to 32 -i bw2046.webm \
