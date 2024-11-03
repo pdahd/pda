@@ -65,24 +65,28 @@ jobs:
       
       - name: x264编码
         run: |
-          ffmpeg -i bw2046.webm \
-                 -i VAL.webm \
+          ffmpeg -ss 2.2 -to 41 -i VAL.webm \
+                 -ss 10.3 -to 32 -i bw2046.webm \
+                 -ss 128 -to 145.5 -i bw2046.webm \
+                 -ss 42 -to 51.5 -i VAL.webm \
+                 -ss 33 -to 110 -i bw2046.webm \
                  -loop 1 -i uio.png \
                  -ss 42:30 -to 47:30 -i ODS.mp4 \
-                 -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.03[k]; \
-                                  [1:v]transpose=2,scale=-2:1920,fps=29.97003,split=2[v1][v2]; \
-                                  [2:v]scale=-2:180[kk]; \
-                                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[mask]; \
-                                  [v1][mask]overlay[kj]; \
-                                  [k][kk]overlay=W-w+20:H-h+20[z]; \
-                                  [z][kj]concat=n=2:v=1:a=0,split=5[seg1][seg2][seg3][seg4][seg5]; \
-                                         [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A]; \
-                                         [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B]; \
-                                         [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C]; \
-                                         [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D]; \
-                                         [seg5]trim=33:110,setpts=PTS-STARTPTS[E]; \
-                                         [A][B][C][D][E]concat=n=5:v=1:a=0[gg]; \
-                                         [gg][3:v]concat=n=2:v=1:a=0[outv]" \
+                 -filter_complex \
+                 "[0:v]transpose=2,scale=-2:1920,split=2[VAL1_orig][VAL1_mask]; \
+                  [VAL1_mask]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[VAL1_masked]; \
+                  [VAL1_orig][VAL1_masked]overlay[VAL1]; \
+                  [1:v]scale=-2:1920,eq=brightness=-0.03[BG1]; \
+                  [2:v]scale=-2:1920,eq=brightness=-0.03[BG2]; \
+                  [3:v]transpose=2,scale=-2:1920,split=2[VAL2_orig][VAL2_mask]; \
+                  [VAL2_mask]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[VAL2_masked]; \
+                  [VAL2_orig][VAL2_masked]overlay[VAL2]; \
+                  [4:v]scale=-2:1920,eq=brightness=-0.03[BG3]; \
+                  [5:v]scale=-2:180,split=3[img1][img2][img3]; \
+                  [BG1][img1]overlay=W-w+20:H-h+20,trim=duration=21.7[BG1_with_img]; \
+                  [BG2][img2]overlay=W-w+20:H-h+20,trim=duration=17.5[BG2_with_img]; \
+                  [BG3][img3]overlay=W-w+20:H-h+20,trim=duration=77[BG3_with_img]; \
+                  [VAL1][BG1_with_img][BG2_with_img][VAL2][BG3_with_img][6:v]concat=n=6:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
       - name: Download video and audio-A
