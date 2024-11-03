@@ -76,13 +76,13 @@ jobs:
                                   [v1][mask]overlay[kj]; \
                                   [k][kk]overlay=W-w+20:H-h+20[z]; \
                                   [z][kj]concat=n=2:v=1:a=0,split=5[seg1][seg2][seg3][seg4][seg5]; \
-                                         [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A]; \
-                                         [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B]; \
-                                         [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C]; \
-                                         [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D]; \
-                                         [seg5]trim=33:110,setpts=PTS-STARTPTS[E]; \
-                                         [A][B][C][D][E]concat=n=5:v=1:a=0[gg]; \
-                                         [gg][3:v]concat=n=2:v=1:a=0[outv]"
+                                  [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A]; \
+                                  [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B]; \
+                                  [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C]; \
+                                  [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D]; \
+                                  [seg5]trim=33:110,setpts=PTS-STARTPTS[E]; \
+                                  [A][B][C][D][E]concat=n=5:v=1:a=0[gg]; \
+                                  [gg][3:v]concat=n=2:v=1:a=0[outv]"
           -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
       - name: Download video and audio-A
