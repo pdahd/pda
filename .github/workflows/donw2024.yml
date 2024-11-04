@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        run: pip install yt-dlp
+        看哈哈run: pip install yt-dlp
 
       - name: List all available streams
         if: false
@@ -25,6 +25,45 @@ jobs:
           echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
       - name: Download videos and audio
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          # 定义一个数组，每个元素包括流编号、链接和输出文件名
+          videos=(
+            "313 https://youtu.be/VFAzkW9y2Xg?si=LnutUREkUlDZfbnf bw2046.webm"
+            "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
+          )
+
+          for video in "${videos[@]}"; do
+            # 提取流编号、URL 和输出文件名
+            IFS=' ' read -r stream url output_file <<< "$video"
+
+            # 判断流编号是否包含加号
+            if [[ "$stream" == *"+"* ]]; then
+              # 如果输出文件名没有扩展名，则添加 .mkv
+              if [[ "$output_file" != *.* ]]; then
+                output_file="${output_file}.mkv"
+              else
+              # 检查扩展名是否不是 .mkv
+              if [[ "$output_file" != *.mkv ]]; then
+                output_file="${output_file%.*}.mkv"  # 替换为 .mkv
+              fi
+            fi
+          fi 
+            # 打印修改后的文件名
+            echo "Modified output file name: $output_file"
+            
+            yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
+            $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+            $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+            -o "$output_file" \
+            "$url"
+          done
+      
+      - name: Download videos and audio
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -64,6 +103,26 @@ jobs:
           done
       
       - name: 编码
+        run: |
+          ffmpeg -i bw2046.webm \
+                 -t 192.2 -loop 1 -i uio.png \
+                 -filter_complex "
+                  [0:v]scale=-2:1920,split=2[v1][v2];
+                  [1:v]scale=-2:180[kk];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,916,1080)*between(Y,1649,1823),255,0)',boxblur=10:2[mask];
+                  [v1][mask]overlay[kj];
+                  [kj][kk]overlay=W-w+20:H-h+20[z];
+                  [z]split=5[seg1][seg2][seg3][seg4][seg5];
+                  [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C];
+                  [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D];
+                  [seg5]trim=33:110,setpts=PTS-STARTPTS[E];
+                  [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
+      
+      - name: 编码
+        if: false
         run: |
           ffmpeg -i bw2046.webm \
                  -i VAL.webm \
@@ -158,16 +217,15 @@ jobs:
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
       - name: Test x264 encoding for A
-        if: false
         run: |
-          ffmpeg -ss 33:30 -to 37:30 -i AAA.mp4 \
+          ffmpeg -ss 47:30 -to 52:30 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video1.mp4
       
       - name: Upload encoded video 
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-video
+          name: encoded-videoA
           path: test_video.mp4
 
       - name: Test x264 encoding for B
@@ -178,11 +236,10 @@ jobs:
           -c:v libx264 test_video2.mp4
       
       - name: Upload encoded video for B
-        if: false
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-video2
-          path: test_video2.mp4
+          name: encoded-videoB
+          path: test_video1.mp4
 
       - name: Upload encoded videos
         if: false
