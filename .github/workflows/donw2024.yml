@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        看哈哈run: pip install yt-dlp
+        run: pip install yt-dlp
 
       - name: List all available streams
         if: false
@@ -112,13 +112,11 @@ jobs:
                   [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,916,1080)*between(Y,1649,1823),255,0)',boxblur=10:2[mask];
                   [v1][mask]overlay[kj];
                   [kj][kk]overlay=W-w+20:H-h+20[z];
-                  [z]split=5[seg1][seg2][seg3][seg4][seg5];
-                  [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A];
-                  [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B];
-                  [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C];
-                  [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D];
-                  [seg5]trim=33:110,setpts=PTS-STARTPTS[E];
-                  [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
+                  [z]split=3[seg1][seg2][seg3];
+                  [seg1]trim=131:190.3,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=2.5:12,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=123:130.5,setpts=PTS-STARTPTS[C];
+                  [A][B][C]concat=n=3:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
       
       - name: 编码
@@ -218,7 +216,7 @@ jobs:
 
       - name: Test x264 encoding for A
         run: |
-          ffmpeg -ss 47:30 -to 52:30 -i ODS.mp4 \
+          ffmpeg -ss 47:30 -to 51:30 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video1.mp4
       
