@@ -104,12 +104,12 @@ jobs:
       
       - name: Video Encoding测试
         run: |
-          ffmpeg -i MR.webm \
+          ffmpeg -ss 153 -to 192 -i MR.webm \
                  -filter_complex "
                   [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
                   [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
-                  [v1][mask]overlay[kj]" \
-                 -map "[kj]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+                  [v1][mask]overlay" \
+                 -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
       - name: 美人视频致内存不足⚠️
         if: false
