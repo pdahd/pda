@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install yt-dlp
-        run: pip install yt-dlp
+        骨灰盒run: pip install yt-dlp
 
       - name: List all available streams
         if: false
@@ -32,7 +32,7 @@ jobs:
         run: |
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
-            "313 https://youtu.be/VFAzkW9y2Xg?si=LnutUREkUlDZfbnf bw2046.webm"
+            "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD 美人.webm"
             "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
           )
 
@@ -103,6 +103,21 @@ jobs:
           done
       
       - name: 编码
+        run: |
+          ffmpeg -i 美人.webm \
+                 -filter_complex "
+                  [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,916,1080)*between(Y,1649,1823),255,0)',boxblur=10:2[mask];
+                  [v1][mask]overlay[kj];
+                  [kj]split=3[seg1][seg2][seg3];
+                  [seg1]trim=131:190.3,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=2.5:12,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=123:130.5,setpts=PTS-STARTPTS[C];
+                  [A][B][C]concat=n=3:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+      
+      - name: 编码
+        if: false
         run: |
           ffmpeg -i bw2046.webm \
                  -t 192.2 -loop 1 -i uio.png \
@@ -216,9 +231,9 @@ jobs:
 
       - name: Test x264 encoding for A
         run: |
-          ffmpeg -ss 47:30 -to 51:30 -i ODS.mp4 \
+          ffmpeg -ss 50:30 -to 55:12 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
-          -c:v libx264 test_video1.mp4
+          -c:v libx264 -r 30 test_video1.mp4
       
       - name: Upload encoded video 
         uses: actions/upload-artifact@v4
