@@ -104,6 +104,33 @@ jobs:
       
       - name: Video Encoding
         run: |
+          ffmpeg -ss 153 -to 192 -i MR.webm \
+                 -ss 59 -to 90 -i MR.webm \
+                 -ss 106 -to 152 -i MR.webm \
+                 -ss 2.4 -to 11.8 -i MR.webm \
+                 -ss 91 -to 105.2 -i MR.webm \
+                 -filter_complex "
+                  [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask1];
+                  [v1][mask1]overlay[A];
+                  [1:v]transpose=1,hflip,scale=-2:1920,split=2[v3][v4];
+                  [v4]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask2];
+                  [v3][mask2]overlay[B];
+                  [2:v]transpose=1,hflip,scale=-2:1920,split=2[v5][v6];
+                  [v6]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask3];
+                  [v5][mask3]overlay[C];
+                  [3:v]transpose=1,hflip,scale=-2:1920,split=2[v7][v8];
+                  [v8]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask4];
+                  [v7][mask4]overlay[D];
+                  [4:v]transpose=1,hflip,scale=-2:1920,split=2[v9][v10];
+                  [v10]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask5];
+                  [v9][mask5]overlay[E];
+                  [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+      
+      - name: 美人视频编码内存不足，失败！⚠️
+        if: false
+        run: |
           ffmpeg -i MR.webm \
                  -filter_complex "
                   [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
@@ -235,7 +262,7 @@ jobs:
         run: |
           ffmpeg -ss 50:30 -to 55:13 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
-          -c:v libx264 test_video1.mp4
+          -c:v libx264 -r 30 test_video1.mp4
       
       - name: Upload encoded video 
         uses: actions/upload-artifact@v4
