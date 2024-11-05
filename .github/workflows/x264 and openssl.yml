@@ -8,14 +8,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Check for required packages
-        run: |
-          echo "Checking for required packages..."
-          apt-cache search libvpx-dev || echo "libvpx-dev not found"
-          apt-cache search libx265-dev || echo "libx265-dev not found"
-          apt-cache search libssl-dev || echo "libssl-dev not found"
-          apt-cache search libx264-dev || echo "libx264-dev not found"
       
       - name: Install dependencies
         run: |
@@ -57,10 +49,10 @@ jobs:
         run: |
           /usr/local/ff2024/bin/ffmpeg -version
           echo "Listing files in /usr/local/ff2024:"
-          ls -R /usr/local/ff2024  # 列出 ff2024 目录中的所有文件和子目录
+          ls -R /usr/local/ff2024  
 
       - name: Upload FFmpeg as artifact
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg
-          path: /usr/local/ff2024/**
+          path: ff2024/bin/ffmpeg
