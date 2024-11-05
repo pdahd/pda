@@ -32,7 +32,7 @@ jobs:
         run: |
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
-            "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD 美人.webm"
+            "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD MR.webm"
             "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
           )
 
@@ -102,9 +102,9 @@ jobs:
             "$url"
           done
       
-      - name: 编码
+      - name: x264 
         run: |
-          ffmpeg -i 美人.webm \
+          ffmpeg -i MR.webm \
                  -filter_complex "
                   [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
                   [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
