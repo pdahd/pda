@@ -33,16 +33,16 @@ jobs:
             libtheora-dev \
             libtool \
             libvorbis-dev \
-            libvpx-dev \
-            libx265-dev \
-            libssl-dev \
-            libx264-dev \   
             pkg-config \
             texinfo \
             wget \
             yasm \
             zlib1g-dev \
-            nasm
+            nasm \
+            libvpx-dev \
+            libx265-dev \
+            libssl-dev \
+            libx264-dev
 
       - name: Clone FFmpeg
         run: |
