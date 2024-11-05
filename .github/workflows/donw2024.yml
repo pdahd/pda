@@ -107,7 +107,7 @@ jobs:
           ffmpeg -i 美人.webm \
                  -filter_complex "
                   [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
-                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,916,1080)*between(Y,1649,1823),255,0)',boxblur=10:2[mask];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
                   [v1][mask]overlay[kj];
                   [kj]split=3[seg1][seg2][seg3];
                   [seg1]trim=131:190.3,setpts=PTS-STARTPTS[A];
