@@ -9,6 +9,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Check for required packages
+        run: |
+          echo "Checking for required packages..."
+          apt-cache search libvpx-dev || echo "libvpx-dev not found"
+          apt-cache search libx265-dev || echo "libx265-dev not found"
+          apt-cache search libssl-dev || echo "libssl-dev not found"
+          apt-cache search libx264-dev || echo "libx264-dev not found"
+      
       - name: Install dependencies
         run: |
           sudo apt-get update
