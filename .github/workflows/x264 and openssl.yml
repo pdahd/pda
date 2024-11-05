@@ -26,9 +26,9 @@ jobs:
             libtool \
             libvorbis-dev \
             libvpx-dev \
-            libx265-dev \  
-            libssl-dev \   
-            libx264-dev \   # 安装 x264 的开发文件
+            libx265-dev \
+            libssl-dev \
+            libx264-dev \   
             pkg-config \
             texinfo \
             wget \
@@ -55,4 +55,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg
-          path: /usr/local/ff2024/**  # 上传 ff2024 目录中的所有目录和文件
+          path: /usr/local/ff2024/**
