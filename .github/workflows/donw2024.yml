@@ -102,7 +102,7 @@ jobs:
             "$url"
           done
       
-      - name: x264 
+      - name: Video Encoding
         run: |
           ffmpeg -i MR.webm \
                  -filter_complex "
@@ -116,7 +116,7 @@ jobs:
                   [seg4]trim=2.4:11.8,setpts=PTS-STARTPTS[D];
                   [seg5]trim=91:105.2,setpts=PTS-STARTPTS[E];
                   [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
-                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+                 -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
       - name: 编码
         if: false
@@ -235,7 +235,7 @@ jobs:
         run: |
           ffmpeg -ss 50:30 -to 55:13 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
-          -c:v libx264 -r 30 test_video1.mp4
+          -c:v libx264 test_video1.mp4
       
       - name: Upload encoded video 
         uses: actions/upload-artifact@v4
