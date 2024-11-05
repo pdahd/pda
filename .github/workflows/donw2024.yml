@@ -158,8 +158,8 @@ jobs:
           done
       
       - name: Video Encoding and Concatenation
-        ☺️好段的的然run: |
-          ss_times=(
+        run: |
+          会很尴尬ss_times=(
             "-ss 153 -to 192"
             "-ss 59 -to 90"
             "-ss 106 -to 152"
