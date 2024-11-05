@@ -102,16 +102,39 @@ jobs:
             "$url"
           done
       
-      - name: Video Encoding测试
+      - name: Video Encoding and Concatenation
         run: |
-          ffmpeg -ss 153 -to 192 -i MR.webm \
-                 -filter_complex "
-                  [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
-                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
-                  [v1][mask]overlay" \
-                 -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+          ss_times=(
+            "-ss 153 -to 192"
+            "-ss 59 -to 90"
+            "-ss 106 -to 152"
+            "-ss 2.4 -to 11.8"
+            "-ss 91 -to 105.2"
+          )
+    
+          count=1
+
+          for time in "${ss_times[@]}"; do
+            output_file="MR${count}.mp4"
       
-      - name: 美人视频致内存不足⚠️
+            ffmpeg $time -i MR.webm \
+                   -filter_complex "
+                    [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
+                    [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
+                    [v1][mask]overlay" \
+                   -c:v libx264 -r 30 -preset slower -crf 15 "$output_file"
+      
+            echo "file '$output_file'" >> file_list.txt
+      
+            count=$((count + 1))
+          done
+
+          ffmpeg -f concat -safe 0 -i file_list.txt -c copy MR_complete.mp4
+
+          rm file_list.txt
+        
+      
+      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
         if: false
         run: |
           ffmpeg -ss 153 -to 192 -i MR.webm \
@@ -138,7 +161,7 @@ jobs:
                   [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
-      - name: 美人视频致内存不足⚠️
+      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
         if: false
         run: |
           ffmpeg -i MR.webm \
@@ -278,7 +301,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: encoded-videoA
-          path: test_video.mp4
+          path: MR_complete.mp4
 
       - name: Test x264 encoding for B
         if: false
