@@ -78,6 +78,7 @@ jobs:
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg || true
+          cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg
       
       - name: Upload FFmpeg config.log
         if: failure()  # 如果前一个步骤失败，则上传日志文件
@@ -90,10 +91,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      - name: Commit and push screenshot to repository
+      
+      - name: Commit and push FFmpeg binary to repository
         run: |
-          git add /usr/local/ff2024/bin/ffmpeg
-          git commit -m "Add screenshot from YouTube video"
+          git add ./ffmpeg
+          git commit -m "Add compiled FFmpeg binary"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
