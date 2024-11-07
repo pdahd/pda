@@ -78,7 +78,7 @@ jobs:
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg || true
-          cp /usr/local/ff2024/bin/ffmpeg ffmpeg
+          cp /usr/local/ff2024/bin/ffmpeg ffmpeg.png
       
       - name: Configure Git
         run: |
@@ -86,7 +86,6 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Remove embedded ffmpeg repository from index
-        if: false
         run: |
           git rm --cached ffmpeg  # 从 Git 索引中删除 ffmpeg 文件夹引用
           rm -rf ffmpeg           # 删除实际文件夹
@@ -95,7 +94,7 @@ jobs:
       
       - name: Commit and push FFmpeg binary to repository
         run: |
-          git add ffmpeg
+          git add ffmpeg.png
           git commit -m "Add compiled FFmpeg binary"
           git push
         env:
