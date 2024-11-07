@@ -10,7 +10,6 @@ jobs:
         uses: actions/checkout@v4
       
       - name: Install dependencies
-        if: false
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -33,7 +32,6 @@ jobs:
             nasm
       
       - name: Clone and build x265
-        if: false
         run: |
           git clone https://bitbucket.org/multicoreware/x265_git.git
           cd x265_git/build/linux
@@ -44,7 +42,6 @@ jobs:
           sudo make install
 
       - name: Clone x264
-        if: false
         run: |
           git clone --depth 1 https://code.videolan.org/videolan/x264.git
           cd x264
@@ -53,7 +50,6 @@ jobs:
           sudo make install
       
       - name: Download and Build Static OpenSSL
-        if: false
         run: |
           wget https://www.openssl.org/source/openssl-1.1.1t.tar.gz
           tar -xvzf openssl-1.1.1t.tar.gz
@@ -64,7 +60,6 @@ jobs:
           openssl version
       
       - name: Clone and build FFmpeg
-        if: false
         run: |
           git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
           cd ffmpeg
@@ -83,7 +78,7 @@ jobs:
           sudo make install
           sudo ldconfig
           ldd /usr/local/ff2024/bin/ffmpeg || true
-          cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg
+          cp /usr/local/ff2024/bin/ffmpeg ffmpeg
       
       - name: Configure Git
         run: |
@@ -91,6 +86,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
       
       - name: Remove embedded ffmpeg repository from index
+        if: false
         run: |
           git rm --cached ffmpeg  # 从 Git 索引中删除 ffmpeg 文件夹引用
           rm -rf ffmpeg           # 删除实际文件夹
@@ -98,9 +94,8 @@ jobs:
           git push
       
       - name: Commit and push FFmpeg binary to repository
-        if: false
         run: |
-          git add ./ffmpeg
+          git add ffmpeg
           git commit -m "Add compiled FFmpeg binary"
           git push
         env:
