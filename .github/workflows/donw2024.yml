@@ -25,6 +25,7 @@ jobs:
           echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
       - name: Download videos and audio
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -63,7 +64,6 @@ jobs:
           done
       
       - name: 多文件多时间段下载
-        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
@@ -158,6 +158,7 @@ jobs:
           done
       
       - name: Video Encoding and Concatenation
+        if: false
         run: |
           ss_times=(
             "-ss 153 -to 192"
@@ -348,11 +349,12 @@ jobs:
 
       - name: Test x264 encoding for A
         run: |
-          ffmpeg -ss 50:30 -to 55:13 -i ODS.mp4 \
+          ffmpeg -t 5 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 -r 30 test_video1.mp4
       
       - name: Upload encoded video 
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: encoded-videoA
