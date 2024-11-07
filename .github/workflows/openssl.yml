@@ -1,0 +1,99 @@
+name: Build FFmpeg with x264 and OpenSSL
+
+on: [push]
+
+jobs:
+  build_ffmpeg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            automake \
+            build-essential \
+            cmake \
+            git \
+            libass-dev \
+            libfdk-aac-dev \
+            libmp3lame-dev \
+            libopus-dev \
+            libtheora-dev \
+            libtool \
+            libvorbis-dev \
+            texinfo \
+            wget \
+            yasm \
+            zlib1g-dev \
+            nasm
+      
+      - name: Clone and build x265
+        run: |
+          git clone https://bitbucket.org/multicoreware/x265_git.git
+          cd x265_git/build/linux
+    
+          cmake -DENABLE_SHARED=OFF -DENABLE_CLI=OFF ../../source
+          
+          make -j$(nproc)
+          sudo make install
+
+      - name: Clone x264
+        run: |
+          git clone --depth 1 https://code.videolan.org/videolan/x264.git
+          cd x264
+          ./configure --enable-static --disable-shared
+          make -j$(nproc)
+          sudo make install
+      
+      - name: Download and Build Static OpenSSL
+        run: |
+          wget https://www.openssl.org/source/openssl-1.1.1t.tar.gz
+          tar -xvzf openssl-1.1.1t.tar.gz
+          cd openssl-1.1.1t
+          ./config no-shared --prefix=/usr/local
+          make -j$(nproc)
+          sudo make install
+          openssl version
+      
+      - name: Clone and build FFmpeg
+        run: |
+          git clone --depth 1 https://git.ffmpeg.org/ffmpeg.git
+          cd ffmpeg
+          
+          ./configure --enable-gpl \
+            --enable-libx265 \
+            --enable-libx264 \
+            --enable-openssl \
+            --enable-nonfree \
+            --enable-static \
+            --disable-shared \
+            --prefix=/usr/local/ff2024\
+            --pkg-config-flags="--static"
+           
+          make -j$(nproc)
+          sudo make install
+          sudo ldconfig
+          ldd /usr/local/ff2024/bin/ffmpeg || true
+      
+      - name: Upload FFmpeg config.log
+        if: failure()  # 如果前一个步骤失败，则上传日志文件
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-config-log
+          path: ffmpeg/ffbuild/config.log
+      
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit and push screenshot to repository
+        run: |
+          git add /usr/local/ff2024/bin/ffmpeg
+          git commit -m "Add screenshot from YouTube video"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
