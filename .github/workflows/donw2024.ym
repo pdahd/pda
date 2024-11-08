@@ -21,6 +21,13 @@ jobs:
 
       - name: Setup FFmpeg
         run: |
+          tar -xzvf ffmpeg.tar.gz
+          chmod +x ffmpeg
+          mv ffmpeg /usr/local/bin/
+      
+      - name: Setup FFmpeg
+        if: false
+        run: |
           chmod +x ffmpeg
           echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
