@@ -149,6 +149,18 @@ jobs:
             "$url"
           done
       
+      - name: 编码1
+        run: |
+          ffmpeg -i mook.webm \
+                 -filter_complex "
+                  [0:v]scale=-2:1920,eq=brightness=-0.02,split=4[seg1][seg2][seg3][seg4];
+                  [seg1]trim=0:10,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=74:142,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=10:59,setpts=PTS-STARTPTS[C];
+                  [seg4]trim=144.4:174,setpts=PTS-STARTPTS[D];
+                  [A][B][C][D]concat=n=4:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -preset slower -crf 15 mook.mp4
+      
       - name: 循环编码所需时间段+无损连接为完整文件（内存不足时使用）
         if: false
         run: |
@@ -313,31 +325,23 @@ jobs:
           [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
-      - name: 编码尾端视频1
-        run: |
-          ffmpeg -t 5 -i 240928.mp4 \
-          -vf "eq=brightness=-0.01" \
-          -c:v libx264 video1.mp4
-      
-      - name: 上传主视频注意对照编码输出名称
-        if: false
+      - name: 上传主视频对照编码输出名称
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-videoA
-          path: MR_complete.mp4
+          name: encoded-video
+          path: mook.mp4
+      
+      - name: 编码尾端视频
+        run: |
+          ffmpeg -t 4:37 -i 240928.mp4 \
+          -vf "eq=brightness=-0.02" \
+          -c:v libx264 end.mp4
 
-      - name: 编码尾端视频2
-        if: false
-        run: |
-          ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
-          -vf "eq=brightness=-0.01" \
-          -c:v libx264 video2.mp4
-      
-      - name: 上传尾端视频1
+      - name: 上传尾端视频
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-video1
-          path: video1.mp4
+          name: encoded-end
+          path: end.mp4
 
       - name: 上传多个不同视频
         if: false
