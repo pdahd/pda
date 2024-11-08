@@ -1,3 +1,4 @@
+
 name: Build FFmpeg with x264 and OpenSSL
 
 on: [push]
@@ -94,6 +95,7 @@ jobs:
       
       - name: Commit and push FFmpeg binary to repository
         run: |
+          mv ffmpeg ffmpeg_src
           cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg
           tar -czvf ffmpeg.tar.gz ffmpeg
           git add ffmpeg.tar.gz
