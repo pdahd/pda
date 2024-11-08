@@ -38,7 +38,6 @@ jobs:
           echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
 
       - name: Download videos and audio
-        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -77,6 +76,7 @@ jobs:
           done
       
       - name: 多文件多时间段下载
+        if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
@@ -231,7 +231,6 @@ jobs:
                  -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
       - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
-        if: false
         run: |
           ffmpeg -i MR.webm \
                  -filter_complex "
@@ -245,7 +244,7 @@ jobs:
                   [seg4]trim=2.4:11.8,setpts=PTS-STARTPTS[D];
                   [seg5]trim=91:105.2,setpts=PTS-STARTPTS[E];
                   [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
-                 -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
+                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
       - name: 编码
         if: false
