@@ -25,7 +25,7 @@ jobs:
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
             "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD MR.webm"
-            "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
+            "137 https://youtu.be/K1G6sjN0jVI?si=hq-RWVjFiaZstYNq 240928.mp4"
           )
 
           for video in "${videos[@]}"; do
@@ -315,9 +315,9 @@ jobs:
 
       - name: 编码尾端视频1
         run: |
-          ffmpeg -t 5 -i ODS.mp4 \
+          ffmpeg -t 5 -i 240928.mp4 \
           -vf "eq=brightness=-0.01" \
-          -c:v libx264 -r 30 test_video1.mp4
+          -c:v libx264 video1.mp4
       
       - name: 上传主视频注意对照编码输出名称
         if: false
@@ -331,13 +331,13 @@ jobs:
         run: |
           ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
-          -c:v libx264 test_video2.mp4
+          -c:v libx264 video2.mp4
       
       - name: 上传尾端视频1
         uses: actions/upload-artifact@v4
         with:
           name: encoded-video1
-          path: test_video1.mp4
+          path: video1.mp4
 
       - name: 上传多个不同视频
         if: false
