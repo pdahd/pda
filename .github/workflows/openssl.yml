@@ -97,9 +97,8 @@ jobs:
         run: |
           mv ffmpeg ffmpeg_src
           cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg
-          tar -czvf ffmpeg.tar.gz ffmpeg
-          git add ffmpeg.tar.gz
-          git commit -m "Add compiled FFmpeg binary as tar.gz"
+          git add ffmpeg
+          git commit -m "Add compiled FFmpeg binary"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
