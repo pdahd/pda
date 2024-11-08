@@ -16,7 +16,7 @@ jobs:
           chmod +x ffmpeg
           mv ffmpeg /usr/local/bin/
       
-      - name: Download videos and audio
+      - name: 下载两个视频以及音频
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
           INCLUDE_SECTIONS: "false"
@@ -54,7 +54,7 @@ jobs:
             "$url"
           done
       
-      - name: 多文件多时间段下载
+      - name: 多个视频无损截取时间段下载
         if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
@@ -109,7 +109,7 @@ jobs:
             count=$((count + 1))
           done
       
-      - name: Download videos and audio
+      - name: 下载三个视频以及音频
         if: false
         env:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
@@ -149,7 +149,7 @@ jobs:
             "$url"
           done
       
-      - name: Video Encoding and Concatenation
+      - name: 循环编码所需时间段+无损连接为完整文件（内存不足时使用）
         if: false
         run: |
           ss_times=(
@@ -182,7 +182,7 @@ jobs:
           rm file_list.txt
         
       
-      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
+      - name: ‘美人’高帧率高码率视频使用concat连接多个片段致内存不足（特例）
         if: false
         run: |
           ffmpeg -ss 153 -to 192 -i MR.webm \
@@ -209,7 +209,8 @@ jobs:
                   [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
-      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
+      - name: ‘美人’高帧率高码率视频使用concat连接多个片段致内存不足（特例）
+        if: false
         run: |
           ffmpeg -i MR.webm \
                  -filter_complex "
@@ -225,7 +226,7 @@ jobs:
                   [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
       
-      - name: 编码
+      - name: 不在叠加中使用split分流，改为叠加后再分流
         if: false
         run: |
           ffmpeg -i bw2046.webm \
@@ -243,7 +244,7 @@ jobs:
                   [A][B][C]concat=n=3:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
       
-      - name: 编码
+      - name: 不在第一个concat连接中使用split分流，改为连接后再分流可避免输出黑屏时间段
         if: false
         run: |
           ffmpeg -i bw2046.webm \
@@ -267,7 +268,7 @@ jobs:
                   [A][B][C][D][E][3:v]concat=n=6:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
-      - name: x264编码
+      - name: 对于不同帧率输入不使用trim，分别应用参数再连接避免输出黑屏时间段
         if: false
         run: |
           ffmpeg -ss 2.2 -to 41 -i VAL.webm \
@@ -294,7 +295,7 @@ jobs:
                   [VAL1][BG1_with_img][BG2_with_img][VAL2][BG3_with_img][6:v]concat=n=6:v=1:a=0[outv]" \
                  -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
       
-      - name: Test x264 encoding
+      - name: 在concat连接中使用split分为多个流，对于不同帧率输入或造成输出有黑屏时间段（慎用）
         if: false
         run: |
           ffmpeg -i AAA.webm -i BBB.webm \
@@ -312,33 +313,33 @@ jobs:
           [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
           -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
 
-      - name: Test x264 encoding for A
+      - name: 编码尾端视频1
         run: |
           ffmpeg -t 5 -i ODS.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 -r 30 test_video1.mp4
       
-      - name: Upload encoded video 
+      - name: 上传主视频注意对照编码输出名称
         if: false
         uses: actions/upload-artifact@v4
         with:
           name: encoded-videoA
           path: MR_complete.mp4
 
-      - name: Test x264 encoding for B
+      - name: 编码尾端视频2
         if: false
         run: |
           ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
           -vf "eq=brightness=-0.01" \
           -c:v libx264 test_video2.mp4
       
-      - name: Upload encoded video for B
+      - name: 上传尾端视频1
         uses: actions/upload-artifact@v4
         with:
-          name: encoded-videoB
+          name: encoded-video1
           path: test_video1.mp4
 
-      - name: Upload encoded videos
+      - name: 上传多个不同视频
         if: false
         uses: actions/upload-artifact@v4
         with:
