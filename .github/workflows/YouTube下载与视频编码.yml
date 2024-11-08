@@ -24,7 +24,7 @@ jobs:
         run: |
           # 定义一个数组，每个元素包括流编号、链接和输出文件名
           videos=(
-            "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD MR.webm"
+            "313 https://youtu.be/zXD-s9uySrg?si=9E2c-KiZL_kqyqsq mook.webm"
             "137 https://youtu.be/K1G6sjN0jVI?si=hq-RWVjFiaZstYNq 240928.mp4"
           )
 
