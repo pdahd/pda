@@ -1,0 +1,396 @@
+name: Download YouTube Video
+
+on: [push]
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp
+        run: pip install yt-dlp
+
+      - name: List all available streams
+        if: false
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
+          https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg
+
+      - name: Setup FFmpeg
+        run: |
+          chmod +x ffmpeg
+          mv ffmpeg /usr/local/bin/
+      
+      - name: Setup FFmpeg
+        if: false
+        run: |
+          tar -xzvf ffmpeg.tar.gz
+          chmod +x ffmpeg
+          mv ffmpeg /usr/local/bin/
+      
+      - name: Setup FFmpeg
+        if: false
+        run: |
+          chmod +x ffmpeg
+          echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
+
+      - name: Download videos and audio
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          # 定义一个数组，每个元素包括流编号、链接和输出文件名
+          videos=(
+            "315 https://youtu.be/dWmu9Fu8VB0?si=zWyvlOfVY2dSj9wD MR.webm"
+            "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
+          )
+
+          for video in "${videos[@]}"; do
+            # 提取流编号、URL 和输出文件名
+            IFS=' ' read -r stream url output_file <<< "$video"
+
+            # 判断流编号是否包含加号
+            if [[ "$stream" == *"+"* ]]; then
+              # 如果输出文件名没有扩展名，则添加 .mkv
+              if [[ "$output_file" != *.* ]]; then
+                output_file="${output_file}.mkv"
+              else
+              # 检查扩展名是否不是 .mkv
+              if [[ "$output_file" != *.mkv ]]; then
+                output_file="${output_file%.*}.mkv"  # 替换为 .mkv
+              fi
+            fi
+          fi 
+            # 打印修改后的文件名
+            echo "Modified output file name: $output_file"
+            
+            yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
+            $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+            $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+            -o "$output_file" \
+            "$url"
+          done
+      
+      - name: 多文件多时间段下载
+        if: false
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          # 定义视频数组，每个元素包括流编号、链接和输出文件名
+          videos=(
+            "313 https://youtu.be/jkOR6QLqT5g?si=dPF93NyqnkNe8AWl VAL.webm"
+            "313 https://youtu.be/GKyWywyglag?si=mwu1QlOzh00Y59UJ bw2046.webm"
+            "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
+          )
+    
+          # 定义对应的时间段数组（留空表示不截取）
+          time_ranges=(
+            "5-1:10"    # 第一个视频的时间段
+            ""          # 第二个视频不截取
+            "0:10-1:00" # 第三个视频的时间段
+          )
+
+          count=0  # 用于同步视频数组和时间段数组的计数器
+
+          for video in "${videos[@]}"; do
+            # 提取流编号、URL 和输出文件名
+            IFS=' ' read -r stream url output_file <<< "$video"
+      
+            # 判断流编号是否包含加号
+            if [[ "$stream" == *"+"* ]]; then
+              # 如果输出文件名没有扩展名，则添加 .mkv
+              if [[ "$output_file" != *.* ]]; then
+                output_file="${output_file}.mkv"
+              else
+                # 检查扩展名是否不是 .mkv
+                if [[ "$output_file" != *.mkv ]]; then
+                  output_file="${output_file%.*}.mkv"  # 替换为 .mkv
+                fi
+              fi 
+            fi 
+      
+            # 获取当前视频的时间段（可能为空）
+            time_range="${time_ranges[count]}"
+      
+            # 打印修改后的文件名
+            echo "Modified output file name: $output_file"
+      
+            # 下载命令，直接使用多线程，按需添加时间段参数
+            yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
+            $([[ -n "$time_range" ]] && echo --download-sections "*$time_range") \
+            --concurrent-fragments 10 \
+            -o "$output_file" \
+            "$url"
+
+            # 增加计数器
+            count=$((count + 1))
+          done
+      
+      - name: Download videos and audio
+        if: false
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          # 定义一个数组，每个元素包括流编号、链接和输出文件名
+          videos=(
+            "313 https://youtu.be/jkOR6QLqT5g?si=dPF93NyqnkNe8AWl VAL.webm"
+            "313 https://youtu.be/GKyWywyglag?si=mwu1QlOzh00Y59UJ bw2046.webm"
+            "137 https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg ODS.mp4"
+          )
+
+          for video in "${videos[@]}"; do
+            # 提取流编号、URL 和输出文件名
+            IFS=' ' read -r stream url output_file <<< "$video"
+
+            # 判断流编号是否包含加号
+            if [[ "$stream" == *"+"* ]]; then
+              # 如果输出文件名没有扩展名，则添加 .mkv
+              if [[ "$output_file" != *.* ]]; then
+                output_file="${output_file}.mkv"
+              else
+              # 检查扩展名是否不是 .mkv
+              if [[ "$output_file" != *.mkv ]]; then
+                output_file="${output_file%.*}.mkv"  # 替换为 .mkv
+              fi
+            fi
+          fi 
+            # 打印修改后的文件名
+            echo "Modified output file name: $output_file"
+            
+            yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f "$stream" \
+            $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+            $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+            -o "$output_file" \
+            "$url"
+          done
+      
+      - name: Video Encoding and Concatenation
+        if: false
+        run: |
+          ss_times=(
+            "-ss 153 -to 192"
+            "-ss 59 -to 90"
+            "-ss 106 -to 152"
+            "-ss 2.4 -to 11.8"
+            "-ss 91 -to 105.2"
+          )
+    
+          count=1
+
+          for time in "${ss_times[@]}"; do
+            output_file="MR${count}.mp4"
+      
+            ffmpeg $time -i MR.webm \
+                   -filter_complex "
+                    [0:v]transpose=1,hflip,eq=brightness=-0.03,scale=-2:1920,split=2[v1][v2];
+                    [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
+                    [v1][mask]overlay" \
+                   -c:v libx264 -r 30 -preset slower -crf 15 "$output_file"
+      
+            echo "file '$output_file'" >> file_list.txt
+      
+            count=$((count + 1))
+          done
+
+          ffmpeg -f concat -safe 0 -i file_list.txt -c copy MR_complete.mp4
+
+          rm file_list.txt
+        
+      
+      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
+        if: false
+        run: |
+          ffmpeg -ss 153 -to 192 -i MR.webm \
+                 -ss 59 -to 90 -i MR.webm \
+                 -ss 106 -to 152 -i MR.webm \
+                 -ss 2.4 -to 11.8 -i MR.webm \
+                 -ss 91 -to 105.2 -i MR.webm \
+                 -filter_complex "
+                  [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask1];
+                  [v1][mask1]overlay[A];
+                  [1:v]transpose=1,hflip,scale=-2:1920,split=2[v3][v4];
+                  [v4]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask2];
+                  [v3][mask2]overlay[B];
+                  [2:v]transpose=1,hflip,scale=-2:1920,split=2[v5][v6];
+                  [v6]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask3];
+                  [v5][mask3]overlay[C];
+                  [3:v]transpose=1,hflip,scale=-2:1920,split=2[v7][v8];
+                  [v8]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask4];
+                  [v7][mask4]overlay[D];
+                  [4:v]transpose=1,hflip,scale=-2:1920,split=2[v9][v10];
+                  [v10]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask5];
+                  [v9][mask5]overlay[E];
+                  [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+      
+      - name: ‘美人’视频使用concat连接多个片段致内存不足⚠️
+        run: |
+          ffmpeg -i MR.webm \
+                 -filter_complex "
+                  [0:v]transpose=1,hflip,scale=-2:1920,split=2[v1][v2];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(lte(hypot(X-125,Y-1794),102)+lte(hypot(X-955,Y-124),102),255,0)',boxblur=10:3[mask];
+                  [v1][mask]overlay[kj];
+                  [kj]split=5[seg1][seg2][seg3][seg4][seg5];
+                  [seg1]trim=153:192,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=59:90,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=106:152,setpts=PTS-STARTPTS[C];
+                  [seg4]trim=2.4:11.8,setpts=PTS-STARTPTS[D];
+                  [seg5]trim=91:105.2,setpts=PTS-STARTPTS[E];
+                  [A][B][C][D][E]concat=n=5:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 30 -preset slower -crf 15 test_video.mp4
+      
+      - name: 编码
+        if: false
+        run: |
+          ffmpeg -i bw2046.webm \
+                 -t 192.2 -loop 1 -i uio.png \
+                 -filter_complex "
+                  [0:v]scale=-2:1920,split=2[v1][v2];
+                  [1:v]scale=-2:180[kk];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,916,1080)*between(Y,1649,1823),255,0)',boxblur=10:2[mask];
+                  [v1][mask]overlay[kj];
+                  [kj][kk]overlay=W-w+20:H-h+20[z];
+                  [z]split=3[seg1][seg2][seg3];
+                  [seg1]trim=131:190.3,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=2.5:12,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=123:130.5,setpts=PTS-STARTPTS[C];
+                  [A][B][C]concat=n=3:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
+      
+      - name: 编码
+        if: false
+        run: |
+          ffmpeg -i bw2046.webm \
+                 -i VAL.webm \
+                 -t 148.3 -loop 1 -i uio.png \
+                 -ss 42:30 -to 47:30 -i ODS.mp4 \
+                 -filter_complex "
+                  [0:v]scale=-2:1920,eq=brightness=-0.03[k];
+                  [1:v]transpose=2,scale=-2:1920,split=2[v1][v2];
+                  [2:v]scale=-2:180[kk];
+                  [v2]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[mask];
+                  [v1][mask]overlay[kj];
+                  [k][kk]overlay=W-w+20:H-h+20[z];
+                  [z][kj]concat=n=2:v=1:a=0[concat1];
+                  [concat1]split=5[seg1][seg2][seg3][seg4][seg5];
+                  [seg1]trim=150.3:189.5,setpts=PTS-STARTPTS[A];
+                  [seg2]trim=10.3:32,setpts=PTS-STARTPTS[B];
+                  [seg3]trim=128:145.5,setpts=PTS-STARTPTS[C];
+                  [seg4]trim=190.2:200.2,setpts=PTS-STARTPTS[D];
+                  [seg5]trim=33:110,setpts=PTS-STARTPTS[E];
+                  [A][B][C][D][E][3:v]concat=n=6:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
+      
+      - name: x264编码
+        if: false
+        run: |
+          ffmpeg -ss 2.2 -to 41 -i VAL.webm \
+                 -ss 10.3 -to 32 -i bw2046.webm \
+                 -ss 128 -to 145.5 -i bw2046.webm \
+                 -ss 42 -to 51.5 -i VAL.webm \
+                 -ss 33 -to 110 -i bw2046.webm \
+                 -loop 1 -i uio.png \
+                 -ss 42:30 -to 47:30 -i ODS.mp4 \
+                 -filter_complex \
+                 "[0:v]transpose=2,scale=-2:1920,split=2[VAL1_orig][VAL1_mask]; \
+                  [VAL1_mask]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[VAL1_masked]; \
+                  [VAL1_orig][VAL1_masked]overlay[VAL1]; \
+                  [1:v]scale=-2:1920,eq=brightness=-0.03[BG1]; \
+                  [2:v]scale=-2:1920,eq=brightness=-0.03[BG2]; \
+                  [3:v]transpose=2,scale=-2:1920,split=2[VAL2_orig][VAL2_mask]; \
+                  [VAL2_mask]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,927,1062)*between(Y,20,208),255,0)',boxblur=10:2[VAL2_masked]; \
+                  [VAL2_orig][VAL2_masked]overlay[VAL2]; \
+                  [4:v]scale=-2:1920,eq=brightness=-0.03[BG3]; \
+                  [5:v]scale=-2:180,split=3[img1][img2][img3]; \
+                  [BG1][img1]overlay=W-w+20:H-h+20,trim=duration=21.7[BG1_with_img]; \
+                  [BG2][img2]overlay=W-w+20:H-h+20,trim=duration=17.5[BG2_with_img]; \
+                  [BG3][img3]overlay=W-w+20:H-h+20,trim=duration=77[BG3_with_img]; \
+                  [VAL1][BG1_with_img][BG2_with_img][VAL2][BG3_with_img][6:v]concat=n=6:v=1:a=0[outv]" \
+                 -map "[outv]" -c:v libx264 -r 29.97003 -preset slower -crf 15 test_video.mp4
+      
+      - name: Download video and audio-A
+        if: false
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 137 \
+          $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          -o "AAA.mp4" \
+          https://youtu.be/n2aYLM2Fg5w?si=bnlVZ7vJEfAPawEg
+
+      - name: Download video and audio-B
+        if: false
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+          INCLUDE_SECTIONS: "false"
+          ENABLE_MULTITHREAD: "true"
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f 313 \
+          $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          -o "BBB.webm" \
+          https://youtu.be/dHfrWznQWgw?si=dG_cP4tLR44OCYBK
+      
+      - name: Test x264 encoding
+        if: false
+        run: |
+          ffmpeg -i AAA.webm -i BBB.webm \
+          -filter_complex "[0:v]scale=-2:1920,eq=brightness=-0.03,split=2[original][copy]; \
+          [copy]format=yuva444p,geq=lum='p(X,Y)':a='if(between(X,780,1080)*between(Y,1800,1920),255,0)',boxblur=10:2[mask]; \
+          [original][mask]overlay[segA]; \
+          [1:v]transpose=1,scale=-2:1920,eq=brightness=-0.05[segB]; \
+          [segA][segB]concat=n=2:v=1:a=0,split=6[seg1][seg2][seg3][seg4][seg5][seg6]; \
+          [seg1]trim=16.2:31.4,setpts=PTS-STARTPTS[A]; \
+          [seg2]trim=33:69,setpts=PTS-STARTPTS[B]; \
+          [seg3]trim=99:124,setpts=PTS-STARTPTS[C]; \
+          [seg4]trim=177:215,setpts=PTS-STARTPTS[D]; \
+          [seg5]trim=71.3:86,setpts=PTS-STARTPTS[E]; \
+          [seg6]trim=158:169,setpts=PTS-STARTPTS[F]; \
+          [A][C][B][D][E][F]concat=n=6:v=1:a=0[outv]" \
+          -map "[outv]" -c:v libx264 -preset slower -crf 15 test_video.mp4
+
+      - name: Test x264 encoding for A
+        run: |
+          ffmpeg -t 5 -i ODS.mp4 \
+          -vf "eq=brightness=-0.01" \
+          -c:v libx264 -r 30 test_video1.mp4
+      
+      - name: Upload encoded video 
+        if: false
+        uses: actions/upload-artifact@v4
+        with:
+          name: encoded-videoA
+          path: MR_complete.mp4
+
+      - name: Test x264 encoding for B
+        if: false
+        run: |
+          ffmpeg -ss 37:30 -to 42:30 -i AAA.mp4 \
+          -vf "eq=brightness=-0.01" \
+          -c:v libx264 test_video2.mp4
+      
+      - name: Upload encoded video for B
+        uses: actions/upload-artifact@v4
+        with:
+          name: encoded-videoB
+          path: test_video1.mp4
+
+      - name: Upload encoded videos
+        if: false
+        uses: actions/upload-artifact@v4
+        with:
+          name: encoded-videos
+          path: |
+            AAA.mkv
+            BBB.mkv
+            CCC.mp4
