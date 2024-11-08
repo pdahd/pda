@@ -21,6 +21,12 @@ jobs:
 
       - name: Setup FFmpeg
         run: |
+          chmod +x ffmpeg
+          mv ffmpeg /usr/local/bin/
+      
+      - name: Setup FFmpeg
+        if: false
+        run: |
           tar -xzvf ffmpeg.tar.gz
           chmod +x ffmpeg
           mv ffmpeg /usr/local/bin/
