@@ -94,9 +94,12 @@ jobs:
       
       - name: Commit and push FFmpeg binary to repository
         run: |
-          cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg.bin
-          git add ./ffmpeg.bin
-          git commit -m "Add compiled FFmpeg binary"
+          cp /usr/local/ff2024/bin/ffmpeg ./ffmpeg
+          tar -czvf ffmpeg.tar.gz ffmpeg
+          rm -f ffmpeg
+          git add ffmpeg.tar.gz
+          git commit -m "Add compiled FFmpeg binary as tar.gz"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
