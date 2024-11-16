@@ -13,6 +13,7 @@ async function handleRequest(request) {
         <style>
             #map {
                 height: 100vh; /* Full screen height */
+                filter: contrast(1.5) saturate(1.2); /* 提高对比度和饱和度 */
             }
             #searchBox {
                 position: absolute;
