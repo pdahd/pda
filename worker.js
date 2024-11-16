@@ -13,7 +13,6 @@ async function handleRequest(request) {
         <style>
             #map {
                 height: 100vh; /* Full screen height */
-                filter: contrast(0.8) saturate(1.2); /* 降低对比度和提高饱和度 */
             }
             #searchBox {
                 position: absolute;
@@ -179,7 +178,7 @@ async function handleRequest(request) {
                     .addTo(map)
                     .bindPopup(popupText)
                     .openPopup();
-                map.flyTo([lat, lon]);
+                map.flyTo([lat, lon], 5);
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
             }
