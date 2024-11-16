@@ -32,7 +32,7 @@ async function handleRequest(request) {
                 position: absolute;
                 width: 50px;
                 height: 50px;
-                background-color: rgba(255, 0, 0, 0.7); /* 增加饱和度 */
+                background-color: rgba(255, 0, 0, 0.8); /* 增加饱和度 */
                 border-radius: 50%; /* 圆形 */
                 animation: pulse-animation 2s infinite; /* 动画效果 */
             }
@@ -178,13 +178,6 @@ async function handleRequest(request) {
                     .addTo(map)
                     .bindPopup(popupText)
                     .openPopup();
-                
-                // 修改标记的阴影效果
-                previousMarker._icon.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.5)';  // 增强标记图标阴影
-
-                // 修改弹出框的阴影效果
-                var popup = previousMarker.getPopup().getElement();
-                popup.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.5)';  // 增强弹出框阴影
                 
                 map.flyTo([lat, lon], 5); //执行平移动画
                 
