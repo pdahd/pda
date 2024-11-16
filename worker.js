@@ -178,7 +178,16 @@ async function handleRequest(request) {
                     .addTo(map)
                     .bindPopup(popupText)
                     .openPopup();
-                map.flyTo([lat, lon], 5);
+                
+                // 修改标记的阴影效果
+                previousMarker._icon.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.8)';  // 增强标记图标阴影
+
+                // 修改弹出框的阴影效果
+                var popup = previousMarker.getPopup().getElement();
+                popup.style.boxShadow = '0 6px 15px rgba(0, 0, 0, 0.8)';  // 增强弹出框阴影
+                
+                map.flyTo([lat, lon], 5); //执行平移动画
+                
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
             }
