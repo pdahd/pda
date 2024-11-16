@@ -97,7 +97,7 @@ async function handleRequest(request) {
         <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 4); // 默认世界地图视图
+            var map = L.map('map').setView([20, 0], 2); // 默认世界地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
