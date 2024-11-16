@@ -178,12 +178,7 @@ async function handleRequest(request) {
                     .addTo(map)
                     .bindPopup(popupText)
                     .openPopup();
-                map.flyTo([lat, lon], 4, { // 第二个参数是缩放级别
-                    animate: true,
-                    duration: 1,        // 动画持续时间（秒）
-                    easeLinearity: 1, // 动画线性速率控制（越小越慢）
-                    noMoveStart: false  // 保持地图事件正常触发
-                });
+                map.flyTo([lat, lon]);
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
             }
