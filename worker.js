@@ -180,7 +180,12 @@ async function handleRequest(request) {
                     .openPopup();
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
-                map.panTo([lat, lon]); // 平移地图至中心
+                map.flyTo([lat, lon], 8, { // 第二个参数是缩放级别
+                    animate: true,
+                    duration: 2,        // 动画持续时间（秒）
+                    easeLinearity: 0.5, // 动画线性速率控制（越小越慢）
+                    noMoveStart: false  // 保持地图事件正常触发
+                });
             }
         </script>
     </body>
