@@ -54,7 +54,7 @@ async function handleRequest(request) {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 50%);
+                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 60%);
                 pointer-events: none; /* 不阻挡交互 */
                 z-index: 900; /* 覆盖地图但不影响交互 */
                 opacity: 0; /* 初始透明 */
@@ -70,7 +70,7 @@ async function handleRequest(request) {
         <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 2); // 默认世界地图视图
+            var map = L.map('map').setView([20, 0], 4); // 默认世界地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -154,6 +154,7 @@ async function handleRequest(request) {
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
                 map.panTo([lat, lon]); // 平移地图至中心
+                map.setView([lat, lon], 4); // 调整缩放级别以聚焦
             }
         </script>
     </body>
