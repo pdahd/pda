@@ -32,7 +32,7 @@ async function handleRequest(request) {
                 position: absolute;
                 width: 50px;
                 height: 50px;
-                background-color: rgba(255, 0, 0, 0.6); /* 增加饱和度 */
+                background-color: rgba(255, 0, 0, 0.7); /* 增加饱和度 */
                 border-radius: 50%; /* 圆形 */
                 animation: pulse-animation 2s infinite; /* 动画效果 */
             }
@@ -54,7 +54,7 @@ async function handleRequest(request) {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 70%);
+                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 50%);
                 pointer-events: none; /* 不阻挡交互 */
                 z-index: 900; /* 覆盖地图但不影响交互 */
                 opacity: 0; /* 初始透明 */
