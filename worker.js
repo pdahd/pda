@@ -180,8 +180,8 @@ async function handleRequest(request) {
                     .openPopup();
                 map.flyTo([lat, lon], 4, { // 第二个参数是缩放级别
                     animate: true,
-                    duration: 2,        // 动画持续时间（秒）
-                    easeLinearity: 0.8, // 动画线性速率控制（越小越慢）
+                    duration: 1,        // 动画持续时间（秒）
+                    easeLinearity: 0.5, // 动画线性速率控制（越小越慢）
                     noMoveStart: false  // 保持地图事件正常触发
                 });
                 // 激活遮罩层（淡入显示）
