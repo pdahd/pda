@@ -83,20 +83,14 @@ async function handleRequest(request) {
             highlightMask.className = 'highlight-mask';
             document.body.appendChild(highlightMask);
 
-            // 输入框输入事件监听
-            document.getElementById('searchBox').addEventListener('input', function(e) {
-                var inputValue = e.target.value.trim();
+            var searchBox = document.getElementById('searchBox');
 
-                if (inputValue === "") {
-                    // 输入框为空，淡出遮罩
-                    highlightMask.classList.remove('active');
-                } else {
-                    // 输入框有内容，显示遮罩
-                    highlightMask.classList.add('active');
-                }
+            // 用户编辑输入框时，淡出遮罩
+            searchBox.addEventListener('input', function() {
+                highlightMask.classList.remove('active');
             });
 
-            document.getElementById('searchBox').addEventListener('keypress', function(e) {
+            searchBox.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     var input = e.target.value.trim();
                     
@@ -134,7 +128,6 @@ async function handleRequest(request) {
             });
 
             function updateMap(lat, lon, popupText) {
-                map.panTo([lat, lon]); // 平移地图至中心
 
                 // 移除之前的标记
                 if (previousMarker) {
@@ -159,6 +152,9 @@ async function handleRequest(request) {
                     .addTo(map)
                     .bindPopup(popupText)
                     .openPopup();
+                // 激活遮罩层（淡入显示）
+                highlightMask.classList.add('active');
+                map.panTo([lat, lon]); // 平移地图至中心
             }
         </script>
     </body>
