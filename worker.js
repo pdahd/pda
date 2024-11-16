@@ -54,11 +54,17 @@ async function handleRequest(request) {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 60%);
+                background: radial-gradient(circle, 
+                    rgba(0, 0, 0, 0) 30%,      /* 中心完全透明 */
+                    rgba(0, 0, 0, 0.3) 50%,   /* 过渡至较浅的暗色 */
+                    rgba(0, 0, 0, 0.7) 70%,   /* 逐渐变暗 */
+                    rgba(0, 0, 0, 0.9) 90%,   /* 更深的暗色 */
+                    rgba(0, 0, 0, 1) 100%     /* 完全黑色 */
+                );   
                 pointer-events: none; /* 不阻挡交互 */
                 z-index: 900; /* 覆盖地图但不影响交互 */
                 opacity: 0; /* 初始透明 */
-                transition: opacity 0.8s ease; /* 淡入淡出 */
+                transition: opacity 1s ease; /* 淡入淡出 */
             }
             .highlight-mask.active {
                 opacity: 1; /* 激活后可见 */
@@ -154,7 +160,6 @@ async function handleRequest(request) {
                 // 激活遮罩层（淡入显示）
                 highlightMask.classList.add('active');
                 map.panTo([lat, lon]); // 平移地图至中心
-                map.setView([lat, lon], 4); // 调整缩放级别以聚焦
             }
         </script>
     </body>
