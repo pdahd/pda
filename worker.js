@@ -54,11 +54,11 @@ async function handleRequest(request) {
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 80%);
+                background: radial-gradient(circle, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.5) 70%);
                 pointer-events: none; /* 不阻挡交互 */
                 z-index: 900; /* 覆盖地图但不影响交互 */
                 opacity: 0; /* 初始透明 */
-                transition: opacity 0.5s ease; /* 淡入淡出 */
+                transition: opacity 0.8s ease; /* 淡入淡出 */
             }
             .highlight-mask.active {
                 opacity: 1; /* 激活后可见 */
@@ -128,7 +128,6 @@ async function handleRequest(request) {
             });
 
             function updateMap(lat, lon, popupText) {
-
                 // 移除之前的标记
                 if (previousMarker) {
                     map.removeLayer(previousMarker);
