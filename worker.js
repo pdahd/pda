@@ -56,18 +56,42 @@ async function handleRequest(request) {
                 height: 100%;
                 background: radial-gradient(circle, 
                     rgba(0, 0, 0, 0) 30%,      /* 中心完全透明 */
-                    rgba(0, 0, 0, 0.3) 50%,   /* 过渡至较浅的暗色 */
-                    rgba(0, 0, 0, 0.7) 70%,   /* 逐渐变暗 */
-                    rgba(0, 0, 0, 0.9) 90%,   /* 更深的暗色 */
+                    rgba(0, 0, 0, 0.1) 40%,   /* 轻微暗色 */
+                    rgba(0, 0, 0, 0.2) 50%,   /* 稍深暗色 */
+                    rgba(0, 0, 0, 0.4) 60%,   /* 中等暗色 */
+                    rgba(0, 0, 0, 0.6) 70%,   /* 较深暗色 */
+                    rgba(0, 0, 0, 0.8) 80%,   /* 更深暗色 */
+                    rgba(0, 0, 0, 1) 90%,     /* 接近黑色 */
                     rgba(0, 0, 0, 1) 100%     /* 完全黑色 */
                 );   
                 pointer-events: none; /* 不阻挡交互 */
                 z-index: 900; /* 覆盖地图但不影响交互 */
                 opacity: 0; /* 初始透明 */
-                transition: opacity 1s ease; /* 淡入淡出 */
+                animation: fadeOut 1s ease forwards; /* 默认淡出动画 */
             }
+            
+            /* 定义遮罩淡入动画 */
+            @keyframes fadeIn {
+                0% {
+                    opacity: 0;
+                }
+                100% {
+                    opacity: 1;
+                }
+            }
+
+            /* 定义遮罩淡出动画 */
+            @keyframes fadeOut {
+                0% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+            
             .highlight-mask.active {
-                opacity: 1; /* 激活后可见 */
+                animation: fadeIn 1s ease forwards; /* 激活时淡入 */
             }
         </style>
     </head>
