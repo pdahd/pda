@@ -8,7 +8,7 @@ async function handleRequest(request) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OpenStreetMap with Cloudflare Workers</title>
+        <title>OpenStreetMap with IP and Geocoding</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
         <style>
             #map {
@@ -21,84 +21,145 @@ async function handleRequest(request) {
                 transform: translateX(-50%);
                 z-index: 1000;
             }
-            .custom-pin {
-                width: 15px; /* 缩小圆的直径 */
-                height: 15px;
-                background-color: #FF0000;
-                border-radius: 50%;
+            .pulse-container {
                 position: absolute;
-                transform: translate(-50%, -50%); /* 保证图标中心对准坐标点 */
-                box-shadow: 0 0 0 2px white; /* 添加白色边框使圆更明显 */
+                width: 50px;
+                height: 50px;
+                transform: translate(-50%, -50%); /* 居中对齐 */
+                z-index: 0; /* 地震波作为背景 */
             }
-            .custom-pin::after {
-                content: '';
+            .pulse-circle {
                 position: absolute;
-                top: 50%;
-                left: 50%;
-                width: 15px;
-                height: 15px;
-                background-color: rgba(255, 0, 0, 0.5);
-                border-radius: 50%;
-                transform: translate(-50%, -50%) scale(1);
-                animation: pulse 2s infinite; /* 添加动画 */
+                width: 50px;
+                height: 50px;
+                background-color: rgba(255, 0, 0, 0.6); /* 增加饱和度 */
+                border-radius: 50%; /* 圆形 */
+                animation: pulse-animation 2s infinite; /* 动画效果 */
             }
-            /* CSS 动画效果 */
-            @keyframes pulse {
+            @keyframes pulse-animation {
                 0% {
-                    transform: translate(-50%, -50%) scale(1);
-                    opacity: 1;
+                    transform: scale(1); /* 起始大小 */
+                    opacity: 1; /* 完全不透明 */
                 }
                 100% {
-                    transform: translate(-50%, -50%) scale(2);
-                    opacity: 0;
+                    transform: scale(3); /* 扩大三倍 */
+                    opacity: 0; /* 完全透明 */
                 }
+            }
+
+            /* 高光遮罩层样式 */
+            .highlight-mask {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.5) 80%);
+                pointer-events: none; /* 不阻挡交互 */
+                z-index: 900; /* 覆盖地图但不影响交互 */
+                opacity: 0; /* 初始透明 */
+                transition: opacity 0.5s ease; /* 淡入淡出 */
+            }
+            .highlight-mask.active {
+                opacity: 1; /* 激活后可见 */
             }
         </style>
     </head>
     <body>
-        <input type="text" id="searchBox" placeholder="Enter location">
+        <input type="text" id="searchBox" placeholder="Enter location or IP address">
         <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            // 设置地图为世界地图并初始缩放铺满屏幕
-            var map = L.map('map').setView([20, 0], 2);
+            var map = L.map('map').setView([20, 0], 2); // 默认世界地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
-            
-            // 全局变量来跟踪上一个标记
-            var previousMarker;
+
+            var previousMarker; // 上一个静态标记
+            var previousAnimatedMarker; // 上一个地震波动画容器
+
+            // 添加高光遮罩层
+            var highlightMask = document.createElement('div');
+            highlightMask.className = 'highlight-mask';
+            document.body.appendChild(highlightMask);
+
+            // 输入框输入事件监听
+            document.getElementById('searchBox').addEventListener('input', function(e) {
+                var inputValue = e.target.value.trim();
+
+                if (inputValue === "") {
+                    // 输入框为空，淡出遮罩
+                    highlightMask.classList.remove('active');
+                } else {
+                    // 输入框有内容，显示遮罩
+                    highlightMask.classList.add('active');
+                }
+            });
 
             document.getElementById('searchBox').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
-                    var location = e.target.value;
-                    fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + location)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.length > 0) {
-                                var lat = data[0].lat;
-                                var lon = data[0].lon;
-                                map.setView([lat, lon], 3); // 调整缩放级别以适应国家视图
+                    var input = e.target.value.trim();
+                    
+                    // 判断输入内容是否是IP地址
+                    var ipPattern = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
 
-                                // 如果存在之前的标记，移除它
-                                if (previousMarker) {
-                                    map.removeLayer(previousMarker);
+                    if (ipPattern.test(input)) {
+                        // 输入为IP地址，调用Geolocation-db API
+                        fetch('https://geolocation-db.com/json/' + input + '&position=true')
+                            .then(response => response.json())
+                            .then(data => {
+                                var lat = parseFloat(data.latitude);
+                                var lon = parseFloat(data.longitude);
+                                if (!isNaN(lat) && !isNaN(lon)) {
+                                    updateMap(lat, lon, "IP Location: " + input);
+                                } else {
+                                    alert('Could not locate IP address');
                                 }
-
-                                // 添加新的红色位置标记并添加地震动画
-                                previousMarker = L.marker([lat, lon], {
-                                    icon: L.divIcon({
-                                        className: 'custom-pin',
-                                        iconSize: [15, 15], // 修改图标大小以匹配圆的大小
-                                        iconAnchor: [7.5, 7.5] // 修改锚点以匹配圆心位置
-                                    })
-                                }).addTo(map);
-                            } else {
-                                alert('Location not found');
-                            }
-                        });
+                            });
+                    } else {
+                        // 输入为地名，调用Nominatim地理编码API
+                        fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + input)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.length > 0) {
+                                    var lat = parseFloat(data[0].lat);
+                                    var lon = parseFloat(data[0].lon);
+                                    updateMap(lat, lon, "Location: " + input);
+                                } else {
+                                    alert('Location not found');
+                                }
+                            });
+                    }
                 }
             });
+
+            function updateMap(lat, lon, popupText) {
+                map.panTo([lat, lon]); // 平移地图至中心
+
+                // 移除之前的标记
+                if (previousMarker) {
+                    map.removeLayer(previousMarker);
+                }
+                if (previousAnimatedMarker) {
+                    map.removeLayer(previousAnimatedMarker);
+                }
+
+                // 添加地震波动画容器
+                var pulseDiv = L.divIcon({
+                    className: 'pulse-container',
+                    html: '<div class="pulse-circle"></div>', // 动态地震波
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25] // 锚点居中
+                });
+
+                previousAnimatedMarker = L.marker([lat, lon], { icon: pulseDiv, interactive: false }).addTo(map);
+
+                // 添加默认 Leaflet marker 图标，显示在地震波上方
+                previousMarker = L.marker([lat, lon], { zIndexOffset: 1000 }) // 提高 z-index
+                    .addTo(map)
+                    .bindPopup(popupText)
+                    .openPopup();
+            }
         </script>
     </body>
     </html>`;
@@ -106,4 +167,4 @@ async function handleRequest(request) {
     return new Response(html, {
         headers: { 'content-type': 'text/html' }
     });
-                  }
+}
