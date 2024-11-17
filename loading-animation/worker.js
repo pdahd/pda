@@ -115,7 +115,7 @@ async function handleRequest(request) {
             }
 
             .highlight-mask.active {
-                animation: fadeIn 1s ease forwards;
+                animation: fadeIn 2s ease forwards;
             }
         </style>
     </head>
