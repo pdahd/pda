@@ -9,16 +9,23 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading Animation</title>
+  <title>Bead-like Loading Animation</title>
   <style>
-    body { margin: 0; overflow: hidden; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #f3f3f3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
     .loading-container {
       display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
-      width: 100vw;
+      position: relative;
+      width: 100%;
+      height: 100%;
     }
 
     .dot {
@@ -26,46 +33,59 @@ async function handleRequest(request) {
       height: 10px;
       border-radius: 50%;
       background-color: #3498db;
-      animation: stretch 3s infinite ease-in-out;
-      opacity: 0; /* 初始状态透明 */
+      position: absolute;
+      animation: beadAnimation 3s ease-in-out infinite;
     }
 
+    /* 每个点延迟动画 */
+    .dot:nth-child(1) { animation-delay: 0s; }
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
     .dot:nth-child(4) { animation-delay: 0.6s; }
     .dot:nth-child(5) { animation-delay: 0.8s; }
-    .dot:nth-child(6) { animation-delay: 1.0s; }
+    .dot:nth-child(6) { animation-delay: 1s; }
 
-    @keyframes stretch {
+    @keyframes beadAnimation {
       0% {
-        transform: translateX(calc((var(--index) * 20px) - 100px));
-        opacity: 0; /* 淡入 */
+        transform: translateX(-100vw); /* 从屏幕外左侧开始 */
+        opacity: 0;
       }
-      10% { opacity: 1; } /*  完全显示 */
+      25% {
+        transform: translateX(calc(50vw - var(--order) * 15px)); /* 有序排列靠中 */
+        opacity: 1;
+      }
       50% {
-        transform: translateX(calc(50vw - 30px + (var(--index) * 0px))); /* 中间聚集，无间隙 */
+        transform: translateX(calc(50vw - var(--order) * 15px)); /* 中间紧密排列 */
       }
-      70% {
-        transform: translateX(calc(50vw - 30px + (var(--index) * 0px)));
+      75% {
+        transform: translateX(calc(100vw + var(--order) * 15px)); /* 向右逐渐分散 */
+        opacity: 1;
       }
-      90% { opacity: 1; }
       100% {
-        transform: translateX(calc(100vw + (var(--index) * 20px) - 130px));
-        opacity: 0; /* 淡出 */
+        transform: translateX(100vw); /* 完全消失 */
+        opacity: 0;
       }
     }
+
+    /* 动态设置点的序号，用于计算排列 */
+    .dot:nth-child(1) { --order: 3; }
+    .dot:nth-child(2) { --order: 2; }
+    .dot:nth-child(3) { --order: 1; }
+    .dot:nth-child(4) { --order: 0; }
+    .dot:nth-child(5) { --order: -1; }
+    .dot:nth-child(6) { --order: -2; }
+
   </style>
 </head>
 <body>
   <div class="loading-container">
-    <div class="dot" style="--index: 0;"></div>
-    <div class="dot" style="--index: 1;"></div>
-    <div class="dot" style="--index: 2;"></div>
-    <div class="dot" style="--index: 3;"></div>
-    <div class="dot" style="--index: 4;"></div>
-    <div class="dot" style="--index: 5;"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
   </div>
-
 </body>
 </html>
 `;
@@ -74,5 +94,5 @@ async function handleRequest(request) {
     headers: {
       'content-type': 'text/html;charset=UTF-8',
     },
-  })
+  });
 }
