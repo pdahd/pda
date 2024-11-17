@@ -34,32 +34,32 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 6s ease-in-out infinite; /* 增加整体动画时长 */
+      animation: beadAnimation 5s ease-in-out infinite; /* 减少整体动画时长 */
     }
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.6s; }
-    .dot:nth-child(3) { animation-delay: 1.2s; }
-    .dot:nth-child(4) { animation-delay: 1.8s; }
+    .dot:nth-child(2) { animation-delay: 0.5s; }
+    .dot:nth-child(3) { animation-delay: 1s; }
+    .dot:nth-child(4) { animation-delay: 1.5s; }
 
     @keyframes beadAnimation {
       0% {
         transform: translateX(-100vw) scale(0.8);
         opacity: 0;
       }
-      30% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 略过目标位置，模拟弹性 */
+      20% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 加快到达中间 */
         opacity: 1;
       }
-      40% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到目标位置 */
+      30% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到中间位置 */
       }
       65% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 在中间停留更长时间 */
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 停留展示时间保持 */
       }
-      85% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 向右略过目标位置 */
+      80% {
+        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 加快散开速度 */
       }
       100% {
         transform: translateX(100vw) scale(0.8);
@@ -90,4 +90,4 @@ async function handleRequest(request) {
       'content-type': 'text/html;charset=UTF-8',
     },
   });
-      }
+}
