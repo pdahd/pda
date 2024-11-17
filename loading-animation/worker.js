@@ -14,7 +14,7 @@ async function handleRequest(request) {
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #f3f3f3; /* 增加背景色，增强视觉效果 */
+      background-color: #f3f3f3; /* 背景色 */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -34,16 +34,16 @@ async function handleRequest(request) {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background-color: #3498db;
+      background-color: red; /* 修改为红色 */
       position: absolute; /* 使用绝对定位便于精确控制弹性 */
       animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* 弹性缓动曲线 */
     }
 
-    /* 设置每个点的延迟 */
+    /* 修改点的延迟，增加延迟时间 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-    .dot:nth-child(4) { animation-delay: 0.6s; }
+    .dot:nth-child(2) { animation-delay: 0.4s; } /* 延迟增加 */
+    .dot:nth-child(3) { animation-delay: 0.8s; } /* 延迟增加 */
+    .dot:nth-child(4) { animation-delay: 1.2s; } /* 延迟增加 */
 
     @keyframes bounce {
       0% {
