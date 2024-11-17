@@ -9,62 +9,69 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Heartbeat Animation</title>
+  <title>Color Changing Loading Animation</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #f3f3f3;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background-color: #f3f3f3;
     }
 
-    .heartbeat {
-      width: 100px;
-      height: 100px;
-      position: relative;
-      animation: heartbeat 1.5s ease-in-out infinite;
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    .heartbeat:before, .heartbeat:after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 100px;
+    .dot {
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background-color: #e74c3c;
+      margin: 0 10px;
+      animation: colorChange 2s ease-in-out infinite; /* 设置动画 */
     }
 
-    .heartbeat:before {
-      left: 0;
-      top: -50px;
-    }
+    /* 设置每个点的延迟 */
+    .dot:nth-child(1) { animation-delay: 0s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+    .dot:nth-child(4) { animation-delay: 0.9s; }
 
-    .heartbeat:after {
-      right: 0;
-      top: -50px;
-    }
-
-    @keyframes heartbeat {
-      0%, 100% {
-        transform: scale(1); /* 正常大小 */
+    @keyframes colorChange {
+      0% {
+        background-color: #e74c3c; /* 红色 */
+        transform: scale(1); /* 初始大小 */
       }
       25% {
-        transform: scale(1.1); /* 略微放大 */
+        background-color: #f39c12; /* 橙色 */
+        transform: scale(1.2); /* 放大 */
       }
       50% {
-        transform: scale(1.3); /* 最大放大，模拟心跳的峰值 */
+        background-color: #2ecc71; /* 绿色 */
+        transform: scale(1); /* 恢复原始大小 */
       }
       75% {
-        transform: scale(1.1); /* 略微缩小 */
+        background-color: #3498db; /* 蓝色 */
+        transform: scale(1.2); /* 放大 */
+      }
+      100% {
+        background-color: #9b59b6; /* 紫色 */
+        transform: scale(1); /* 恢复原始大小 */
       }
     }
   </style>
 </head>
 <body>
-  <div class="heartbeat"></div>
+  <div class="loading-container">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
 </body>
 </html>
 `;
