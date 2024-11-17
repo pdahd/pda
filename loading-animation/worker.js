@@ -120,7 +120,7 @@ async function handleRequest(request) {
         </style>
     </head>
     <body>
-        <input type="text" id="searchBox" placeholder="查询地名或IP位置（输入并按回车键）">
+        <input type="text" id="searchBox" placeholder="输入地名或IP按回车键查询位置">
         <div class="loading-container" id="loadingAnimation">
             <div class="dot"></div>
             <div class="dot"></div>
