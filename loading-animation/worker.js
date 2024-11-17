@@ -56,13 +56,13 @@ async function handleRequest(request) {
         opacity: 1;
       }
       35% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回中间 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 回弹到中间 */
       }
       50% {
-        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 排列整齐 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 在中间排列 */
       }
       70% {
-        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 展示阶段 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 展示阶段，仍在中间 */
       }
       80% {
         transform: translateX(calc(75vw + var(--order) * 10px)) scale(1.2); /* 向右散开 */
