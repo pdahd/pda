@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead-like Loading Animation</title>
+  <title>Improved Bead Animation</title>
   <style>
     body {
       margin: 0;
@@ -37,7 +37,7 @@ async function handleRequest(request) {
       animation: beadAnimation 3s ease-in-out infinite;
     }
 
-    /* 每个点延迟动画 */
+    /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
@@ -47,23 +47,25 @@ async function handleRequest(request) {
 
     @keyframes beadAnimation {
       0% {
-        transform: translateX(-100vw); /* 从屏幕外左侧开始 */
-        opacity: 0;
+        transform: translateX(-100vw) scale(0.8); /* 从屏幕外左侧开始 */
+        opacity: 0.3;
       }
-      25% {
-        transform: translateX(calc(50vw - var(--order) * 15px)); /* 有序排列靠中 */
+      20% {
+        transform: translateX(calc(50vw - var(--order) * 15px - 10px)) scale(1.1); /* 略过头，模拟弹性 */
         opacity: 1;
+      }
+      30% {
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 回到中间，连成珠子 */
       }
       50% {
-        transform: translateX(calc(50vw - var(--order) * 15px)); /* 中间紧密排列 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 在中间停留 */
       }
-      75% {
-        transform: translateX(calc(100vw + var(--order) * 15px)); /* 向右逐渐分散 */
-        opacity: 1;
+      70% {
+        transform: translateX(calc(100vw + var(--order) * 15px)) scale(1.1); /* 向右略过头 */
       }
       100% {
-        transform: translateX(100vw); /* 完全消失 */
-        opacity: 0;
+        transform: translateX(100vw) scale(0.8); /* 消失 */
+        opacity: 0.3;
       }
     }
 
@@ -74,7 +76,6 @@ async function handleRequest(request) {
     .dot:nth-child(4) { --order: 0; }
     .dot:nth-child(5) { --order: -1; }
     .dot:nth-child(6) { --order: -2; }
-
   </style>
 </head>
 <body>
