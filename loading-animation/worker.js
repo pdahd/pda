@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead Animation Optimized Timing</title>
+  <title>Bead Animation Adjusted Timing</title>
   <style>
     body {
       margin: 0;
@@ -34,7 +34,7 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 3s ease-in-out infinite; /* 总时长缩短为 3 秒 */
+      animation: beadAnimation 3s ease-in-out infinite;
     }
 
     /* 动态设置点的延迟 */
@@ -49,17 +49,17 @@ async function handleRequest(request) {
         opacity: 0;
       }
       12% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.1); /* 更快到达中间 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.1);
         opacity: 1;
       }
       18% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回中间 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1);
       }
-      32% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 中间停留时间缩短 */
+      28% {
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1);
       }
       60% {
-        transform: translateX(calc(100vw + var(--order) * 25px)) scale(1.1); /* 向右加速 */
+        transform: translateX(calc(100vw + var(--order) * 25px)) scale(1.1);
       }
       100% {
         transform: translateX(100vw) scale(0.8);
