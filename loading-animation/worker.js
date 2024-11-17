@@ -22,7 +22,7 @@ async function handleRequest(request) {
                 z-index: 1000;
             }
 
-            /* 加载动画样式 */
+            /* 加载动画样式 - 波浪动画 */
             .loading-container {
                 position: absolute;
                 top: 50px;
@@ -30,6 +30,7 @@ async function handleRequest(request) {
                 transform: translateX(-50%);
                 display: none;
                 z-index: 1000;
+                text-align: center;
             }
 
             .dot {
@@ -38,21 +39,19 @@ async function handleRequest(request) {
                 border-radius: 50%;
                 background-color: #e74c3c;
                 margin: 0 5px;
-                animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+                animation: wave 1.5s ease-in-out infinite;
             }
 
-            /* 设置每个点的延迟 */
+            /* 设置每个点的延迟，创建波浪效果 */
             .dot:nth-child(1) { animation-delay: 0s; }
             .dot:nth-child(2) { animation-delay: 0.2s; }
             .dot:nth-child(3) { animation-delay: 0.4s; }
             .dot:nth-child(4) { animation-delay: 0.6s; }
 
-            @keyframes bounce {
-                0% { transform: translateX(-100vw) scale(0.5); opacity: 0.3; }
-                30% { transform: translateX(calc(50vw - 35px)) scale(1); opacity: 1; }
-                50% { transform: translateX(calc(50vw - 35px)) scale(1); }
-                70% { transform: translateX(100vw) scale(0.5); opacity: 0.3; }
-                100% { transform: translateX(100vw) scale(0.5); opacity: 0; }
+            @keyframes wave {
+                0% { transform: scale(1); opacity: 0.3; }
+                50% { transform: scale(1.4); opacity: 1; }
+                100% { transform: scale(1); opacity: 0.3; }
             }
 
             /* 高光遮罩层样式 */
@@ -188,4 +187,4 @@ async function handleRequest(request) {
     return new Response(html, {
         headers: { 'content-type': 'text/html' }
     });
-      }
+}
