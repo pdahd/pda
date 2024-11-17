@@ -7,7 +7,49 @@ async function handleRequest(request) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ... (其他部分不变) -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading Animation</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+
+    .loading-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: #3498db;
+      animation: stretch 3s infinite ease-in-out;
+    }
+
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    .dot:nth-child(4) { animation-delay: 0.6s; }
+    .dot:nth-child(5) { animation-delay: 0.8s; }
+    .dot:nth-child(6) { animation-delay: 1.0s; }
+
+    @keyframes stretch {
+      0% {
+        transform: translateX(calc((var(--index) * 20px) - 100px));
+      }
+      50% {
+        transform: translateX(var(--center-position));
+      }
+      70% {
+        transform: translateX(var(--center-position));
+      }
+      100% {
+        transform: translateX(var(--end-position));
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="loading-container">
@@ -19,7 +61,6 @@ async function handleRequest(request) {
     <div class="dot" style="--index: 5;"></div>
   </div>
   <script>
-    // **修正：移除 calc() 周围的 `` 和 ${}**
     const dots = document.querySelectorAll('.dot');
     const centerPosition = 'calc(50vw - ' + (dots.length * 5) + 'px)';
     const endPosition = 'calc(100vw + ' + (dots.length * 10) + 'px - 30px)';
