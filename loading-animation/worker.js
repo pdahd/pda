@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead Animation Fix</title>
+  <title>Bead Animation</title>
   <style>
     body {
       margin: 0;
@@ -41,34 +41,34 @@ async function handleRequest(request) {
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.4s; }
-    .dot:nth-child(3) { animation-delay: 0.8s; }
-    .dot:nth-child(4) { animation-delay: 1.2s; }
-    .dot:nth-child(5) { animation-delay: 1.6s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+    .dot:nth-child(4) { animation-delay: 0.9s; }
+    .dot:nth-child(5) { animation-delay: 1.2s; }
 
     @keyframes beadAnimation {
       0% {
-        transform: translateX(-100vw) scale(0.8);
+        transform: translateX(-50vw) scale(0.8); /* 从屏幕左侧开始 */
         opacity: 0;
       }
       25% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.2); /* 略过目标位置 */
+        transform: translateX(calc(-25vw - var(--order) * 10px)) scale(1.2); /* 略过中间 */
         opacity: 1;
       }
       35% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回目标位置 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回中间 */
       }
       50% {
-        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 紧密排列在屏幕中间 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 排列整齐 */
       }
       70% {
-        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 保持展示 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 展示阶段 */
       }
       80% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.2); /* 分散弹出屏幕 */
+        transform: translateX(calc(75vw + var(--order) * 10px)) scale(1.2); /* 向右散开 */
       }
       100% {
-        transform: translateX(100vw) scale(0.8);
+        transform: translateX(100vw) scale(0.8); /* 完全移出屏幕 */
         opacity: 0;
       }
     }
