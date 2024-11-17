@@ -8,24 +8,51 @@ async function handleRequest(request) {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>OpenStreetMap with Loading Animation</title>
+        <title>OpenStreetMap with IP and Geocoding</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
         <style>
-            body {
-                margin: 0;
-                overflow: hidden;
-            }
-
             #map {
                 height: 100vh; /* Full screen height */
             }
-
             #searchBox {
                 position: absolute;
                 top: 10px;
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 1000;
+            }
+
+            /* 加载动画样式 - 波浪动画 */
+            .loading-container {
+                position: absolute;
+                top: 50px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: none;
+                z-index: 1000;
+                text-align: center;
+            }
+
+            .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background-color: #ffffff;
+                margin: 0 5px;
+                animation: wave 1.5s ease-in-out infinite;
+            }
+
+            /* 设置每个点的延迟，创建波浪效果 */
+            .dot:nth-child(1) { animation-delay: 0s; }
+            .dot:nth-child(2) { animation-delay: 0.2s; }
+            .dot:nth-child(3) { animation-delay: 0.4s; }
+            .dot:nth-child(4) { animation-delay: 0.6s; }
+            .dot:nth-child(5) { animation-delay: 0.8s; }
+
+            @keyframes wave {
+                0% { transform: scale(1); opacity: 0.3; }
+                50% { transform: scale(1.4); opacity: 1; }
+                100% { transform: scale(1); opacity: 0.3; }
             }
 
             /* 高光遮罩层样式 */
@@ -36,103 +63,43 @@ async function handleRequest(request) {
                 width: 100%;
                 height: 100%;
                 background: radial-gradient(circle, 
-                   rgba(0, 0, 0, 0) 30%, 
-                   rgba(0, 0, 0, 0.3) 50%, 
-                   rgba(0, 0, 0, 0.7) 70%, 
-                   rgba(0, 0, 0, 0.9) 90%, 
-                   rgba(0, 0, 0, 1) 100%);
+                   rgba(0, 0, 0, 0) 30%,      
+                   rgba(0, 0, 0, 0.3) 50%,    
+                   rgba(0, 0, 0, 0.7) 70%,    
+                   rgba(0, 0, 0, 0.9) 90%,    
+                   rgba(0, 0, 0, 1) 100%      
+                );   
                 pointer-events: none;
                 z-index: 900;
                 opacity: 0;
                 animation: fadeOut 1s ease forwards;
             }
-            
-            .highlight-mask.active {
-                animation: fadeIn 1s ease forwards;
-            }
 
             @keyframes fadeIn {
-                0% {
-                    opacity: 0;
-                }
-                100% {
-                    opacity: 1;
-                }
+                0% { opacity: 0; }
+                100% { opacity: 1; }
             }
 
             @keyframes fadeOut {
-                0% {
-                    opacity: 1;
-                }
-                100% {
-                    opacity: 0;
-                }
+                0% { opacity: 1; }
+                100% { opacity: 0; }
             }
 
-            /* 加载动画样式 */
-            .loading-container {
-                position: absolute;
-                bottom: 50px;
-                left: 50%;
-                transform: translateX(-50%);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                gap: 10px;
-                z-index: 1000;
-                display: none;
-            }
-
-            .dot {
-                width: 12px;
-                height: 12px;
-                background-color: green;
-                border-radius: 50%;
-                animation: wave 1.5s infinite ease-in-out;
-            }
-
-            .dot:nth-child(1) {
-                animation-delay: 0s;
-            }
-
-            .dot:nth-child(2) {
-                animation-delay: 0.2s;
-            }
-
-            .dot:nth-child(3) {
-                animation-delay: 0.4s;
-            }
-
-            .dot:nth-child(4) {
-                animation-delay: 0.6s;
-            }
-
-            .dot:nth-child(5) {
-                animation-delay: 0.8s;
-            }
-
-            @keyframes wave {
-                0%, 100% {
-                    transform: scale(1);
-                    opacity: 0.5;
-                }
-                50% {
-                    transform: scale(1.5);
-                    opacity: 1;
-                }
+            .highlight-mask.active {
+                animation: fadeIn 1s ease forwards;
             }
         </style>
     </head>
     <body>
         <input type="text" id="searchBox" placeholder="Enter location or IP address">
-        <div id="map"></div>
-        <div id="loadingAnimation" class="loading-container">
+        <div class="loading-container" id="loadingAnimation">
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
         </div>
+        <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
             var map = L.map('map').setView([20, 0], 2); // 默认世界地图视图
@@ -142,29 +109,25 @@ async function handleRequest(request) {
 
             var previousMarker;
             var previousAnimatedMarker;
-
-            // 添加高光遮罩层
             var highlightMask = document.createElement('div');
             highlightMask.className = 'highlight-mask';
             document.body.appendChild(highlightMask);
 
             var searchBox = document.getElementById('searchBox');
+            var loadingAnimation = document.getElementById('loadingAnimation');
 
             // 用户编辑输入框时，淡出遮罩
-            searchBox.addEventListener('input', function () {
+            searchBox.addEventListener('input', function() {
                 highlightMask.classList.remove('active');
             });
 
-            // 获取加载动画元素
-            var loadingAnimation = document.getElementById('loadingAnimation');
-
-            searchBox.addEventListener('keypress', function (e) {
+            searchBox.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     var input = e.target.value.trim();
-
-                    // 显示加载动画
+                    
+                    // 启动加载动画
                     loadingAnimation.style.display = 'flex';
-
+                    
                     var ipPattern = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
 
                     if (ipPattern.test(input)) {
@@ -217,12 +180,11 @@ async function handleRequest(request) {
                     .bindPopup(popupText)
                     .openPopup();
 
-                map.flyTo([lat, lon], 5);
+                map.flyTo([lat, lon], 5); // 执行平移动画
 
-                // 隐藏加载动画
+                // 停止加载动画
                 loadingAnimation.style.display = 'none';
 
-                // 激活高光遮罩
                 highlightMask.classList.add('active');
             }
         </script>
@@ -232,4 +194,4 @@ async function handleRequest(request) {
     return new Response(html, {
         headers: { 'content-type': 'text/html' }
     });
-        }
+}
