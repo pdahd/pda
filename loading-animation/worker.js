@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Improved Bead Animation</title>
+  <title>Smoother Bead Animation</title>
   <style>
     body {
       margin: 0;
@@ -34,28 +34,28 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 3s ease-in-out infinite;
+      animation: beadAnimation 4s ease-in-out infinite; /* 延长总时间使运动更流畅 */
     }
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-    .dot:nth-child(4) { animation-delay: 0.6s; }
-    .dot:nth-child(5) { animation-delay: 0.8s; }
-    .dot:nth-child(6) { animation-delay: 1s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+    .dot:nth-child(4) { animation-delay: 0.9s; }
+    .dot:nth-child(5) { animation-delay: 1.2s; }
+    .dot:nth-child(6) { animation-delay: 1.5s; }
 
     @keyframes beadAnimation {
       0% {
         transform: translateX(-100vw) scale(0.8); /* 从屏幕外左侧开始 */
-        opacity: 0.3;
+        opacity: 0;
       }
-      20% {
-        transform: translateX(calc(50vw - var(--order) * 15px - 10px)) scale(1.1); /* 略过头，模拟弹性 */
+      25% {
+        transform: translateX(calc(50vw - var(--order) * 15px - 10px)) scale(1.1); /* 接近中间，稍微超过 */
         opacity: 1;
       }
-      30% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 回到中间，连成珠子 */
+      35% {
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 回弹到中间 */
       }
       50% {
         transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 在中间停留 */
@@ -65,7 +65,7 @@ async function handleRequest(request) {
       }
       100% {
         transform: translateX(100vw) scale(0.8); /* 消失 */
-        opacity: 0.3;
+        opacity: 0;
       }
     }
 
