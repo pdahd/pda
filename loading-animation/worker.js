@@ -27,6 +27,7 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       animation: stretch 3s infinite ease-in-out;
+      opacity: 0; /* 初始状态透明 */
     }
 
     .dot:nth-child(2) { animation-delay: 0.2s; }
@@ -37,16 +38,20 @@ async function handleRequest(request) {
 
     @keyframes stretch {
       0% {
-        transform: translateX(calc((var(--index) * var(--dot-spacing))); /* 初始分散 */
+        transform: translateX(calc((var(--index) * 20px) - 100px));
+        opacity: 0; /* 淡入 */
       }
+      10% { opacity: 1; } /*  完全显示 */
       50% {
-        transform: translateX(calc(50vw - var(--total-width) / 2 + var(--index) * 10px)); /* 中间对齐，无缝隙 */
+        transform: translateX(calc(50vw - 30px + (var(--index) * 0px))); /* 中间聚集，无间隙 */
       }
       70% {
-        transform: translateX(calc(50vw - var(--total-width) / 2 + var(--index) * 10px)); /* 中间停留 */
+        transform: translateX(calc(50vw - 30px + (var(--index) * 0px)));
       }
+      90% { opacity: 1; }
       100% {
-        transform: translateX(calc(100vw + (var(--index) * var(--dot-spacing)) - var(--total-width) - var(--dot-spacing))); /* 向右分散 */
+        transform: translateX(calc(100vw + (var(--index) * 20px) - 130px));
+        opacity: 0; /* 淡出 */
       }
     }
   </style>
@@ -60,16 +65,7 @@ async function handleRequest(request) {
     <div class="dot" style="--index: 4;"></div>
     <div class="dot" style="--index: 5;"></div>
   </div>
-  <script>
-    const dots = document.querySelectorAll('.dot');
-    const dotSpacing = 20; // 点与点之间的间距
-    const totalWidth = dots.length * 10; // 所有点的总宽度
 
-    dots.forEach(dot => {
-      dot.style.setProperty('--dot-spacing', dotSpacing + 'px');
-      dot.style.setProperty('--total-width', totalWidth + 'px');
-    });
-  </script>
 </body>
 </html>
 `;
