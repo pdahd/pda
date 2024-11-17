@@ -34,7 +34,7 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 4.5s ease-in-out infinite; /* 提速动画 */
+      animation: beadAnimation 4s ease-in-out infinite; /* 提速动画 */
     }
 
     /* 设置每个点的延迟 */
@@ -50,7 +50,7 @@ async function handleRequest(request) {
         opacity: 0;
       }
       15% {
-        transform: translateX(calc(50vw - 20px * var(--order))) scale(1.2); /* 加强拉伸效果 */
+        transform: translateX(calc(50vw - 20px * var(--order))) scale(1.5); /* 增强弹性收缩 */
         opacity: 1;
       }
       30% {
