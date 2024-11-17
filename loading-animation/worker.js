@@ -9,58 +9,62 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wave Loading Animation</title>
+  <title>Heartbeat Animation</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
+      background-color: #f3f3f3;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #f3f3f3;
     }
 
-    .loading-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    .heartbeat {
+      width: 100px;
+      height: 100px;
+      position: relative;
+      animation: heartbeat 1.5s ease-in-out infinite;
     }
 
-    .dot {
-      width: 10px;
-      height: 10px;
+    .heartbeat:before, .heartbeat:after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
       background-color: #e74c3c;
-      margin: 0 10px;
-      animation: wave 1.5s ease-in-out infinite;
     }
 
-    /* 设置每个点的延迟 */
-    .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.3s; }
-    .dot:nth-child(3) { animation-delay: 0.6s; }
-    .dot:nth-child(4) { animation-delay: 0.9s; }
+    .heartbeat:before {
+      left: 0;
+      top: -50px;
+    }
 
-    @keyframes wave {
+    .heartbeat:after {
+      right: 0;
+      top: -50px;
+    }
+
+    @keyframes heartbeat {
       0%, 100% {
-        transform: translateY(0); /* 默认位置 */
-        opacity: 0.7;
+        transform: scale(1); /* 正常大小 */
+      }
+      25% {
+        transform: scale(1.1); /* 略微放大 */
       }
       50% {
-        transform: translateY(-20px); /* 向上波动 */
-        opacity: 1;
+        transform: scale(1.3); /* 最大放大，模拟心跳的峰值 */
+      }
+      75% {
+        transform: scale(1.1); /* 略微缩小 */
       }
     }
   </style>
 </head>
 <body>
-  <div class="loading-container">
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-    <div class="dot"></div>
-  </div>
+  <div class="heartbeat"></div>
 </body>
 </html>
 `;
