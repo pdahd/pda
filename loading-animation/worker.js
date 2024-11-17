@@ -44,8 +44,6 @@ async function handleRequest(request) {
     .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.4s; }
     .dot:nth-child(4) { animation-delay: 0.6s; }
-    .dot:nth-child(5) { animation-delay: 0.8s; }
-    .dot:nth-child(6) { animation-delay: 1s; }
 
     @keyframes bounce {
       0% {
@@ -72,8 +70,6 @@ async function handleRequest(request) {
 </head>
 <body>
   <div class="loading-container">
-    <div class="dot"></div>
-    <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
