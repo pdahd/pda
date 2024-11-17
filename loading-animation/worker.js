@@ -9,12 +9,12 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead Animation - 2 Seconds</title>
+  <title>Elastic Loading Animation</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #f3f3f3;
+      background-color: #f3f3f3; /* 增加背景色，增强视觉效果 */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -23,9 +23,11 @@ async function handleRequest(request) {
 
     .loading-container {
       display: flex;
-      position: relative;
+      justify-content: flex-start;
+      align-items: center;
       width: 100%;
       height: 100%;
+      position: relative;
     }
 
     .dot {
@@ -33,49 +35,45 @@ async function handleRequest(request) {
       height: 10px;
       border-radius: 50%;
       background-color: #3498db;
-      position: absolute;
-      animation: beadAnimation 3s ease-in-out infinite; /* 总时间 3 秒 */
+      position: absolute; /* 使用绝对定位便于精确控制弹性 */
+      animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* 弹性缓动曲线 */
     }
 
-    /* 动态设置点的延迟 */
-    .dot:nth-child(1) { animation-delay: 0.15s; }
+    /* 设置每个点的延迟 */
+    .dot:nth-child(1) { animation-delay: 0s; }
     .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.3s; }
-    .dot:nth-child(4) { animation-delay: 0.45s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    .dot:nth-child(4) { animation-delay: 0.6s; }
+    .dot:nth-child(5) { animation-delay: 0.8s; }
+    .dot:nth-child(6) { animation-delay: 1s; }
 
-    @keyframes beadAnimation {
+    @keyframes bounce {
       0% {
-        transform: translateX(-100vw) scale(0.8);
-        opacity: 0;
+        transform: translateX(-100vw) scale(0.5); /* 从屏幕外左侧开始，缩小 */
+        opacity: 0.3;
       }
-      10% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.1);
+      30% {
+        transform: translateX(calc(50vw - 35px)) scale(1); /* 回弹至中间，变大 */
         opacity: 1;
       }
-      15% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1);
+      50% {
+        transform: translateX(calc(50vw - 35px)) scale(1); /* 中间停留 */
       }
-      25% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 缩短停留时间 */
-      }
-      55% {
-        transform: translateX(calc(100vw + var(--order) * 25px)) scale(1.1);
+      70% {
+        transform: translateX(100vw) scale(0.5); /* 弹出屏幕外右侧，缩小 */
+        opacity: 0.3;
       }
       100% {
-        transform: translateX(100vw) scale(0.8);
+        transform: translateX(100vw) scale(0.5); /* 完全消失 */
         opacity: 0;
       }
     }
-
-    /* 动态设置点的序号，从右到左 */
-    .dot:nth-child(1) { --order: -1.5; } /* 最右 */
-    .dot:nth-child(2) { --order: -0.5; }
-    .dot:nth-child(3) { --order: 0.5; }  /* 中间 */
-    .dot:nth-child(4) { --order: 1.5; } /* 最左 */
   </style>
 </head>
 <body>
   <div class="loading-container">
+    <div class="dot"></div>
+    <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
