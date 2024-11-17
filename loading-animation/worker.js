@@ -34,12 +34,12 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 2s ease-in-out infinite; /* 总时间 2 秒 */
+      animation: beadAnimation 3s ease-in-out infinite; /* 总时间 3 秒 */
     }
 
     /* 动态设置点的延迟 */
-    .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.15s; }
+    .dot:nth-child(1) { animation-delay: 0.15s; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
     .dot:nth-child(3) { animation-delay: 0.3s; }
     .dot:nth-child(4) { animation-delay: 0.45s; }
 
