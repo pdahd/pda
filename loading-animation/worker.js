@@ -34,7 +34,7 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 4s ease-in-out infinite; /* 提速动画 */
+      animation: beadAnimation 4.5s ease-in-out infinite; /* 提速动画 */
     }
 
     /* 设置每个点的延迟 */
@@ -69,11 +69,11 @@ async function handleRequest(request) {
     }
 
     /* 动态设置点的序号，调整偏移量以确保没有缝隙 */
-    .dot:nth-child(1) { --order: 2; }
-    .dot:nth-child(2) { --order: 1; }
-    .dot:nth-child(3) { --order: 0; }
-    .dot:nth-child(4) { --order: -1; }
-    .dot:nth-child(5) { --order: -2; }
+    .dot:nth-child(1) { --order: 0; }
+    .dot:nth-child(2) { --order: -1; }
+    .dot:nth-child(3) { --order: -2; }
+    .dot:nth-child(4) { --order: -3; }
+    .dot:nth-child(5) { --order: -4; }
   </style>
 </head>
 <body>
