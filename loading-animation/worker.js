@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smoother Bead Animation</title>
+  <title>Improved Bead Animation</title>
   <style>
     body {
       margin: 0;
@@ -34,51 +34,48 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 5s ease-in-out infinite;
+      animation: beadAnimation 6s ease-in-out infinite; /* 增加整体动画时长 */
     }
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.5s; }
-    .dot:nth-child(3) { animation-delay: 1s; }
-    .dot:nth-child(4) { animation-delay: 1.5s; }
-    .dot:nth-child(5) { animation-delay: 2s; }
+    .dot:nth-child(2) { animation-delay: 0.6s; }
+    .dot:nth-child(3) { animation-delay: 1.2s; }
+    .dot:nth-child(4) { animation-delay: 1.8s; }
 
     @keyframes beadAnimation {
       0% {
         transform: translateX(-100vw) scale(0.8);
         opacity: 0;
       }
-      25% {
-        transform: translateX(calc(50vw - var(--order) * 20px - 10px)) scale(1.1); /* 略过头，带点弹性 */
+      30% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 略过目标位置，模拟弹性 */
         opacity: 1;
       }
-      35% {
-        transform: translateX(calc(50vw - var(--order) * 20px)) scale(1); /* 回弹到中间 */
+      40% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到目标位置 */
       }
-      60% {
-        transform: translateX(calc(50vw - var(--order) * 20px)) scale(1); /* 在中间停留更长时间 */
+      65% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 在中间停留更长时间 */
       }
-      80% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 向右略过头 */
+      85% {
+        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 向右略过目标位置 */
       }
       100% {
-        transform: translateX(100vw) scale(0.8); /* 消失 */
+        transform: translateX(100vw) scale(0.8);
         opacity: 0;
       }
     }
 
-    /* 动态设置点的序号，用于计算排列 */
-    .dot:nth-child(1) { --order: 2; }
-    .dot:nth-child(2) { --order: 1; }
-    .dot:nth-child(3) { --order: 0; }
-    .dot:nth-child(4) { --order: -1; }
-    .dot:nth-child(5) { --order: -2; }
+    /* 动态设置点的序号 */
+    .dot:nth-child(1) { --order: 1.5; }
+    .dot:nth-child(2) { --order: 0.5; }
+    .dot:nth-child(3) { --order: -0.5; }
+    .dot:nth-child(4) { --order: -1.5; }
   </style>
 </head>
 <body>
   <div class="loading-container">
-    <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
     <div class="dot"></div>
@@ -93,4 +90,4 @@ async function handleRequest(request) {
       'content-type': 'text/html;charset=UTF-8',
     },
   });
-}
+      }
