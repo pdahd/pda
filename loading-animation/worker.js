@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead Animation with Elastic Effect</title>
+  <title>Bead Animation Fix</title>
   <style>
     body {
       margin: 0;
@@ -52,23 +52,20 @@ async function handleRequest(request) {
         opacity: 0;
       }
       25% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.2); /* 略过目标位置，增加弹性 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.2); /* 略过目标位置 */
         opacity: 1;
       }
       35% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回到目标位置 */
-      }
-      40% {
-        transform: translateX(calc(50vw)) scale(1); /* 短暂堆叠 */
+        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 弹回目标位置 */
       }
       50% {
-        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 排成紧密一串 */
+        transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 紧密排列在屏幕中间 */
       }
       70% {
         transform: translateX(calc(50vw - var(--order) * 10px)) scale(1); /* 保持展示 */
       }
       80% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.2); /* 向右散开，略过目标位置 */
+        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.2); /* 分散弹出屏幕 */
       }
       100% {
         transform: translateX(100vw) scale(0.8);
