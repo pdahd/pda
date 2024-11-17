@@ -34,12 +34,14 @@ async function handleRequest(request) {
             }
 
             .dot {
-                width: 8px;
-                height: 8px;
+                width: 10px;
+                height: 10px;
                 border-radius: 50%;
                 background-color: #ffffff;
                 margin: 0 5px;
                 animation: wave 1.5s ease-in-out infinite;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.8); /* 添加阴影 */
+                border: 2px solid rgba(0, 0, 0, 0.5); /* 外边框增加深色轮廓 */
             }
 
             /* 设置每个点的延迟，创建波浪效果 */
