@@ -34,7 +34,7 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 4s ease-in-out infinite; /* 总时长缩短为 4s */
+      animation: beadAnimation 4s ease-in-out infinite; /* 总时长保持 4s */
     }
 
     /* 动态设置点的延迟 */
@@ -53,11 +53,11 @@ async function handleRequest(request) {
         transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 更快到达中间 */
         opacity: 1;
       }
-      25% {
+      20% {
         transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到中间位置 */
       }
-      45% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 中间停留时间缩短 */
+      35% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 停留展示时间进一步缩短 */
       }
       65% {
         transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 散开加速 */
