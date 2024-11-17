@@ -9,23 +9,64 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Loading Animation</title>
+  <title>Elastic Loading Animation</title>
   <style>
-    body { margin: 0; overflow: hidden; }
-    .loading-container {
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #f3f3f3; /* 增加背景色，增强视觉效果 */
       display: flex;
+      justify-content: center;
       align-items: center;
       height: 100vh;
-      width: 100vw;
-      position: relative; /* 允许绝对定位子元素 */
     }
+
+    .loading-container {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+
     .dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
       background-color: #3498db;
-      position: absolute; /* 绝对定位 */
-      left: 0; /* 初始位置 */
+      position: absolute; /* 使用绝对定位便于精确控制弹性 */
+      animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* 弹性缓动曲线 */
+    }
+
+    /* 设置每个点的延迟 */
+    .dot:nth-child(1) { animation-delay: 0s; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    .dot:nth-child(4) { animation-delay: 0.6s; }
+    .dot:nth-child(5) { animation-delay: 0.8s; }
+    .dot:nth-child(6) { animation-delay: 1s; }
+
+    @keyframes bounce {
+      0% {
+        transform: translateX(-100vw) scale(0.5); /* 从屏幕外左侧开始，缩小 */
+        opacity: 0.3;
+      }
+      30% {
+        transform: translateX(calc(50vw - 35px)) scale(1); /* 回弹至中间，变大 */
+        opacity: 1;
+      }
+      50% {
+        transform: translateX(calc(50vw - 35px)) scale(1); /* 中间停留 */
+      }
+      70% {
+        transform: translateX(100vw) scale(0.5); /* 弹出屏幕外右侧，缩小 */
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateX(100vw) scale(0.5); /* 完全消失 */
+        opacity: 0;
+      }
     }
   </style>
 </head>
@@ -38,56 +79,13 @@ async function handleRequest(request) {
     <div class="dot"></div>
     <div class="dot"></div>
   </div>
-  <script>
-    const dots = document.querySelectorAll('.dot');
-    const containerWidth = document.querySelector('.loading-container').offsetWidth;
-    const midPoint = containerWidth / 2;
-    const numDots = dots.length;
-    const spacing = 20; // 圆点间距
-
-    function animateDots(start, end, duration, delay) {
-      let startTime = null;
-
-      function animate(timestamp) {
-        if (!startTime) startTime = timestamp;
-        const progress = Math.min((timestamp - startTime) / duration, 1);
-        const easedProgress = easeInOutElastic(progress); // 使用弹性缓动函数
-
-        for (let i = 0; i < numDots; i++) {
-          const offset = i * spacing;
-          const x = start + (end - start) * easedProgress + offset;
-          dots[i].style.transform = \`translateX(\${x}px)\`;
-        }
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        } else {
-          setTimeout(() => {
-            animateDots(end, end > midPoint ? containerWidth : 0, duration, delay); // 反向动画
-          }, delay);
-        }
-      }
-
-      requestAnimationFrame(animate);
-    }
-
-    // 弹性缓动函数 (easeInOutElastic)
-    function easeInOutElastic(t) {
-      const c5 = (2 * Math.PI) / 4.5;
-      return t === 0
-        ? 0
-        : t === 1
-        ? 1
-        : t < 0.5
-        ? -(Math.pow(2, 20 * t - 10) * Math.sin((20 * t - 11.125) * c5)) / 2
-        : (Math.pow(2, -20 * t + 10) * Math.sin((20 * t - 11.125) * c5)) / 2 + 1;
-    }
-
-    animateDots(0, midPoint, 1000, 500); // 初始动画，从左边到中间
-  </script>
 </body>
 </html>
 `;
 
-  return new Response(html, { headers: { 'content-type': 'text/html;charset=UTF-8' } });
+  return new Response(html, {
+    headers: {
+      'content-type': 'text/html;charset=UTF-8',
+    },
+  });
 }
