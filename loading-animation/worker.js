@@ -9,62 +9,47 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Elastic Loading Animation</title>
+  <title>Wave Loading Animation</title>
   <style>
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #f3f3f3;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background-color: #f3f3f3;
     }
 
     .loading-container {
       display: flex;
-      justify-content: flex-start;
+      justify-content: center;
       align-items: center;
-      width: 100%;
-      height: 100%;
-      position: relative;
     }
 
     .dot {
-      width: 15px;  /* 增大圆点的大小 */
-      height: 15px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
-      background-color: #e74c3c; /* 改为红色 */
-      position: absolute;
-      animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* 弹性缓动曲线 */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1); /* 阴影效果模拟立体感 */
+      background-color: #e74c3c;
+      margin: 0 10px;
+      animation: wave 1.5s ease-in-out infinite;
     }
 
     /* 设置每个点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.2s; }
-    .dot:nth-child(3) { animation-delay: 0.4s; }
-    .dot:nth-child(4) { animation-delay: 0.6s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+    .dot:nth-child(4) { animation-delay: 0.9s; }
 
-    @keyframes bounce {
-      0% {
-        transform: translateX(-100vw) scale(0.5); /* 从屏幕外左侧开始，缩小 */
-        opacity: 0.3;
-      }
-      30% {
-        transform: translateX(calc(50vw - 35px)) scale(1); /* 回弹至中间，变大 */
-        opacity: 1;
+    @keyframes wave {
+      0%, 100% {
+        transform: translateY(0); /* 默认位置 */
+        opacity: 0.7;
       }
       50% {
-        transform: translateX(calc(50vw - 35px)) scale(1); /* 中间停留 */
-      }
-      70% {
-        transform: translateX(100vw) scale(0.5); /* 弹出屏幕外右侧，缩小 */
-        opacity: 0.3;
-      }
-      100% {
-        transform: translateX(100vw) scale(0.5); /* 完全消失 */
-        opacity: 0;
+        transform: translateY(-20px); /* 向上波动 */
+        opacity: 1;
       }
     }
   </style>
