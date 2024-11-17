@@ -9,7 +9,7 @@ async function handleRequest(request) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bead Animation with Correct Order</title>
+  <title>Bead Animation Adjusted Speed</title>
   <style>
     body {
       margin: 0;
@@ -34,33 +34,33 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 5s ease-in-out infinite;
+      animation: beadAnimation 4.5s ease-in-out infinite; /* 总时长缩短为 4.5s */
     }
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.5s; }
-    .dot:nth-child(3) { animation-delay: 1s; }
-    .dot:nth-child(4) { animation-delay: 1.5s; }
-    .dot:nth-child(5) { animation-delay: 2s; }
+    .dot:nth-child(2) { animation-delay: 0.4s; }
+    .dot:nth-child(3) { animation-delay: 0.8s; }
+    .dot:nth-child(4) { animation-delay: 1.2s; }
+    .dot:nth-child(5) { animation-delay: 1.6s; }
 
     @keyframes beadAnimation {
       0% {
         transform: translateX(-100vw) scale(0.8);
         opacity: 0;
       }
-      20% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1);
+      18% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 加速到达中间 */
         opacity: 1;
       }
-      30% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1);
+      28% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到中间位置 */
       }
-      65% {
+      60% {
         transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 停留展示时间保持 */
       }
-      80% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 向右略过目标位置 */
+      75% {
+        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 散开加速 */
       }
       100% {
         transform: translateX(100vw) scale(0.8);
