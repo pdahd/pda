@@ -14,7 +14,7 @@ async function handleRequest(request) {
     body {
       margin: 0;
       overflow: hidden;
-      background-color: #f3f3f3; /* 背景色 */
+      background-color: #f3f3f3;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -31,19 +31,20 @@ async function handleRequest(request) {
     }
 
     .dot {
-      width: 10px;
-      height: 10px;
+      width: 15px;  /* 增大圆点的大小 */
+      height: 15px;
       border-radius: 50%;
-      background-color: red; /* 修改为红色 */
-      position: absolute; /* 使用绝对定位便于精确控制弹性 */
+      background-color: #e74c3c; /* 改为红色 */
+      position: absolute;
       animation: bounce 3s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite; /* 弹性缓动曲线 */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1); /* 阴影效果模拟立体感 */
     }
 
-    /* 修改点的延迟，增加延迟时间 */
+    /* 设置每个点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.4s; } /* 延迟增加 */
-    .dot:nth-child(3) { animation-delay: 0.8s; } /* 延迟增加 */
-    .dot:nth-child(4) { animation-delay: 1.2s; } /* 延迟增加 */
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    .dot:nth-child(4) { animation-delay: 0.6s; }
 
     @keyframes bounce {
       0% {
