@@ -101,7 +101,7 @@ async function handleRequest(request) {
                 pointer-events: none;
                 z-index: 900;
                 opacity: 0;
-                animation: fadeOut 1s ease forwards;
+                animation: fadeOut 1.5s ease forwards;
             }
 
             @keyframes fadeIn {
@@ -115,7 +115,7 @@ async function handleRequest(request) {
             }
 
             .highlight-mask.active {
-                animation: fadeIn 2s ease forwards;
+                animation: fadeIn 2.5s ease forwards;
             }
         </style>
     </head>
