@@ -37,16 +37,16 @@ async function handleRequest(request) {
 
     @keyframes stretch {
       0% {
-        transform: translateX(calc((var(--index) * 20px) - 100px));
+        transform: translateX(calc((var(--index) * var(--dot-spacing))); /* 初始分散 */
       }
       50% {
-        transform: translateX(var(--center-position));
+        transform: translateX(calc(50vw - var(--total-width) / 2 + var(--index) * 10px)); /* 中间对齐，无缝隙 */
       }
       70% {
-        transform: translateX(var(--center-position));
+        transform: translateX(calc(50vw - var(--total-width) / 2 + var(--index) * 10px)); /* 中间停留 */
       }
       100% {
-        transform: translateX(var(--end-position));
+        transform: translateX(calc(100vw + (var(--index) * var(--dot-spacing)) - var(--total-width) - var(--dot-spacing))); /* 向右分散 */
       }
     }
   </style>
@@ -62,12 +62,12 @@ async function handleRequest(request) {
   </div>
   <script>
     const dots = document.querySelectorAll('.dot');
-    const centerPosition = 'calc(50vw - ' + (dots.length * 5) + 'px)';
-    const endPosition = 'calc(100vw + ' + (dots.length * 10) + 'px - 30px)';
+    const dotSpacing = 20; // 点与点之间的间距
+    const totalWidth = dots.length * 10; // 所有点的总宽度
 
     dots.forEach(dot => {
-      dot.style.setProperty('--center-position', centerPosition);
-      dot.style.setProperty('--end-position', endPosition);
+      dot.style.setProperty('--dot-spacing', dotSpacing + 'px');
+      dot.style.setProperty('--total-width', totalWidth + 'px');
     });
   </script>
 </body>
