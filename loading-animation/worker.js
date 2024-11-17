@@ -34,33 +34,33 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 4s ease-in-out infinite; /* 总时长保持 4s */
+      animation: beadAnimation 3.5s ease-in-out infinite; /* 总时长缩短为 3.5s */
     }
 
     /* 动态设置点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.35s; }
-    .dot:nth-child(3) { animation-delay: 0.7s; }
-    .dot:nth-child(4) { animation-delay: 1.05s; }
-    .dot:nth-child(5) { animation-delay: 1.4s; }
+    .dot:nth-child(2) { animation-delay: 0.25s; }
+    .dot:nth-child(3) { animation-delay: 0.5s; }
+    .dot:nth-child(4) { animation-delay: 0.75s; }
+    .dot:nth-child(5) { animation-delay: 1s; }
 
     @keyframes beadAnimation {
       0% {
         transform: translateX(-100vw) scale(0.8);
         opacity: 0;
       }
-      15% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 更快到达中间 */
+      12% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1.1); /* 快速到达中间 */
         opacity: 1;
       }
-      20% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到中间位置 */
+      18% {
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 弹回到中间 */
       }
       35% {
-        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 停留展示时间进一步缩短 */
+        transform: translateX(calc(50vw - var(--order) * 12px)) scale(1); /* 中间停留时间缩短 */
       }
-      65% {
-        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 散开加速 */
+      60% {
+        transform: translateX(calc(100vw + var(--order) * 20px)) scale(1.1); /* 向右加速 */
       }
       100% {
         transform: translateX(100vw) scale(0.8);
