@@ -34,15 +34,15 @@ async function handleRequest(request) {
       border-radius: 50%;
       background-color: #3498db;
       position: absolute;
-      animation: beadAnimation 5.5s ease-in-out infinite;
+      animation: beadAnimation 4.5s ease-in-out infinite; /* 提速动画 */
     }
 
     /* 设置每个点的延迟 */
     .dot:nth-child(1) { animation-delay: 0s; }
-    .dot:nth-child(2) { animation-delay: 0.4s; }
-    .dot:nth-child(3) { animation-delay: 0.8s; }
-    .dot:nth-child(4) { animation-delay: 1.2s; }
-    .dot:nth-child(5) { animation-delay: 1.6s; }
+    .dot:nth-child(2) { animation-delay: 0.3s; }
+    .dot:nth-child(3) { animation-delay: 0.6s; }
+    .dot:nth-child(4) { animation-delay: 0.9s; }
+    .dot:nth-child(5) { animation-delay: 1.2s; }
 
     @keyframes beadAnimation {
       0% {
@@ -50,17 +50,17 @@ async function handleRequest(request) {
         opacity: 0;
       }
       15% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1.2); /* 增强弹性效果 */
+        transform: translateX(calc(50vw - 20px * var(--order))) scale(1.2); /* 加强拉伸效果 */
         opacity: 1;
       }
       30% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 完全到达中间位置 */
+        transform: translateX(calc(50vw - 20px * var(--order))) scale(1); /* 完全到达中间位置 */
       }
-      65% {
-        transform: translateX(calc(50vw - var(--order) * 15px)) scale(1); /* 停留在中间 */
+      60% {
+        transform: translateX(calc(50vw - 20px * var(--order))) scale(1); /* 停留中间位置 */
       }
       85% {
-        transform: translateX(calc(100vw + var(--order) * 25px)) scale(1.2); /* 增强右边扩散效果 */
+        transform: translateX(calc(100vw + 25px * var(--order))) scale(1.2); /* 散开效果 */
       }
       100% {
         transform: translateX(100vw) scale(0.8);
@@ -68,7 +68,7 @@ async function handleRequest(request) {
       }
     }
 
-    /* 动态设置点的序号，用于调整它们的偏移量 */
+    /* 动态设置点的序号，调整偏移量以确保没有缝隙 */
     .dot:nth-child(1) { --order: 2; }
     .dot:nth-child(2) { --order: 1; }
     .dot:nth-child(3) { --order: 0; }
