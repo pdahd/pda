@@ -22,6 +22,33 @@ async function handleRequest(request) {
                 z-index: 1000;
             }
 
+            /* 地震波动画样式 */
+            .pulse-container {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                transform: translate(-50%, -50%); /* 居中对齐 */
+                z-index: 0; /* 地震波作为背景 */
+            }
+            .pulse-circle {
+                position: absolute;
+                width: 50px;
+                height: 50px;
+                background-color: rgba(255, 0, 0, 0.8); /* 增加饱和度 */
+                border-radius: 50%; /* 圆形 */
+                animation: pulse-animation 2s infinite; /* 动画效果 */
+            }
+            @keyframes pulse-animation {
+                0% {
+                    transform: scale(1); /* 起始大小 */
+                    opacity: 1; /* 完全不透明 */
+                }
+                100% {
+                    transform: scale(3); /* 扩大三倍 */
+                    opacity: 0; /* 完全透明 */
+                }
+            }
+            
             /* 加载动画样式 - 波浪动画 */
             .loading-container {
                 position: absolute;
