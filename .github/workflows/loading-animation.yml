@@ -15,6 +15,14 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
+          # 添加 --debug 参数，强制 wrangler 输出调试日志
+          wranglerFlags: "--debug"
 
+      # 如果 wrangler 失败，我们可以打印日志文件
       - name: Show Wrangler Logs
-        run: cat /home/runner/.config/.wrangler/logs/*.log
+        run: |
+          if [ -f "/home/runner/.config/.wrangler/logs/*.log" ]; then
+            cat /home/runner/.config/.wrangler/logs/*.log
+          else
+            echo "No wrangler logs found."
+          fi
