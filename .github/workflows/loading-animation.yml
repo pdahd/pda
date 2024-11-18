@@ -15,3 +15,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
+
+      - name: Show Wrangler Logs
+        run: cat /home/runner/.config/.wrangler/logs/*.log
