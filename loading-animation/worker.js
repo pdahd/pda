@@ -138,6 +138,30 @@ async function handleRequest(request) {
 
             var previousMarker;
             var previousAnimatedMarker;
+            
+            // 自动检测用户 IP 并定位
+            fetch('https://ipinfo.io?token=8f72f481863e3d') // 替换为你的 token
+                .then(response => response.json())
+                .then(data => {
+                    if (data.loc) {
+                        var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
+
+                        var popupText =
+                            "Your IP: " + data.ip +
+                            "<br>City: " + (data.city || "Unknown") +
+                            "<br>Region: " + (data.region || "Unknown") +
+                            "<br>Country: " + (data.country || "Unknown");
+
+                        updateMap(lat, lon, popupText); // 自动定位用户
+                    } else {
+                        alert('Could not detect your location automatically');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error detecting user location:', error);
+                    alert('Error detecting your location');
+                });
+            
             var highlightMask = document.createElement('div');
             highlightMask.className = 'highlight-mask';
             document.body.appendChild(highlightMask);
