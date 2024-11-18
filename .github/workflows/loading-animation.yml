@@ -11,15 +11,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Set up Wrangler debug logging
+        run: |
+          export DEBUG="wrangler:*"
+
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
-          # 使用 `command` 指定带 --debug 的 wrangler deploy
-          command: deploy --debug
 
-      # 打印日志文件
       - name: Show Wrangler Logs
         run: |
           LOG_DIR="/home/runner/.config/.wrangler/logs"
