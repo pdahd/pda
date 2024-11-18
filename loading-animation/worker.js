@@ -92,7 +92,7 @@ async function handleRequest(request) {
                 width: 100%;
                 height: 100%;
                 background: radial-gradient(circle, 
-                   rgba(0, 0, 0, 0) 30%,      
+                   rgba(0, 0, 0, 0) 40%,      
                    rgba(0, 0, 0, 0.3) 50%,    
                    rgba(0, 0, 0, 0.7) 70%,    
                    rgba(0, 0, 0, 0.9) 90%,    
@@ -120,7 +120,7 @@ async function handleRequest(request) {
         </style>
     </head>
     <body>
-        <input type="text" id="searchBox" placeholder="输入位置或 IP 地址并按回车定位">
+        <input type="text" id="searchBox" placeholder="输入位置或IP地址并按回车定位">
         <div class="loading-container" id="loadingAnimation">
             <div class="dot"></div>
             <div class="dot"></div>
