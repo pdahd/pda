@@ -231,10 +231,8 @@ async function handleRequest(request) {
                                 if (data.length > 0) {
                                     var lat = parseFloat(data[0].lat);
                                     var lon = parseFloat(data[0].lon);
-                                    var country = data[0].address.country;
-                                    var flagUrl = country ? `https://www.countryflags.io/${country.toLowerCase()}/flat/32.png` : null;
-
-                                    updateMap(lat, lon, "位置: " + input + (flagUrl ? " <img src='" + flagUrl + "' alt='Flag' style='width:20px;height:auto;vertical-align:middle;'> " : ""));
+                                   
+                                    updateMap(lat, lon, "位置: " + input);
                                 } else {
                                     alert('Location not found');
                                 }
