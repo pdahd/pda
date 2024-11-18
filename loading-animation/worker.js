@@ -150,16 +150,14 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "<small>自动检测您的 IP 信息:</small><br>" +  // 最小号字体提示
-                            "<small>您的 IP: " + (data.ip || "Unknown") + 
-                            "<br>主机名: " + (data.hostname || "Unknown") + 
-                            "<br>城市: " + (data.city || "Unknown") + 
-                            "<br>区域: " + (data.region || "Unknown") + 
-                            "<br>国家: " + (data.country || "Unknown") + 
-                            "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
-                            "<br>时区: " + (data.timezone || "Unknown") + // 时区信息
-                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
-                            "<br>这是系统自动检测到的您当前的位置。</small>"; // 自动定位提示语，所有内容都使用最小号字体
+                            "<strong>这是您的当前 IP 地址定位信息:</strong><br>" +
+                            "<small>您的 IP: " + (data.ip || "未知") + "</small><br>" +
+                            "<small>城市: " + (data.city || "未知") + "</small><br>" +
+                            "<small>区域: " + (data.region || "未知") + "</small><br>" +
+                            "<small>国家: " + (data.country || "未知") + "</small><br>" +
+                            "<small>ISP: " + (data.org || "未知") + "</small><br>" +
+                            "<small>时区: " + (data.timezone || "未知") + "</small><br>" +
+                            "<small>经纬度: " + (lat || "未知") + ", " + (lon || "未知") + "</small>";
 
                         // 自动定位并更新地图
                         updateMap(lat, lon, popupText); 
