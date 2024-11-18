@@ -160,17 +160,20 @@ async function handleRequest(request) {
                     var ipPattern = /^(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[0-1]?[0-9][0-9]?)$/;
 
                     if (ipPattern.test(input)) {
-                        fetch('https://geolocation-db.com/json/' + input + '&position=true')
+                        fetch('https://ipinfo.io/' + input + '?token=8f72f481863e3d') // 用你自己的 token
                             .then(response => response.json())
                             .then(data => {
-                                var lat = parseFloat(data.latitude);
-                                var lon = parseFloat(data.longitude);
-                                if (!isNaN(lat) && !isNaN(lon)) {
-                                    updateMap(lat, lon, "IP Location: " + input);
+                                if (data.loc) {
+                                    var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
+                                    updateMap(lat, lon, `IP: ${input}<br>City: ${data.city}<br>Region: ${data.region}<br>Country: ${data.country}`);
                                 } else {
                                     alert('Could not locate IP address');
                                 }
-                            });
+                             })
+                             .catch(error => {
+                                 console.error('Error fetching IP location:', error);
+                                 alert('Error fetching IP location');
+                             });
                     } else {
                         fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + input)
                             .then(response => response.json())
