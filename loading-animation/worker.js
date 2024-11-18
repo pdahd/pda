@@ -149,18 +149,18 @@ async function handleRequest(request) {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
-                        var popupText = `
-                            <strong>自动检测您的 IP 信息:</strong><br>
-                            <strong>IP 地址:</strong> ${data.ip || "未知"}<br>
-                            <strong>主机名:</strong> ${data.hostname || "未知"}<br>
-                            <strong>城市:</strong> ${data.city || "未知"}<br>
-                            <strong>区域:</strong> ${data.region || "未知"}<br>
-                            <strong>国家:</strong> ${data.country || "未知"}<br>
-                            <strong>坐标:</strong> ${lat || "未知"}, ${lon || "未知"}<br>
-                            <strong>ISP:</strong> ${data.org || "未知"}<br>
-                            <strong>时区:</strong> ${data.timezone || "未知"}<br>
-                            <em>这是系统自动检测到的您当前的位置。</em>
-                        `;
+                        var popupText =
+                            "Your IP: " + (data.ip || "Unknown") + 
+                            "<br>Hostname: " + (data.hostname || "Unknown") + 
+                            "<br>City: " + (data.city || "Unknown") + 
+                            "<br>Region: " + (data.region || "Unknown") + 
+                            "<br>Country: " + (data.country || "Unknown") + 
+                            "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
+                            "<br>Timezone: " + (data.timezone || "Unknown") + // 时区信息
+                            "<br>Coordinates: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
+                            "<br><i>This is the location automatically detected from your IP address.</i>"; // 自动定位提示语
+
+                        // 自动定位并更新地图
                         updateMap(lat, lon, popupText); // 自动定位用户
                     } else {
                         alert('Could not detect your location automatically');
