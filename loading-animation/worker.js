@@ -150,16 +150,18 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "<small>自动检测您的 IP 信息:</small><br>" +  // 最小号字体提示
-                            "<small>您的 IP: " + (data.ip || "Unknown") + 
-                            "<br>主机名: " + (data.hostname || "Unknown") + 
-                            "<br>城市: " + (data.city || "Unknown") + 
-                            "<br>区域: " + (data.region || "Unknown") + 
-                            "<br>国家: " + (data.country || "Unknown") + 
-                            "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
-                            "<br>时区: " + (data.timezone || "Unknown") + // 时区信息
-                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
-                            "<br>这是系统自动检测到的您当前的位置。</small>"; // 自动定位提示语，所有内容都使用最小号字体
+                            "<table style='font-size: small;'>" +  // 设置表格字体为小号
+                            "<tr><td><strong>自动检测您的 IP 信息:</strong></td></tr>" +
+                            "<tr><td>您的 IP: " + (data.ip || "Unknown") + "</td></tr>" +
+                            "<tr><td>主机名: " + (data.hostname || "Unknown") + "</td></tr>" +
+                            "<tr><td>城市: " + (data.city || "Unknown") + "</td></tr>" +
+                            "<tr><td>区域: " + (data.region || "Unknown") + "</td></tr>" +
+                            "<tr><td>国家: " + (data.country || "Unknown") + "</td></tr>" +
+                            "<tr><td>ISP: " + (data.org || "Unknown") + "</td></tr>" + // 网络提供商信息
+                            "<tr><td>时区: " + (data.timezone || "Unknown") + "</td></tr>" + // 时区信息
+                            "<tr><td>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + "</td></tr>" + // 经纬度
+                            "<tr><td><i>这是系统自动检测到的您当前的位置。</i></td></tr>" + // 自动定位提示
+                            "</table>"; // 关闭表格
 
                         // 自动定位并更新地图
                         updateMap(lat, lon, popupText); // 自动定位用户
