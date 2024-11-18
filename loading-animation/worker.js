@@ -149,7 +149,7 @@ async function handleRequest(request) {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
-                        var popupText =
+                        var popupText = `
                             <strong>自动检测您的 IP 信息:</strong>
                             <ul>
                                 <li><strong>IP 地址:</strong> ${data.ip || "未知"}</li>
