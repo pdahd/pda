@@ -149,58 +149,18 @@ async function handleRequest(request) {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
-                        // 定义预渲染的 HTML 模板
-                        var popupTemplate = `
-                            <strong>自动检测您的 IP 信息:</strong>
-                            <table style="width: 100%; text-align: left;">
-                                <tr>
-                                    <td><strong>IP 地址:</strong></td>
-                                    <td>__IP__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>主机名:</strong></td>
-                                    <td>__HOSTNAME__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>城市:</strong></td>
-                                    <td>__CITY__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>区域:</strong></td>
-                                    <td>__REGION__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>国家:</strong></td>
-                                    <td>__COUNTRY__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>坐标:</strong></td>
-                                    <td>__LAT__, __LON__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>ISP:</strong></td>
-                                    <td>__ORG__</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>时区:</strong></td>
-                                    <td>__TIMEZONE__</td>
-                                </tr>
-                            </table>
+                        var popupText = `
+                            <strong>自动检测您的 IP 信息:</strong><br>
+                            <strong>IP 地址:</strong> ${data.ip || "未知"}<br>
+                            <strong>主机名:</strong> ${data.hostname || "未知"}<br>
+                            <strong>城市:</strong> ${data.city || "未知"}<br>
+                            <strong>区域:</strong> ${data.region || "未知"}<br>
+                            <strong>国家:</strong> ${data.country || "未知"}<br>
+                            <strong>坐标:</strong> ${lat || "未知"}, ${lon || "未知"}<br>
+                            <strong>ISP:</strong> ${data.org || "未知"}<br>
+                            <strong>时区:</strong> ${data.timezone || "未知"}<br>
                             <em>这是系统自动检测到的您当前的位置。</em>
-                       `;
-
-                       // 替换模板中的占位符
-                       var popupText = popupTemplate
-                            .replace('__IP__', data.ip || "未知")
-                            .replace('__HOSTNAME__', data.hostname || "未知")
-                            .replace('__CITY__', data.city || "未知")
-                            .replace('__REGION__', data.region || "未知")
-                            .replace('__COUNTRY__', data.country || "未知")
-                            .replace('__LAT__', lat || "未知")
-                            .replace('__LON__', lon || "未知")
-                            .replace('__ORG__', data.org || "未知")
-                            .replace('__TIMEZONE__', data.timezone || "未知");
-
+                        `;
                         updateMap(lat, lon, popupText); // 自动定位用户
                     } else {
                         alert('Could not detect your location automatically');
