@@ -165,7 +165,11 @@ async function handleRequest(request) {
                             .then(data => {
                                 if (data.loc) {
                                     var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
-                                    updateMap(lat, lon, `IP: ${input}<br>City: ${data.city}<br>Region: ${data.region}<br>Country: ${data.country}`);
+                                    updateMap(
+                                        lat,
+                                        lon,
+                                        `IP: ${input}<br>City: ${data.city}<br>Region: ${data.region}<br>Country: ${data.country}`
+                                    );
                                 } else {
                                     alert('Could not locate IP address');
                                 }
