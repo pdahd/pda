@@ -150,9 +150,9 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "Your IP: " + (data.ip || "Unknown") + 
+                            "你的 IP: " + (data.ip || "Unknown") + 
                             "<br>Hostname: " + (data.hostname || "Unknown") + 
-                            "<br>City: " + (data.city || "Unknown") + 
+                            "<br>城市: " + (data.city || "Unknown") + 
                             "<br>Region: " + (data.region || "Unknown") + 
                             "<br>Country: " + (data.country || "Unknown") + 
                             "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
