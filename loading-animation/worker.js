@@ -231,7 +231,11 @@ async function handleRequest(request) {
                                 if (data.length > 0) {
                                     var lat = parseFloat(data[0].lat);
                                     var lon = parseFloat(data[0].lon);
-                                    updateMap(lat, lon, "位置: " + input);
+                                    var country = data[0].address.country;
+                                    var flagUrl = country 
+                                        ? "https://flagcdn.com/w40/" + country.toLowerCase() + ".png"
+                                        : null;
+                                    updateMap(lat, lon, "位置: " + input + (flagUrl ? " <img src='" + flagUrl + "' alt='Flag' style='width:20px;height:auto;vertical-align:middle;'> " : ""));
                                 } else {
                                     alert('Location not found');
                                 }
