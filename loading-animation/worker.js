@@ -263,7 +263,7 @@ async function handleRequest(request) {
                     .bindPopup(popupText)
                     .openPopup();
 
-                map.flyTo([lat, lon], 5); // 执行平移动画
+                map.panTo([lat, lon]);
 
                 // 停止加载动画
                 loadingAnimation.style.display = 'none';
