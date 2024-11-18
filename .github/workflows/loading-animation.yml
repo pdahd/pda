@@ -10,19 +10,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
-          # 添加 --debug 参数，强制 wrangler 输出调试日志
-          wranglerFlags: "--debug"
+          # 使用 `command` 指定带 --debug 的 wrangler deploy
+          command: deploy --debug
 
-      # 如果 wrangler 失败，我们可以打印日志文件
+      # 打印日志文件
       - name: Show Wrangler Logs
         run: |
-          if [ -f "/home/runner/.config/.wrangler/logs/*.log" ]; then
-            cat /home/runner/.config/.wrangler/logs/*.log
+          LOG_DIR="/home/runner/.config/.wrangler/logs"
+          if [ -d "$LOG_DIR" ]; then
+            echo "Printing Wrangler logs..."
+            cat "$LOG_DIR"/*.log
           else
-            echo "No wrangler logs found."
+            echo "No Wrangler logs found."
           fi
