@@ -165,12 +165,12 @@ async function handleRequest(request) {
                             .then(data => {
                                 if (data.loc) {
                                     var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
-                                    const popupText = `
-                                        IP: ${input}<br>
-                                        City: ${data.city}<br>
-                                        Region: ${data.region}<br>
-                                        Country: ${data.country}
-                                    `;
+                                    var popupText = 
+                                        "IP: " + input + 
+                                        "<br>City: " + (data.city || "Unknown") + 
+                                        "<br>Region: " + (data.region || "Unknown") + 
+                                        "<br>Country: " + (data.country || "Unknown");
+
                                     updateMap(lat, lon, popupText);
                                 } else {
                                     alert('Could not locate IP address');
