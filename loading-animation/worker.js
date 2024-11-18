@@ -168,7 +168,7 @@ async function handleRequest(request) {
                                     updateMap(
                                         lat,
                                         lon,
-                                        `IP: ${input}<br>City: ${data.city}<br>Region: ${data.region}<br>Country: ${data.country}`
+                                        `IP: ${input}<br>City: ${data.city || "Unknown"}<br>Region: ${data.region || "Unknown"}<br>Country: ${data.country || "Unknown"}`
                                     );
                                 } else {
                                     alert('Could not locate IP address');
