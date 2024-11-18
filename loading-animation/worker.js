@@ -141,6 +141,20 @@ async function handleRequest(request) {
             var searchBox = document.getElementById('searchBox');
             var loadingAnimation = document.getElementById('loadingAnimation');
             
+            // 通用弹出框生成函数
+            function generatePopupContent(title, data, lat, lon) {
+                return (
+                    `<strong>${title}</strong><br>` +
+                    `<small>IP 地址: ${data.ip || "未知"}</small><br>` +
+                    `<small>城市: ${data.city || "未知"}</small><br>` +
+                    `<small>区域: ${data.region || "未知"}</small><br>` +
+                    `<small>国家: ${data.country || "未知"}</small><br>` +
+                    `<small>ISP: ${data.org || "未知"}</small><br>` +
+                    `<small>时区: ${data.timezone || "未知"}</small><br>` +
+                    `<small>经纬度: ${lat || "未知"}, ${lon || "未知"}</small>`
+                );
+            }
+            
             // 自动检测用户 IP 并定位
             loadingAnimation.style.display = 'flex';
             fetch('https://ipinfo.io?token=8f72f481863e3d') // 替换为你的 token
@@ -148,18 +162,12 @@ async function handleRequest(request) {
                 .then(data => {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
-
-                        var popupText =
-                            "<strong>这是您的当前 IP 地址定位信息:</strong><br>" +
-                            "<small>您的 IP: " + (data.ip || "未知") + "</small><br>" +
-                            "<small>城市: " + (data.city || "未知") + "</small><br>" +
-                            "<small>区域: " + (data.region || "未知") + "</small><br>" +
-                            "<small>国家: " + (data.country || "未知") + "</small><br>" +
-                            "<small>ISP: " + (data.org || "未知") + "</small><br>" +
-                            "<small>时区: " + (data.timezone || "未知") + "</small><br>" +
-                            "<small>经纬度: " + (lat || "未知") + ", " + (lon || "未知") + "</small>";
-
-                        // 自动定位并更新地图
+                        var popupText = generatePopupContent(
+                            "您当前的 IP 地址定位信息:",
+                            data, 
+                            lat, 
+                            lon
+                        );
                         updateMap(lat, lon, popupText); 
                     } else {
                         alert('Could not detect your location automatically');
@@ -194,12 +202,12 @@ async function handleRequest(request) {
                             .then(data => {
                                 if (data.loc) {
                                     var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
-                                    var popupText = 
-                                        "IP: " + input + 
-                                        "<br>City: " + (data.city || "Unknown") + 
-                                        "<br>Region: " + (data.region || "Unknown") + 
-                                        "<br>Country: " + (data.country || "Unknown");
-
+                                    var popupText = generatePopupContent(
+                                        "您输入的 IP 地址定位信息:",
+                                        data, 
+                                        lat, 
+                                        lon
+                                    );
                                     updateMap(lat, lon, popupText);
                                 } else {
                                     alert('Could not locate IP address');
@@ -216,7 +224,7 @@ async function handleRequest(request) {
                                 if (data.length > 0) {
                                     var lat = parseFloat(data[0].lat);
                                     var lon = parseFloat(data[0].lon);
-                                    updateMap(lat, lon, "Location: " + input);
+                                    updateMap(lat, lon, "位置: " + input);
                                 } else {
                                     alert('Location not found');
                                 }
