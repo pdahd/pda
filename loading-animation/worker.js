@@ -150,21 +150,19 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "自动检测您的 IP 信息:" + 
-                            "<br>您的 IP: " + (data.ip || "Unknown") + 
+                            "<small>自动检测您的 IP 信息:</small><br>" +  // 最小号字体提示
+                            "<small>您的 IP: " + (data.ip || "Unknown") + 
                             "<br>主机名: " + (data.hostname || "Unknown") + 
                             "<br>城市: " + (data.city || "Unknown") + 
                             "<br>区域: " + (data.region || "Unknown") + 
                             "<br>国家: " + (data.country || "Unknown") + 
-                            "<br>ISP: " + (data.org || "Unknown") + 
-                            "<br>时区: " + (data.timezone || "Unknown") + 
-                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown");
-
-                        // 将 popupText 转换为表格格式
-                        var formattedTable = formatPopupToTable(popupText);
+                            "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
+                            "<br>时区: " + (data.timezone || "Unknown") + // 时区信息
+                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
+                            "<br>这是系统自动检测到的您当前的位置。</small>"; // 自动定位提示语，所有内容都使用最小号字体
 
                         // 自动定位并更新地图
-                        updateMap(lat, lon, formattedTable); // 传入表格内容
+                        updateMap(lat, lon, popupText); 
                     } else {
                         alert('Could not detect your location automatically');
                     }
@@ -173,25 +171,6 @@ async function handleRequest(request) {
                     console.error('Error detecting user location:', error);
                     alert('Error detecting your location');
                 });
-            
-            function formatPopupToTable(popupText) {
-                // 假设 popupText 是一串以 `<br>` 分隔的文字
-                var lines = popupText.split('<br>');
-                var tableHTML = "<table style='font-size: small; width: 100%; border-collapse: collapse;'>";
-
-                lines.forEach(line => {
-                    var [key, value] = line.split(': ');
-                    if (key && value) {
-                        tableHTML += "<tr><td style='border: 1px solid #ddd; padding: 4px;'><strong>" + key + ":</strong></td>" +
-                                     "<td style='border: 1px solid #ddd; padding: 4px;'>" + value + "</td></tr>";
-                    } else if (line) {
-                        tableHTML += "<tr><td colspan='2' style='border: 1px solid #ddd; padding: 4px;'>" + line + "</td></tr>";
-                    }
-                });
-
-                tableHTML += "</table>";
-                return tableHTML;
-            }
             
             var highlightMask = document.createElement('div');
             highlightMask.className = 'highlight-mask';
@@ -248,7 +227,7 @@ async function handleRequest(request) {
                 }
             });
 
-            function updateMap(lat, lon, formattedTable) {
+            function updateMap(lat, lon, popupText) {
                 if (previousMarker) {
                     map.removeLayer(previousMarker);
                 }
@@ -260,14 +239,14 @@ async function handleRequest(request) {
                     className: 'pulse-container',
                     html: '<div class="pulse-circle"></div>',
                     iconSize: [50, 50],
-         
+                    iconAnchor: [25, 25]
                 });
 
                 previousAnimatedMarker = L.marker([lat, lon], { icon: pulseDiv, interactive: false }).addTo(map);
 
                 previousMarker = L.marker([lat, lon], { zIndexOffset: 1000 })
                     .addTo(map)
-                    .bindPopup(formattedTable)
+                    .bindPopup(popupText)
                     .openPopup();
 
                 map.flyTo([lat, lon], 5); // 执行平移动画
