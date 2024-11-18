@@ -150,17 +150,17 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "<table style='font-size: small;'>" +  // 设置表格字体为小号
-                            "<tr><td><strong>自动检测您的 IP 信息:</strong></td></tr>" +
-                            "<tr><td>您的 IP: " + (data.ip || "Unknown") + "</td></tr>" +
-                            "<tr><td>主机名: " + (data.hostname || "Unknown") + "</td></tr>" +
-                            "<tr><td>城市: " + (data.city || "Unknown") + "</td></tr>" +
-                            "<tr><td>区域: " + (data.region || "Unknown") + "</td></tr>" +
-                            "<tr><td>国家: " + (data.country || "Unknown") + "</td></tr>" +
-                            "<tr><td>ISP: " + (data.org || "Unknown") + "</td></tr>" + // 网络提供商信息
-                            "<tr><td>时区: " + (data.timezone || "Unknown") + "</td></tr>" + // 时区信息
-                            "<tr><td>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + "</td></tr>" + // 经纬度
-                            "<tr><td><i>这是系统自动检测到的您当前的位置。</i></td></tr>" + // 自动定位提示
+                            "<table style='font-size: small; width: 100%;'>" +  // 设置表格字体为小号，且表格宽度占满容器
+                            "<tr><td colspan='2'><strong>自动检测您的 IP 信息:</strong></td></tr>" +
+                            "<tr><td><strong>您的 IP:</strong></td><td>" + (data.ip || "Unknown") + "</td></tr>" +
+                            "<tr><td><strong>主机名:</strong></td><td>" + (data.hostname || "Unknown") + "</td></tr>" +
+                            "<tr><td><strong>城市:</strong></td><td>" + (data.city || "Unknown") + "</td></tr>" +
+                            "<tr><td><strong>区域:</strong></td><td>" + (data.region || "Unknown") + "</td></tr>" +
+                            "<tr><td><strong>国家:</strong></td><td>" + (data.country || "Unknown") + "</td></tr>" +
+                            "<tr><td><strong>ISP:</strong></td><td>" + (data.org || "Unknown") + "</td></tr>" + // 网络提供商信息
+                            "<tr><td><strong>时区:</strong></td><td>" + (data.timezone || "Unknown") + "</td></tr>" + // 时区信息
+                            "<tr><td><strong>经纬度:</strong></td><td>" + (lat || "Unknown") + ", " + (lon || "Unknown") + "</td></tr>" + // 经纬度
+                            "<tr><td colspan='2'><i>这是系统自动检测到的您当前的位置。</i></td></tr>" + // 自动定位提示
                             "</table>"; // 关闭表格
 
                         // 自动定位并更新地图
