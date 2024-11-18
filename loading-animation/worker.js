@@ -138,8 +138,11 @@ async function handleRequest(request) {
 
             var previousMarker;
             var previousAnimatedMarker;
+            var searchBox = document.getElementById('searchBox');
+            var loadingAnimation = document.getElementById('loadingAnimation');
             
             // 自动检测用户 IP 并定位
+            loadingAnimation.style.display = 'flex';
             fetch('https://ipinfo.io?token=8f72f481863e3d') // 替换为你的 token
                 .then(response => response.json())
                 .then(data => {
@@ -165,9 +168,6 @@ async function handleRequest(request) {
             var highlightMask = document.createElement('div');
             highlightMask.className = 'highlight-mask';
             document.body.appendChild(highlightMask);
-
-            var searchBox = document.getElementById('searchBox');
-            var loadingAnimation = document.getElementById('loadingAnimation');
 
             // 用户编辑输入框时，淡出遮罩
             searchBox.addEventListener('input', function() {
