@@ -150,15 +150,16 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "你的 IP: " + (data.ip || "Unknown") + 
-                            "<br>Hostname: " + (data.hostname || "Unknown") + 
+                            "<small>自动检测您的 IP 信息:</small><br>" +  // 最小号字体提示
+                            "<small>您的 IP: " + (data.ip || "Unknown") + 
+                            "<br>主机名: " + (data.hostname || "Unknown") + 
                             "<br>城市: " + (data.city || "Unknown") + 
-                            "<br>Region: " + (data.region || "Unknown") + 
-                            "<br>Country: " + (data.country || "Unknown") + 
+                            "<br>区域: " + (data.region || "Unknown") + 
+                            "<br>国家: " + (data.country || "Unknown") + 
                             "<br>ISP: " + (data.org || "Unknown") + // 网络提供商信息
-                            "<br>Timezone: " + (data.timezone || "Unknown") + // 时区信息
-                            "<br>Coordinates: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
-                            "<br><i>This is the location automatically detected from your IP address.</i>"; // 自动定位提示语
+                            "<br>时区: " + (data.timezone || "Unknown") + // 时区信息
+                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown") + // 经纬度
+                            "<br>这是系统自动检测到的您当前的位置。</small>"; // 自动定位提示语，所有内容都使用最小号字体
 
                         // 自动定位并更新地图
                         updateMap(lat, lon, popupText); // 自动定位用户
