@@ -162,12 +162,12 @@ async function handleRequest(request) {
                                 <li><strong>时区:</strong> ${data.timezone || "未知"}</li>
                             </ul>
                             <em>这是系统自动检测到的您当前的位置。</em>
-                            `;
+                        `;
 
-                            updateMap(lat, lon, popupText); // 自动定位用户
-                        } else {
-                            alert('Could not detect your location automatically');
-                        }
+                        updateMap(lat, lon, popupText); // 自动定位用户
+                    } else {
+                        alert('Could not detect your location automatically');
+                    }
                 })
                 .catch(error => {
                     console.error('Error detecting user location:', error);
