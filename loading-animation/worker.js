@@ -150,10 +150,10 @@ async function handleRequest(request) {
                 
                 return (
                     "<strong>" + title + "</strong><br>" +
-                    (flagUrl ? "<img src='" + flagUrl + "' alt='Flag' style='width:20px;height:auto;vertical-align:middle;'> " : "") +
                     "<small>IP 地址: " + (data.ip || "未知") + "</small><br>" +
                     "<small>城市: " + (data.city || "未知") + "</small><br>" +
                     "<small>区域: " + (data.region || "未知") + "</small><br>" +
+                    (flagUrl ? "<img src='" + flagUrl + "' alt='Flag' style='width:20px;height:auto;vertical-align:middle;'> " : "") +
                     "<small>国家: " + (data.country || "未知") + "</small><br>" +
                     "<small>ISP: " + (data.org || "未知") + "</small><br>" +
                     "<small>时区: " + (data.timezone || "未知") + "</small><br>" +
