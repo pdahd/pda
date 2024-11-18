@@ -150,15 +150,24 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "Your IP: " + data.ip +
-                            "<br>City: " + (data.city || "Unknown") +
-                            "<br>Region: " + (data.region || "Unknown") +
-                            "<br>Country: " + (data.country || "Unknown");
+                            <strong>自动检测您的 IP 信息:</strong>
+                            <ul>
+                                <li><strong>IP 地址:</strong> ${data.ip || "未知"}</li>
+                                <li><strong>主机名:</strong> ${data.hostname || "未知"}</li>
+                                <li><strong>城市:</strong> ${data.city || "未知"}</li>
+                                <li><strong>区域:</strong> ${data.region || "未知"}</li>
+                                <li><strong>国家:</strong> ${data.country || "未知"}</li>
+                                <li><strong>坐标:</strong> ${lat || "未知"}, ${lon || "未知"}</li>
+                                <li><strong>ISP:</strong> ${data.org || "未知"}</li>
+                                <li><strong>时区:</strong> ${data.timezone || "未知"}</li>
+                            </ul>
+                            <em>这是系统自动检测到的您当前的位置。</em>
+                            `;
 
-                        updateMap(lat, lon, popupText); // 自动定位用户
-                    } else {
-                        alert('Could not detect your location automatically');
-                    }
+                            updateMap(lat, lon, popupText); // 自动定位用户
+                        } else {
+                            alert('Could not detect your location automatically');
+                        }
                 })
                 .catch(error => {
                     console.error('Error detecting user location:', error);
