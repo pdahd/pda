@@ -93,11 +93,10 @@ async function handleRequest(request) {
                 height: 100%;
                 background: radial-gradient(circle, 
                     rgba(0, 0, 0, 0) 50%,      
-                    rgba(0, 0, 0, 0.1) 55%,    
-                    rgba(0, 0, 0, 0.4) 60%,    
-                    rgba(0, 0, 0, 0.7) 75%,    
-                    rgba(0, 0, 0, 0.9) 90%,    
-                    rgba(0, 0, 0, 1) 100%    
+                    rgba(0, 0, 0, 0.2) 60%,    
+                    rgba(0, 0, 0, 0.5) 70%,    
+                    rgba(0, 0, 0, 0.75) 85%,   
+                    rgba(0, 0, 0, 1) 100%   
                 );   
                 pointer-events: none;
                 z-index: 900;
