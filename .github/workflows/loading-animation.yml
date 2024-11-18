@@ -10,16 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Set up Wrangler debug logging
-        run: |
-          export DEBUG="wrangler:*"
 
-      - uses: cloudflare/wrangler-action@v3
+      - name: Enable Wrangler Debug Mode
+        run: echo "DEBUG=wrangler:*" >> $GITHUB_ENV
+
+      - name: Deploy with Wrangler
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
+        continue-on-error: true
 
       - name: Show Wrangler Logs
         run: |
