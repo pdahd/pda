@@ -150,21 +150,21 @@ async function handleRequest(request) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
 
                         var popupText =
-                            "<table style='font-size: small; width: 100%;'>" +  // 设置表格字体为小号，且表格宽度占满容器
-                            "<tr><td colspan='2'><strong>自动检测您的 IP 信息:</strong></td></tr>" +
-                            "<tr><td><strong>您的 IP:</strong></td><td>" + (data.ip || "Unknown") + "</td></tr>" +
-                            "<tr><td><strong>主机名:</strong></td><td>" + (data.hostname || "Unknown") + "</td></tr>" +
-                            "<tr><td><strong>城市:</strong></td><td>" + (data.city || "Unknown") + "</td></tr>" +
-                            "<tr><td><strong>区域:</strong></td><td>" + (data.region || "Unknown") + "</td></tr>" +
-                            "<tr><td><strong>国家:</strong></td><td>" + (data.country || "Unknown") + "</td></tr>" +
-                            "<tr><td><strong>ISP:</strong></td><td>" + (data.org || "Unknown") + "</td></tr>" + // 网络提供商信息
-                            "<tr><td><strong>时区:</strong></td><td>" + (data.timezone || "Unknown") + "</td></tr>" + // 时区信息
-                            "<tr><td><strong>经纬度:</strong></td><td>" + (lat || "Unknown") + ", " + (lon || "Unknown") + "</td></tr>" + // 经纬度
-                            "<tr><td colspan='2'><i>这是系统自动检测到的您当前的位置。</i></td></tr>" + // 自动定位提示
-                            "</table>"; // 关闭表格
+                            "自动检测您的 IP 信息:" + 
+                            "<br>您的 IP: " + (data.ip || "Unknown") + 
+                            "<br>主机名: " + (data.hostname || "Unknown") + 
+                            "<br>城市: " + (data.city || "Unknown") + 
+                            "<br>区域: " + (data.region || "Unknown") + 
+                            "<br>国家: " + (data.country || "Unknown") + 
+                            "<br>ISP: " + (data.org || "Unknown") + 
+                            "<br>时区: " + (data.timezone || "Unknown") + 
+                            "<br>经纬度: " + (lat || "Unknown") + ", " + (lon || "Unknown");
+
+                        // 将 popupText 转换为表格格式
+                        var formattedTable = formatPopupToTable(popupText);
 
                         // 自动定位并更新地图
-                        updateMap(lat, lon, popupText); // 自动定位用户
+                        updateMap(lat, lon, formattedTable); // 传入表格内容
                     } else {
                         alert('Could not detect your location automatically');
                     }
@@ -173,6 +173,25 @@ async function handleRequest(request) {
                     console.error('Error detecting user location:', error);
                     alert('Error detecting your location');
                 });
+            
+            function formatPopupToTable(popupText) {
+                // 假设 popupText 是一串以 `<br>` 分隔的文字
+                var lines = popupText.split('<br>');
+                var tableHTML = "<table style='font-size: small; width: 100%; border-collapse: collapse;'>";
+
+                lines.forEach(line => {
+                    var [key, value] = line.split(': ');
+                    if (key && value) {
+                        tableHTML += "<tr><td style='border: 1px solid #ddd; padding: 4px;'><strong>" + key + ":</strong></td>" +
+                                     "<td style='border: 1px solid #ddd; padding: 4px;'>" + value + "</td></tr>";
+                    } else if (line) {
+                        tableHTML += "<tr><td colspan='2' style='border: 1px solid #ddd; padding: 4px;'>" + line + "</td></tr>";
+                    }
+                });
+
+                tableHTML += "</table>";
+                return tableHTML;
+            }
             
             var highlightMask = document.createElement('div');
             highlightMask.className = 'highlight-mask';
@@ -229,7 +248,7 @@ async function handleRequest(request) {
                 }
             });
 
-            function updateMap(lat, lon, popupText) {
+            function updateMap(lat, lon, formattedTable) {
                 if (previousMarker) {
                     map.removeLayer(previousMarker);
                 }
@@ -241,14 +260,14 @@ async function handleRequest(request) {
                     className: 'pulse-container',
                     html: '<div class="pulse-circle"></div>',
                     iconSize: [50, 50],
-                    iconAnchor: [25, 25]
+         
                 });
 
                 previousAnimatedMarker = L.marker([lat, lon], { icon: pulseDiv, interactive: false }).addTo(map);
 
                 previousMarker = L.marker([lat, lon], { zIndexOffset: 1000 })
                     .addTo(map)
-                    .bindPopup(popupText)
+                    .bindPopup(formattedTable)
                     .openPopup();
 
                 map.flyTo([lat, lon], 5); // 执行平移动画
