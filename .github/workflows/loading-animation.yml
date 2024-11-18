@@ -10,24 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Enable Wrangler Debug Mode
-        run: echo "DEBUG=wrangler:*" >> $GITHUB_ENV
-
-      - name: Deploy with Wrangler
-        uses: cloudflare/wrangler-action@v3
+      - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: loading-animation
-        continue-on-error: true
-
-      - name: Show Wrangler Logs
-        run: |
-          LOG_DIR="/home/runner/.config/.wrangler/logs"
-          if [ -d "$LOG_DIR" ]; then
-            echo "Printing Wrangler logs..."
-            cat "$LOG_DIR"/*.log
-          else
-            echo "No Wrangler logs found."
-          fi
