@@ -149,8 +149,8 @@ async function handleRequest(request) {
                     : null;
                 
                 return (
-                    "<div style='background-color: #f0f0f0; padding: 15px; border-radius: 5px; border: 2px solid #ddd; " +
-                    "box-shadow: inset 5px 5px 10px rgba(0, 0, 0, 0.2), inset -5px -5px 10px rgba(255, 255, 255, 0.5);'>" + // 凹陷相框样式
+                    "<div style='background-color: #f0f0f0; padding: 15px; border-radius: 5px; border: 2px solid #ddd; " + 
+                    "box-shadow: inset -5px -5px 10px rgba(0, 0, 0, 0.2);'>" + // 去掉倾斜，保持内容平直
                     "<strong style='color: " + (title === "这是您当前的 IP 地址定位信息:" ? "#00693E" : "#000000") + ";'>" + title + "</strong><br>" + // 标题颜色和加粗
                     "IP 地址: " + (data.ip || "未知") + "<br>" +
                     "城市: " + (data.city || "未知") + "<br>" +
