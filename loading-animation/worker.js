@@ -64,11 +64,11 @@ async function handleRequest(request) {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background-color: #50C878;
+                background-color: #F2F3F4;
                 margin: 0 5px;
                 animation: wave 1.5s ease-in-out infinite;
-                box-shadow: 0 0 5px rgba(0, 0, 0, 0.8); /* 添加阴影 */
-                border: 2px solid rgba(0, 0, 0, 0.5); /* 外边框增加深色轮廓 */
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); /* 添加阴影 */
+                border: 1px solid rgba(0, 0, 0, 0.5); /* 外边框增加深色轮廓 */
             }
 
             /* 设置每个点的延迟，创建波浪效果 */
@@ -131,7 +131,7 @@ async function handleRequest(request) {
         <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 7); // 默认国家地图视图
+            var map = L.map('map').setView([20, 0], 8); // 默认国家地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
