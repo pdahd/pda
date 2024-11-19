@@ -64,7 +64,7 @@ async function handleRequest(request) {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background-color: #00B9E8;
+                background-color: #FF5800橙色加载;
                 margin: 0 5px;
                 animation: wave 1.5s ease-in-out infinite;
                 box-shadow: 0 0 4px rgba(0, 0, 0, 0.7); /* 添加阴影 */
