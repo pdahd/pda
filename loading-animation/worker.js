@@ -64,10 +64,10 @@ async function handleRequest(request) {
                 width: 10px;
                 height: 10px;
                 border-radius: 50%;
-                background-color: #F2F3F4;
+                background-color: #EDEAE0;
                 margin: 0 5px;
                 animation: wave 1.5s ease-in-out infinite;
-                box-shadow: 0 0 4px rgba(0, 0, 0, 0.5); /* 添加阴影 */
+                box-shadow: 0 0 4px rgba(0, 0, 0, 0.7); /* 添加阴影 */
                 border: 1px solid rgba(0, 0, 0, 0.5); /* 外边框增加深色轮廓 */
             }
 
