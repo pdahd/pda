@@ -149,7 +149,8 @@ async function handleRequest(request) {
                     : null;
                 
                 return (
-                    title + "<br>" +
+                    "<div style='background-color: #f0f0f0; padding: 10px; border-radius: 5px;'>" + // 灰色背景
+                    "<strong style='color: " + (title === "这是您当前的 IP 地址定位信息:" ? "#50C878" : "#000000") + ";'>" + title + "</strong><br>" + // 标题颜色和加粗
                     "IP 地址: " + (data.ip || "未知") + "<br>" +
                     "城市: " + (data.city || "未知") + "<br>" +
                     "区域: " + (data.region || "未知") + "<br>" +
@@ -170,7 +171,7 @@ async function handleRequest(request) {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
                         var popupText = generatePopupContent(
-                            "您当前的 IP 地址定位信息:",
+                            "这是您当前的 IP 地址定位信息:",
                             data, 
                             lat, 
                             lon
@@ -210,7 +211,7 @@ async function handleRequest(request) {
                                 if (data.loc) {
                                     var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
                                     var popupText = generatePopupContent(
-                                        "您输入的 IP 地址定位信息:",
+                                        "这是您输入的 IP 地址定位信息:",
                                         data, 
                                         lat, 
                                         lon
