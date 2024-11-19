@@ -145,7 +145,7 @@ async function handleRequest(request) {
             function generatePopupContent(title, data, lat, lon) {
                 
                 var flagUrl = data.country 
-                    ? "https://flagcdn.com/w40/" + data.country.toLowerCase() + ".png"
+                    ? "https://flagcdn.com/" + data.country.toLowerCase() + ".svg"
                     : null;
                 
                 return (
@@ -156,8 +156,7 @@ async function handleRequest(request) {
                     "城市: " + (data.city || "未知") + "<br>" +
                     "区域: " + (data.region || "未知") + "<br>" +
                     "国家: " + (data.country || "未知") + 
-                    (flagUrl ? " <img src='" + flagUrl + "' alt='Flag' style='width:20px;height:auto;vertical-align:middle;'>" : "") + 
-                    "<br>" +
+                    (flagUrl ? " <img src='" + flagUrl + "' alt='Flag of " + (data.country || "Unknown") + "' width='20' style='vertical-align:middle;'>" : "") + "<br>" +
                     "ISP: " + (data.org || "未知") + "<br>" +
                     "时区: " + (data.timezone || "未知") + "<br>" +
                     "经纬度: " + (lat || "未知") + ", " + (lon || "未知")
