@@ -232,7 +232,14 @@ async function handleRequest(request) {
                                     var lat = parseFloat(data[0].lat);
                                     var lon = parseFloat(data[0].lon);
                                    
-                                    updateMap(lat, lon, "位置: " + input);
+                                    var countryCode = data[0].address ? data[0].address.country_code : "未知"; // 提取国家代码
+
+                                    // 构造弹出框内容
+                                    var popupText = 
+                                        "位置: " + input + "<br>" +
+                                        "国家代码: " + (countryCode.toUpperCase() || "未知"); // 国家代码大写显示
+
+                                    updateMap(lat, lon, popupText);
                                 } else {
                                     alert('Location not found');
                                 }
