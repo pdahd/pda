@@ -120,7 +120,7 @@ async function handleRequest(request) {
         </style>
     </head>
     <body>
-        <input type="text" id="searchBox" placeholder="输入位置或IP并按回车定位">
+        <input type="text" id="searchBox" placeholder="输入IP或位置并按回车定位">
         <div class="loading-container" id="loadingAnimation">
             <div class="dot"></div>
             <div class="dot"></div>
@@ -131,7 +131,7 @@ async function handleRequest(request) {
         <div id="map"></div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 2); // 默认世界地图视图
+            var map = L.map('map').setView([20, 0], 4); // 默认国家地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -232,14 +232,7 @@ async function handleRequest(request) {
                                     var lat = parseFloat(data[0].lat);
                                     var lon = parseFloat(data[0].lon);
                                    
-                                    var countryCode = data[0].address ? data[0].address.country_code : "未知"; // 提取国家代码
-
-                                    // 构造弹出框内容
-                                    var popupText = 
-                                        "位置: " + input + "<br>" +
-                                        "国家代码: " + (countryCode.toUpperCase() || "未知"); // 国家代码大写显示
-
-                                    updateMap(lat, lon, popupText);
+                                    updateMap(lat, lon, "位置: " + input);
                                 } else {
                                     alert('Location not found');
                                 }
