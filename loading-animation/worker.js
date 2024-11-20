@@ -10,6 +10,10 @@ async function handleRequest(request) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>OpenStreetMap with IP and Geocoding</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+        <!-- 加载 Google 字体 -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Bungee+Outline&display=swap" rel="stylesheet">
         <style>
             #map {
                 height: 100vh; /* Full screen height */
@@ -117,6 +121,18 @@ async function handleRequest(request) {
             .highlight-mask.active {
                 animation: fadeIn 2s ease forwards;
             }
+
+            /* MapMyIP 名称样式 */
+            #projectName {
+                position: fixed;
+                left: 10px; /* 左边距 */
+                bottom: 10px; /* 底边距 */
+                font-family: 'Bungee Outline', sans-serif; /* 使用 Google 字体 */
+                font-size: 24px; /* 字体大小 */
+                color: #333; /* 字体颜色 */
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* 阴影效果 */
+                z-index: 1000; /* 保证在最上层 */
+            }
         </style>
     </head>
     <body>
@@ -129,6 +145,7 @@ async function handleRequest(request) {
             <div class="dot"></div>
         </div>
         <div id="map"></div>
+        <div id="projectName">MapMyIP</div> <!-- 添加 MapMyIP 名称 -->
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
             var map = L.map('map').setView([20, 0], 8); // 默认国家地图视图
