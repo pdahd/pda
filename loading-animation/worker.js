@@ -125,13 +125,17 @@ async function handleRequest(request) {
             /* MapMyIP 名称样式 */
             #projectName {
                 position: fixed;
-                left: 10px; /* 左边距 */
-                bottom: 10px; /* 底边距 */
-                font-family: 'Bungee Outline', sans-serif; /* 使用 Google 字体 */
-                font-size: 24px; /* 字体大小 */
-                color: #333; /* 字体颜色 */
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* 阴影效果 */
-                z-index: 1000; /* 保证在最上层 */
+                left: 10px;
+                bottom: 10px;
+                font-family: 'Bungee Outline', sans-serif;
+                font-size: 24px;
+                color: #ffffff; /* 使用白色字体 */
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 
+                             -1px -1px 2px rgba(255, 255, 255, 0.5); /* 添加高对比度阴影 */
+                background: rgba(0, 0, 0, 0.5); /* 半透明背景框 */
+                padding: 5px 10px; /* 内边距 */
+                border-radius: 5px; /* 圆角边框 */
+                z-index: 1000;
             }
         </style>
     </head>
