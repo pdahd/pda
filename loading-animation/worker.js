@@ -134,13 +134,13 @@ async function handleRequest(request) {
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+                box-sizing: border-box;
             }
             /* 项目标题 MapMyIP */
             #projectName {
                 font-family: 'Faster One', sans-serif;
                 font-size: 24px;
                 color: #f5f5f5; 
-                -webkit-text-stroke: 0.5px #f5f5f5;
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
             }
             /* 副标题 你的IP地图 */
