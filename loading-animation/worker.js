@@ -122,27 +122,35 @@ async function handleRequest(request) {
                 animation: fadeIn 2s ease forwards;
             }
 
-            /* MapMyIP 名称样式 */
-            #projectName {
+            /* 包裹名称和说明的整体容器 */
+            #projectContainer {
                 position: fixed;
                 left: 10px;
                 bottom: 10px;
+                z-index: 1000;
+                display: flex;
+                align-items: center; /* 垂直居中对齐 */
+                background: linear-gradient(135deg, #b8b8b8, #e0e0e0, #b8b8b8); /* 金属渐变效果 */
+                padding: 10px 15px;
+                border: 2px solid #999; /* 外边框 */
+                box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6), inset 1px 1px 4px rgba(255, 255, 255, 0.4);
+                border-radius: 10px;
+            }
+            /* 项目标题 MapMyIP */
+            #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
-                color: #ffffff; /* 使用白色字体 */
+                color: #ffffff;
                 text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 
-                             -1px -1px 2px rgba(255, 255, 255, 0.5); /* 添加高对比度阴影 */
-                background: rgba(0, 0, 0, 0.5); /* 半透明背景框 */
-                padding: 5px 10px; /* 内边距 */
-                border-radius: 5px; /* 圆角边框 */
-                z-index: 1000;
+                             -1px -1px 2px rgba(255, 255, 255, 0.5);
+                margin-right: 10px; /* 和说明之间的间距 */
             }
-
+            /* 副标题 你的IP地图 */
             #projectSubtitle {
-                font-size: 12px; /* 小字的字体大小 */
-                font-family: sans-serif; /* 使用简单的无衬线字体 */
-                color: #dddddd; /* 浅灰色 */
-                margin-top: 5px; /* 上下文字之间的间距 */
+                font-size: 16px;
+                font-family: sans-serif;
+                color: #333; /* 深灰色，与金属背景搭配 */
+                text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
             }
         </style>
     </head>
@@ -156,10 +164,10 @@ async function handleRequest(request) {
             <div class="dot"></div>
         </div>
         <div id="map"></div>
-        <div id="projectName">
-            MapMyIP
-            <div id="projectSubtitle">你的IP向导，在地图中找到IP位置</div>
-        </div> <!-- 添加 MapMyIP 名称 -->
+        <div id="projectContainer">
+            <div id="projectName">MapMyIP</div>
+            <div id="projectSubtitle">你的IP地图</div>
+        </div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
             var map = L.map('map').setView([20, 0], 8); // 默认国家地图视图
