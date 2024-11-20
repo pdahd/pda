@@ -128,7 +128,7 @@ async function handleRequest(request) {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                height: 10px; 
+                height: 12px; 
                 background: rgba(50, 50, 50, 0.4); 
                 padding: 4px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
