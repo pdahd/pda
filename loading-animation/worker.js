@@ -131,7 +131,7 @@ async function handleRequest(request) {
                 height: 12px; 
                 background: rgba(50, 50, 50, 0.4); 
                 padding: 4px; /* 微调内边距 */
-                border-radius: 4px; /* 圆角背景 */
+                border-radius: 3px; /* 圆角背景 */
                 border: 1px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             }
