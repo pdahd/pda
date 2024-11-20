@@ -142,11 +142,10 @@ async function handleRequest(request) {
             #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
-                color: #ffffff; 
+                color: #f5f5f5; 
                 text-stroke: 1px white;
                 -webkit-text-stroke: 1px white; 
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 
-                             -2px -2px 3px rgba(255, 255, 255, 0.6);
+                text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.9);
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
