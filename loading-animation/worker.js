@@ -145,6 +145,8 @@ async function handleRequest(request) {
                 color: #ffffff; 
                 text-stroke: 1px white;
                 -webkit-text-stroke: 1px white; 
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9), 
+                             -2px -2px 3px rgba(255, 255, 255, 0.6);
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
