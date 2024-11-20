@@ -130,7 +130,7 @@ async function handleRequest(request) {
                 justify-content: center;
                 height: 21px; 
                 background: rgba(50, 50, 50, 0.4); 
-                padding: 3px; /* 微调内边距 */
+                padding: 15px 4px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -144,7 +144,7 @@ async function handleRequest(request) {
             }
             /* 副标题 IP地图 */
             #projectSubtitle {
-                font-size: 15px;
+                font-size: 14px;
                 font-family: 'ZCOOL QingKe HuangYou', sans-serif;
                 color: #f5f5f5; 
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
