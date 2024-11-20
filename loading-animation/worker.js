@@ -132,7 +132,7 @@ async function handleRequest(request) {
                 align-items: center;
                 justify-content: center;
                 height: 21px; 
-                background: rgba(50, 50, 50, 0.5); 
+                background: rgba(50, 50, 50, 0.3); 
                 padding: 3px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(245, 245, 245, 0.5);
