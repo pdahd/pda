@@ -128,7 +128,9 @@ async function handleRequest(request) {
                 left: 10px;
                 bottom: 10px;
                 z-index: 1000;
+                line-height: normal;
                 display: inline-flex;
+                box-sizing: border-box;
                 align-items: center; /* 垂直居中对齐 */
                 background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
                 padding: 4px 4px; /* 紧贴文字的内边距 */
