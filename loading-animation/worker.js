@@ -135,25 +135,24 @@ async function handleRequest(request) {
                 background: rgba(50, 50, 50, 0.6); /* 半透明深灰色背景 */
                 padding: 3px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
-                border: 2px solid rgba(255, 255, 255, 0.3);
-                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), inset 1px 1px 4px rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.4);
+                box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9), inset 2px 2px 4px rgba(255, 255, 255, 0.2);
             }
             /* 项目标题 MapMyIP */
             #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
                 color: #ffffff; 
-                font-weight: bold; /* 加粗标题 */
-                text-stroke: 1px black; /* 黑色描边 */
-                -webkit-text-stroke: 1px black; /* 兼容性描边 */
-                margin-right: 5px; /* 与副标题保持间距 */
+                text-stroke: 1px white;
+                -webkit-text-stroke: 1px white; 
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
                 font-size: 15px;
                 font-family: sans-serif;
-                color: #dcdcdc; /* 浅灰色文字，清晰但不抢眼 */
-                margin-left: 5px; /* 缩小间距，紧贴主标题 */
+                color: #f5f5f5; 
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+                margin-left: 5px; 
             }
         </style>
     </head>
