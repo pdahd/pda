@@ -137,7 +137,7 @@ async function handleRequest(request) {
             }
             /* 项目标题 MapMyIP */
             #projectName {
-                font-family: 'Alumni Sans Inline One', sans-serif;
+                font-family: 'Anton', sans-serif;
                 font-size: 24px;
                 color: #f5f5f5; 
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
@@ -168,7 +168,7 @@ async function handleRequest(request) {
         </div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 8); // 默认国家地图视图
+            var map = L.map('map').setView([20, 0], 8); // 地图视图
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -189,8 +189,8 @@ async function handleRequest(request) {
                     "<strong style='color: " + (title === "这是您当前的 IP 地址定位信息:" ? "#00693E" : "#000000") + ";'>" + title + "</strong><br>" + // 标题颜色和加粗
                     "IP 地址: " + (data.ip || "未知") + "<br>" +
                     "城市: " + (data.city || "未知") + "<br>" +
-                    "区域: " + (data.region || "未知") + "<br>" +
-                    "国家地区: " + (data.country || "未知") + 
+                    "省/州: " + (data.region || "未知") + "<br>" +
+                    "国家/地区: " + (data.country || "未知") + 
                     (flagUrl ? " <img src='" + flagUrl + "' alt='Flag of " + (data.country || "Unknown") + "' width='50' style='vertical-align:middle;'>" : "") + "<br>" +
                     "ISP: " + (data.org || "未知") + "<br>" +
                     "时区: " + (data.timezone || "未知") + "<br>" +
