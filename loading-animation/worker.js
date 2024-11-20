@@ -130,27 +130,28 @@ async function handleRequest(request) {
                 z-index: 1000;
                 display: flex;
                 align-items: center; /* 垂直居中对齐 */
-                background: linear-gradient(135deg, #b8b8b8, #e0e0e0, #b8b8b8); /* 金属渐变效果 */
-                padding: 10px 15px;
-                border: 2px solid #999; /* 外边框 */
-                box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.6), inset 1px 1px 4px rgba(255, 255, 255, 0.4);
-                border-radius: 10px;
+                background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
+                padding: 5px 10px; /* 紧贴文字的内边距 */
+                border-radius: 8px; /* 圆角背景 */
+                border: 2px solid rgba(255, 255, 255, 0.3); /* 外边框为透明白色 */
+                box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8), /* 深色阴影增强立体感 */
+                            inset 1px 1px 5px rgba(255, 255, 255, 0.1); /* 内阴影增加质感 */
             }
             /* 项目标题 MapMyIP */
             #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
-                color: #ffffff;
-                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 
-                             -1px -1px 2px rgba(255, 255, 255, 0.5);
-                margin-right: 10px; /* 和说明之间的间距 */
+                color: #f5f5f5; /* 浅灰白色，适配深浅背景 */
+                text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.8), /* 深色阴影增强深色背景可读性 */
+                             -1px -1px 2px rgba(255, 255, 255, 0.5); /* 浅色阴影适配浅色背景 */
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
                 font-size: 16px;
                 font-family: sans-serif;
-                color: #333; /* 深灰色，与金属背景搭配 */
-                text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+                color: #dcdcdc; /* 浅灰色文字，清晰但不抢眼 */
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); /* 增强可读性 */
+                margin-left: 5px; /* 缩小间距，紧贴主标题 */
             }
         </style>
     </head>
