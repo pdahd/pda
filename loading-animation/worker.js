@@ -131,8 +131,7 @@ async function handleRequest(request) {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                height: 32px; /* 设置容器的高度 */
-                line-height: 32px; /* 确保上下居中 */
+                height: 32px; 
                 background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
                 padding: 3px; /* 微调内边距 */
                 border-radius: 5px; /* 圆角背景 */
