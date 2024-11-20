@@ -137,6 +137,13 @@ async function handleRequest(request) {
                 border-radius: 5px; /* 圆角边框 */
                 z-index: 1000;
             }
+
+            #projectSubtitle {
+                font-size: 12px; /* 小字的字体大小 */
+                font-family: sans-serif; /* 使用简单的无衬线字体 */
+                color: #dddddd; /* 浅灰色 */
+                margin-top: 5px; /* 上下文字之间的间距 */
+            }
         </style>
     </head>
     <body>
@@ -149,7 +156,10 @@ async function handleRequest(request) {
             <div class="dot"></div>
         </div>
         <div id="map"></div>
-        <div id="projectName">MapMyIP</div> <!-- 添加 MapMyIP 名称 -->
+        <div id="projectName">
+            MapMyIP
+            <div id="projectSubtitle">你的IP向导，在地图中找到IP位置</div>
+        </div> <!-- 添加 MapMyIP 名称 -->
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
             var map = L.map('map').setView([20, 0], 8); // 默认国家地图视图
