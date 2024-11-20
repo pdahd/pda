@@ -143,8 +143,8 @@ async function handleRequest(request) {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
                 color: #f5f5f5; 
-                text-stroke: 1px white;
-                -webkit-text-stroke: 1px white; 
+                text-stroke: 1px #f5f5f5;
+                -webkit-text-stroke: 1px #f5f5f5; 
                 text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.9);
             }
             /* 副标题 你的IP地图 */
