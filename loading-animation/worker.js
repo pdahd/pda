@@ -131,10 +131,10 @@ async function handleRequest(request) {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                height: 32px; 
+                height: 30px; 
                 background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
                 padding: 3px; /* 微调内边距 */
-                border-radius: 5px; /* 圆角背景 */
+                border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(255, 255, 255, 0.3);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), inset 1px 1px 4px rgba(255, 255, 255, 0.1);
                 box-sizing: border-box;
