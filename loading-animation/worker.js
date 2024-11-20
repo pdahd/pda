@@ -137,8 +137,8 @@ async function handleRequest(request) {
             }
             /* 项目标题 MapMyIP */
             #projectName {
-                font-family: 'Alumni Sans Collegiate One', sans-serif;
-                font-size: 24px;
+                font-family: 'Faster One', sans-serif;
+                font-size: 23px;
                 color: #f5f5f5; 
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
             }
