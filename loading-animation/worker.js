@@ -135,8 +135,8 @@ async function handleRequest(request) {
                 background: rgba(50, 50, 50, 0.6); /* 半透明深灰色背景 */
                 padding: 3px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
-                border: 2px solid rgba(255, 255, 255, 0.4);
-                box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9), inset 2px 2px 4px rgba(255, 255, 255, 0.2);
+                border: 2px solid rgba(245, 245, 245, 0.5);
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             }
             /* 项目标题 MapMyIP */
             #projectName {
@@ -145,7 +145,7 @@ async function handleRequest(request) {
                 color: #f5f5f5; 
                 text-stroke: 1px #f5f5f5;
                 -webkit-text-stroke: 1px #f5f5f5; 
-                text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.9);
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
