@@ -142,7 +142,7 @@ async function handleRequest(request) {
             #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
-                color: #f5f5f5; /* 浅灰白色，适配深浅背景 */
+                color: #ffffff; /* 浅灰白色，适配深浅背景 */
                 text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.8), /* 深色阴影增强深色背景可读性 */
                              -1px -1px 2px rgba(255, 255, 255, 0.5); /* 浅色阴影适配浅色背景 */
             }
