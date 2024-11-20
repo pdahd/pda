@@ -128,16 +128,17 @@ async function handleRequest(request) {
                 left: 10px;
                 bottom: 10px;
                 z-index: 1000;
-                line-height: normal;
                 display: inline-flex;
-                box-sizing: border-box;
-                align-items: center; /* 垂直居中对齐 */
+                align-items: center;
+                justify-content: center;
+                height: 40px; /* 设置容器的高度 */
+                line-height: 40px; /* 确保上下居中 */
                 background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
-                padding: 4px 4px; /* 紧贴文字的内边距 */
+                padding: 2px 4px; /* 微调内边距 */
                 border-radius: 8px; /* 圆角背景 */
-                border: 2px solid rgba(255, 255, 255, 0.3); /* 外边框为透明白色 */
-                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), /* 深色阴影增强立体感 */
-                            inset 1px 1px 4px rgba(255, 255, 255, 0.1); /* 内阴影增加质感 */
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), inset 1px 1px 4px rgba(255, 255, 255, 0.1);
+                box-sizing: border-box;
             }
             /* 项目标题 MapMyIP */
             #projectName {
