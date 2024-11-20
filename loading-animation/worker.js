@@ -142,16 +142,17 @@ async function handleRequest(request) {
             #projectName {
                 font-family: 'Bungee Outline', sans-serif;
                 font-size: 24px;
-                color: #ffffff; /* 浅灰白色，适配深浅背景 */
-                text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.8), /* 深色阴影增强深色背景可读性 */
-                             -1px -1px 2px rgba(255, 255, 255, 0.5); /* 浅色阴影适配浅色背景 */
+                color: #ffffff; 
+                font-weight: bold; /* 加粗标题 */
+                text-stroke: 1px black; /* 黑色描边 */
+                -webkit-text-stroke: 1px black; /* 兼容性描边 */
+                margin-right: 5px; /* 与副标题保持间距 */
             }
             /* 副标题 你的IP地图 */
             #projectSubtitle {
-                font-size: 16px;
+                font-size: 15px;
                 font-family: sans-serif;
                 color: #dcdcdc; /* 浅灰色文字，清晰但不抢眼 */
-                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6); /* 增强可读性 */
                 margin-left: 5px; /* 缩小间距，紧贴主标题 */
             }
         </style>
