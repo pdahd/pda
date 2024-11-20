@@ -14,6 +14,7 @@ async function handleRequest(request) {
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Bungee+Outline&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400&display=swap" rel="stylesheet">
         <style>
             #map {
                 height: 100vh; /* Full screen height */
@@ -149,7 +150,7 @@ async function handleRequest(request) {
             /* 副标题 你的IP地图 */
             #projectSubtitle {
                 font-size: 15px;
-                font-family: sans-serif;
+                font-family: 'Noto Sans SC', sans-serif;
                 color: #f5f5f5; 
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
                 margin-left: 5px; 
