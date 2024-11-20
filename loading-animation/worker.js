@@ -135,7 +135,7 @@ async function handleRequest(request) {
                 border: 1px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             }
-            /* 项目标题 MapMyIP */
+            /* 项目标题 MAPMYIP */
             #projectName {
                 font-family: 'Faster One', sans-serif;
                 font-size: 22px;
@@ -163,7 +163,7 @@ async function handleRequest(request) {
         </div>
         <div id="map"></div>
         <div id="projectContainer">
-            <div id="projectName">MapMyIP</div>
+            <div id="projectName">MAPMYIP</div>
             <div id="projectSubtitle">IP地图</div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
