@@ -153,7 +153,7 @@ async function handleRequest(request) {
         </style>
     </head>
     <body>
-        <input type="text" id="searchBox" placeholder="输入IP或位置并敲回车键定位">
+        <input type="text" id="searchBox" placeholder="输入IP或位置敲回车键定位">
         <div class="loading-container" id="loadingAnimation">
             <div class="dot"></div>
             <div class="dot"></div>
@@ -206,7 +206,7 @@ async function handleRequest(request) {
                     if (data.loc) {
                         var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
                         var popupText = generatePopupContent(
-                            "这是您当前的 IP 地址定位信息:",
+                            "您当前的 IP 地址定位信息:",
                             data, 
                             lat, 
                             lon
@@ -246,7 +246,7 @@ async function handleRequest(request) {
                                 if (data.loc) {
                                     var [lat, lon] = data.loc.split(',').map(coord => parseFloat(coord)); // 提取经纬度
                                     var popupText = generatePopupContent(
-                                        "这是您输入的 IP 地址定位信息:",
+                                        "您输入的 IP 地址定位信息:",
                                         data, 
                                         lat, 
                                         lon
@@ -270,7 +270,7 @@ async function handleRequest(request) {
                                    
                                     updateMap(lat, lon, "位置: " + input);
                                 } else {
-                                    alert('Location not found');
+                                    alert('你输入的地名无效，找不到这个鬼地方 🙄');
                                 }
                             });
                     }
