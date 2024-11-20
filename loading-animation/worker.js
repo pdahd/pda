@@ -128,10 +128,10 @@ async function handleRequest(request) {
                 left: 10px;
                 bottom: 10px;
                 z-index: 1000;
-                display: flex;
+                display: inline-flex;
                 align-items: center; /* 垂直居中对齐 */
                 background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
-                padding: 5px 10px; /* 紧贴文字的内边距 */
+                padding: 4px 4px; /* 紧贴文字的内边距 */
                 border-radius: 8px; /* 圆角背景 */
                 border: 2px solid rgba(255, 255, 255, 0.3); /* 外边框为透明白色 */
                 box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8), /* 深色阴影增强立体感 */
