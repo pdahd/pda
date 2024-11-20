@@ -131,8 +131,8 @@ async function handleRequest(request) {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                height: 5px; 
-                background: rgba(50, 50, 50, 0.7); /* 半透明深灰色背景 */
+                height: 17px; 
+                background: rgba(50, 50, 50, 0.6); /* 半透明深灰色背景 */
                 padding: 3px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(255, 255, 255, 0.3);
