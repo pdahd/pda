@@ -130,14 +130,14 @@ async function handleRequest(request) {
                 justify-content: center;
                 height: 21px; 
                 background: rgba(50, 50, 50, 0.4); 
-                padding: 20px 50px; /* 微调内边距 */
+                padding: 3px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             }
             /* 项目标题 MapMyIP */
             #projectName {
-                font-family: 'Faster One', sans-serif;
+                font-family: 'Anton SC', sans-serif;
                 font-size: 24px;
                 color: #f5f5f5; 
                 text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
@@ -190,7 +190,7 @@ async function handleRequest(request) {
                     "IP 地址: " + (data.ip || "未知") + "<br>" +
                     "城市: " + (data.city || "未知") + "<br>" +
                     "区域: " + (data.region || "未知") + "<br>" +
-                    "国家: " + (data.country || "未知") + 
+                    "国家地区: " + (data.country || "未知") + 
                     (flagUrl ? " <img src='" + flagUrl + "' alt='Flag of " + (data.country || "Unknown") + "' width='50' style='vertical-align:middle;'>" : "") + "<br>" +
                     "ISP: " + (data.org || "未知") + "<br>" +
                     "时区: " + (data.timezone || "未知") + "<br>" +
