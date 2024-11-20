@@ -128,9 +128,9 @@ async function handleRequest(request) {
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
-                height: 21px; 
+                height: 10px; 
                 background: rgba(50, 50, 50, 0.4); 
-                padding: 1px 5px; /* 微调内边距 */
+                padding: 4px; /* 微调内边距 */
                 border-radius: 6px; /* 圆角背景 */
                 border: 2px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
