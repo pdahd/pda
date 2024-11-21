@@ -135,7 +135,7 @@ async function handleRequest(request) {
                 border: 1px solid rgba(245, 245, 245, 0.5);
                 box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
             }
-            /* 项目标题 MAPMYIP */
+            /* 项目标题 IPMAP */
             #projectName {
                 font-family: 'Faster One', sans-serif;
                 font-size: 22px;
@@ -163,12 +163,12 @@ async function handleRequest(request) {
         </div>
         <div id="map"></div>
         <div id="projectContainer">
-            <div id="projectName">MAPMYIP</div>
+            <div id="projectName">IPMAP</div>
             <div id="projectSubtitle">IP地图</div>
         </div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 8); // 地图视图
+            var map = L.map('map').setView([20, 0], 8); // 地图视图缩放级别
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
@@ -186,7 +186,7 @@ async function handleRequest(request) {
                     : null;
                 
                 return (
-                    "<strong style='color: " + (title === "这是您当前的 IP 地址定位信息:" ? "#00693E" : "#000000") + ";'>" + title + "</strong><br>" + // 标题颜色和加粗
+                    "<strong style='color: " + (title === "您当前的 IP 地址定位信息:" ? "#00693E" : "#000000") + ";'>" + title + "</strong><br>" + // 标题颜色和加粗
                     "IP 地址: " + (data.ip || "未知") + "<br>" +
                     "城市: " + (data.city || "未知") + "<br>" +
                     "省/州: " + (data.region || "未知") + "<br>" +
