@@ -168,7 +168,7 @@ async function handleRequest(request) {
         </div>
         <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
         <script>
-            var map = L.map('map').setView([20, 0], 8); // 地图视图缩放级别
+            var map = L.map('map').setView([20, 0], 5); // 地图视图缩放级别
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
