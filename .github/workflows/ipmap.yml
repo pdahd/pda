@@ -1,4 +1,4 @@
-name: Deploy to Cloudflare Workers
+name: 目录部署Deploy to Cloudflare Workers
 
 on:
   workflow_dispatch:
