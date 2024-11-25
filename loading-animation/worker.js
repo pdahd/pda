@@ -7,14 +7,27 @@ async function handleRequest(request) {
 
   // 处理OPTIONS请求
   if (method === 'OPTIONS') {
-    return new Response(null, { headers });
+    return new Response(null);
   }
 
-  // 检查请求是否为POST
+  // 如果是GET请求，返回index.html
+  if (method === 'GET') {
+    // 读取index.html文件内容
+    const indexHTML = await fetch('/index.html');
+    if (!indexHTML.ok) {
+      return new Response('Failed to load index.html', { status: 500 });
+    }
+    const htmlContent = await indexHTML.text();
+    return new Response(htmlContent, {
+      headers: { 'Content-Type': 'text/html' }
+    });
+  }
+
+  // 如果是POST请求，处理聊天逻辑
   if (method === 'POST') {
     const body = await request.json();
     if (!body.message) {
-      return new Response(JSON.stringify({ error: "Message is required" }), { status: 400, headers });
+      return new Response(JSON.stringify({ error: "Message is required" }), { status: 400 });
     }
 
     // 这里使用x.ai的API密钥
@@ -40,17 +53,17 @@ async function handleRequest(request) {
       // 只返回AI的回答文本
       const aiResponse = result.choices[0].message.content;
       return new Response(aiResponse, {
-        headers: { ...headers, 'Content-Type': 'text/plain' }
+        headers: { 'Content-Type': 'text/plain' }
       });
     } else {
       // 如果API返回错误，返回错误信息
       return new Response(JSON.stringify({ error: result.error }), {
         status: response.status,
-        headers: { ...headers, 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' }
       });
     }
   } else {
-    // 如果不是POST请求，返回一个简单的HTML页面或错误信息
-    return new Response('Please send a POST request with a message.', { status: 405, headers });
+    // 如果不是GET或POST请求，返回一个简单的HTML页面或错误信息
+    return new Response('Please send a GET request for the page or a POST request with a message.', { status: 405 });
   }
-      }
+    }
