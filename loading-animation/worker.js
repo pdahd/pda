@@ -1,4 +1,4 @@
-const htmlContent = HTML_CONTENT; 
+/* global HTML_CONTENT */
 
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
