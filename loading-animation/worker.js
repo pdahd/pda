@@ -24,6 +24,6 @@ async function handleRequest(request) {
     });
   }
 
-  // 如果不是GET或POST请求，返回错误
+  // 如果不是GET或POST请求，返回错误。
   return new Response('Method Not Allowed', { status: 405 });
 }
