@@ -1,3 +1,5 @@
+const HTML_NAMESPACE = 'HTML_CONTENT'; // 确保这个名称与wrangler.toml中的绑定名称匹配
+
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
 })
@@ -7,11 +9,10 @@ async function handleRequest(request) {
 
   // 如果是GET请求，返回index.html
   if (method === 'GET') {
-    const indexHTML = await fetch('/index.html');
-    if (!indexHTML.ok) {
+    const htmlContent = await HTML_NAMESPACE.get('index.html');
+    if (!htmlContent) {
       return new Response('Failed to load index.html', { status: 500 });
     }
-    const htmlContent = await indexHTML.text();
     return new Response(htmlContent, {
       headers: { 'Content-Type': 'text/html' }
     });
@@ -24,6 +25,6 @@ async function handleRequest(request) {
     });
   }
 
-  // 如果不是GET或POST请求，返回错误。
+  // 如果不是GET或POST请求，返回错误
   return new Response('Method Not Allowed', { status: 405 });
 }
