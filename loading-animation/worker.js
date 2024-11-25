@@ -9,7 +9,7 @@ async function handleRequest(request) {
 
   // 如果是GET请求，返回index.html
   if (method === 'GET') {
-    const htmlContent = await HTML_NAMESPACE.get('index.html');
+    const htmlContent = await HTML_CONTENT.get('index.html');
     if (!htmlContent) {
       return new Response('Failed to load index.html', { status: 500 });
     }
