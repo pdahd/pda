@@ -163,7 +163,7 @@
             newMessage.scrollIntoView({ behavior: 'smooth', block: 'end', inline: 'nearest' });
 
             try {
-                const response = await fetch('/worker.js', {
+                const response = await fetch('/', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
