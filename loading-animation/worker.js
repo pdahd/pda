@@ -1,5 +1,3 @@
-const HTML_CONTENT = HTML_NAMESPACE; // 确保这个名称与wrangler.toml中的绑定名称匹配
-
 addEventListener('fetch', event => {
   event.respondWith(handleRequest(event.request))
 })
