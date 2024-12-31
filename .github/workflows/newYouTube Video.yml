@@ -10,6 +10,10 @@ on:
         options:
           - 查询
           - 下载
+      video_link:  
+        description: '请输入YouTube视频链接'
+        required: true
+        type: string
 
 jobs:
   download_video:
@@ -25,7 +29,7 @@ jobs:
           COOKIES_CONTENT: ${{ secrets.COOKIES }}
         run: |
           yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
-          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
+          ${{ github.event.inputs.video_link }}
 
       - name: Install ffmpeg
         if: ${{ github.event.inputs.action_type == '下载' }}
@@ -38,7 +42,7 @@ jobs:
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
-          https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
+          ${{ github.event.inputs.video_link }}
         env:
           INCLUDE_SECTIONS: "false"  # "true"表示启用裁剪的指定时间段，设置"false"则表示禁用
           ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
