@@ -14,6 +14,10 @@ on:
         description: '请输入YouTube视频链接'
         required: true
         type: string
+      video_format:  
+        description: '请输入视频格式代码'
+        required: true
+        type: string
 
 jobs:
   download_video:
@@ -38,7 +42,7 @@ jobs:
       - name: Download video and audio
         if: ${{ github.event.inputs.action_type == '下载' }}
         run: |
-          yt-dlp --cookies cookies.txt -f 313 \
+          yt-dlp --cookies cookies.txt -f ${{ github.event.inputs.video_format }} \
           $([[ "$INCLUDE_SECTIONS" == "true" ]] && echo --download-sections *5-2:36) \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
