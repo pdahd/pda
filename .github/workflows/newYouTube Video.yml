@@ -1,11 +1,11 @@
 name: 手动下载 YouTube 视频
 
 on: 
-    workflow_dispatch:
+  workflow_dispatch:
     inputs:
       action_type:
         description: '请选择操作类型'
-        required: true
+        required: false
         type: choice
         options:
           - 查询
@@ -28,12 +28,10 @@ jobs:
           https://youtu.be/6B93A9RsI7Y?si=S5zCNCBWaTKnh8JM
 
       - name: Install ffmpeg
-        # 仅当选择"下载"时才执行此步骤
         if: ${{ github.event.inputs.action_type == '下载' }}
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Download video and audio
-        # 仅当选择"下载"时才执行此步骤
         if: ${{ github.event.inputs.action_type == '下载' }}
         run: |
           yt-dlp --cookies cookies.txt -f 313 \
@@ -46,7 +44,6 @@ jobs:
           ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
 
       - name: Upload downloaded videos
-        # 仅当选择"下载"时才执行此步骤
         if: ${{ github.event.inputs.action_type == '下载' }}
         uses: actions/upload-artifact@v4
         with:
