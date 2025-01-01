@@ -58,7 +58,7 @@ jobs:
         if: ${{ github.event.inputs.action_type == '下载' }}
         run: |
           yt-dlp --cookies cookies.txt -f ${{ github.event.inputs.video_format }} \
-          $([[ "${{ github.event.inputs.enable_sections }}" == "是" ]] && echo --download-sections "${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+          $([[ "${{ github.event.inputs.enable_sections }}" == "是" ]] && echo --download-sections "*${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
           ${{ github.event.inputs.video_link }}
