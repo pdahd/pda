@@ -1,4 +1,4 @@
-name: 2026年YouTube
+name: 2016年YouTube 视频
 
 on: 
   workflow_dispatch:
@@ -40,13 +40,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 新增步骤：安装 Deno 环境
+      # 1. 设置 Deno 环境 (EJS 依赖)
       - name: Setup Deno
         uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
 
-      # 修改步骤：安装包含 EJS 支持的 yt-dlp
+      # 2. 安装 yt-dlp 及其 EJS 依赖
       - name: Install yt-dlp
         run: pip install -U "yt-dlp[default]"
 
@@ -61,16 +61,18 @@ jobs:
         if: ${{ github.event.inputs.action_type == '下载' }}
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
+      # 3. 修改此处：使用 secrets.COOKIES 替代 cookies.txt
       - name: Download video and audio
         if: ${{ github.event.inputs.action_type == '下载' }}
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}  # 注入 Cookies 密钥
+          ENABLE_MULTITHREAD: "true"
         run: |
-          yt-dlp --cookies cookies.txt -f ${{ github.event.inputs.video_format }} \
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -f ${{ github.event.inputs.video_format }} \
           $([[ "${{ github.event.inputs.enable_sections }}" == "是" ]] && echo --download-sections "*${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
           $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
           -o "downloads/%(title)s.%(ext)s" \
           ${{ github.event.inputs.video_link }}
-        env:
-          ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
 
       - name: Upload downloaded videos
         if: ${{ github.event.inputs.action_type == '下载' }}
