@@ -1,0 +1,80 @@
+name: 2026年YouTube
+
+on: 
+  workflow_dispatch:
+    inputs:
+      action_type:
+        description: '请选择操作类型'
+        required: false
+        type: choice
+        options:
+          - 查询
+          - 下载
+      video_link:  
+        description: '请输入YouTube视频链接'
+        required: true
+        type: string
+      video_format:  
+        description: '请输入视频格式代码'
+        required: false
+        type: string
+      enable_sections:
+        description: '是否启用指定时间段'
+        required: false
+        type: choice
+        options:
+          - 否
+          - 是
+      start_time:
+        description: '请输入开始时间 (格式: mm:ss 或 hh:mm:ss)'
+        required: false
+        type: string
+      end_time:
+        description: '请输入结束时间 (格式: mm:ss 或 hh:mm:ss)'
+        required: false
+        type: string
+
+jobs:
+  download_video:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 新增步骤：安装 Deno 环境
+      - name: Setup Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      # 修改步骤：安装包含 EJS 支持的 yt-dlp
+      - name: Install yt-dlp
+        run: pip install -U "yt-dlp[default]"
+
+      - name: List all available streams
+        env:
+          COOKIES_CONTENT: ${{ secrets.COOKIES }}
+        run: |
+          yt-dlp --cookies <(echo "$COOKIES_CONTENT") -F \
+          ${{ github.event.inputs.video_link }}
+
+      - name: Install ffmpeg
+        if: ${{ github.event.inputs.action_type == '下载' }}
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Download video and audio
+        if: ${{ github.event.inputs.action_type == '下载' }}
+        run: |
+          yt-dlp --cookies cookies.txt -f ${{ github.event.inputs.video_format }} \
+          $([[ "${{ github.event.inputs.enable_sections }}" == "是" ]] && echo --download-sections "*${{ github.event.inputs.start_time }}-${{ github.event.inputs.end_time }}") \
+          $([[ "$ENABLE_MULTITHREAD" == "true" ]] && echo --concurrent-fragments 10) \
+          -o "downloads/%(title)s.%(ext)s" \
+          ${{ github.event.inputs.video_link }}
+        env:
+          ENABLE_MULTITHREAD: "true"  # "true"表示启用多线程下载，设置并发片段数为10，设置"false"则表示禁用
+
+      - name: Upload downloaded videos
+        if: ${{ github.event.inputs.action_type == '下载' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-videos
+          path: downloads/**
